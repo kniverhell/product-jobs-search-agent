@@ -10,18 +10,19 @@ A file-based agentic system that runs a senior PM job search end to end. Built w
 
 Most AI job search tools stop at resume rewriting. This one runs the whole operation:
 
-- **Finds roles** — query-led web discovery, watchlist passes, and a Python ATS scanner across 29+ boards
+- **Finds roles** — query-led web discovery, watchlist passes, and a Python ATS scanner across 27 boards
 - **Verifies them** — every role confirmed on the employer's own ATS before any effort goes into it
-- **Scores them** — 5-dimension rubric with transparent modifiers, not keyword matching
+- **Scores them** — 5-dimension rubric (domain, level, comp, location, company) with transparent modifiers, not keyword matching
+- **Evaluates each role** — 7-block structured report covering fit, comp, personalization angle, interview stories, and blockers
 - **Tailors your materials** — resume and cover letter calibrated to one specific JD
 - **Prepares you** — company research, interview story mapping, negotiation prep
 - **Keeps the pipeline honest** — dedup, staleness enforcement, proof-point integrity
 
-**Key finding from 7 weeks of operation:** ~32% of apparently live job board listings are already closed. The verification gate catches them before you invest any time. A "quiet market" that hasn't been verified is not a finding — it's an unread report.
+**Key finding from 8 weeks of operation:** ~32% of apparently live job board listings are already closed *(measured: 8 of ~25 postings verified against employer ATS in the first week — dead reqs stay indexed on aggregators for months)*. The verification gate catches them before you invest any time. A "quiet market" that hasn't been verified is not a finding — it's an unread report.
 
 ---
 
-## The 10 modes
+## The 11 modes
 
 | Trigger | Mode | What it does |
 |---|---|---|
@@ -35,6 +36,7 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 | "prep me for this interview" | **Interview** | Story mapping + gap bridges + 5 questions |
 | "they made an offer" | **Negotiate** | Comp research + anchoring prep |
 | "something feels off in the tracker" | **Integrity** | Dedup, staleness, proof-point drift check |
+| "where am I at" / "pipeline review" | **Weekly Review** | Pipeline snapshot, follow-up triggers, tracker sync |
 
 ---
 
@@ -46,7 +48,7 @@ This is not an oversight — it is a design decision. An application is a human 
 
 ---
 
-## 7 weeks of learnings encoded as rules
+## 8 weeks of learnings encoded as rules
 
 These findings are now permanent rules in the system:
 

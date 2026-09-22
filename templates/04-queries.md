@@ -2,6 +2,44 @@
 
 The primary discovery surface for `scan` mode. The company is the output; the query is the input.
 
+---
+
+## Problem-space layer — build queries from the problem, not the title
+
+The differentiator in this system is that discovery starts from *what you know how to solve*, not from a job title. A title-first query finds every listing that uses your title. A problem-first query finds listings where the problem you solve is urgent — even if they use a different title, a different level, or a term you haven't heard before.
+
+**The pattern:** Name the user problem or failure mode. Turn it into search terms that describe the symptom, not the solution. The employer is the output, not the input.
+
+### How to build a problem-space query
+
+1. List 3–5 problems your domain solves. Be specific about the failure mode — not "identity" but "account takeover after password reset."
+2. Write the query as the victim or the business would describe the problem: words like "risk," "friction," "fraud," "drop-off," "recovery," "trust," "step-up," "attrition."
+3. No title keywords. No company names. If the query works only when you already know the employer, it's a watchlist pass, not a problem-space query.
+
+### Worked example — identity/CIAM domain
+
+These queries contain no job titles and no company names. They find the problem, and the employer is what comes back.
+
+| Problem cluster | Query | What comes back |
+|---|---|---|
+| Account takeover / contact-change fraud | `"contact change" "fraud" "product" site:linkedin.com` | PM roles at companies where ATO via phone/email update is a live threat |
+| Account takeover / contact-change fraud | `"account recovery" "risk" "drop-off" product` | Roles where recovery friction is the design tension |
+| Step-up authentication friction | `"step-up" "authentication" "product" "friction"` | Roles defining step-up policy; often buried in platform or trust orgs |
+| Step-up authentication friction | `"MFA" "abandonment" "product manager"` | Companies where MFA friction is causing measurable drop-off |
+| Onboarding/KYC conversion | `"KYC" "onboarding" "conversion" "product"` | Regulated fintechs where identity verification is a conversion bottleneck |
+| Onboarding/KYC conversion | `"identity verification" "funnel" "product" site:linkedin.com` | Roles where the business problem is verification-rate vs. fraud-rate tradeoff |
+
+### Adapt this to your domain
+
+Replace the problem clusters above with the 3–5 failure modes in your domain. For each:
+- What does the failure look like to the user?
+- What does the failure look like to the business (fraud, churn, cost, compliance)?
+- What words would a non-PM stakeholder (risk, ops, engineering, legal) use to describe it?
+
+Those words are your query terms.
+
+---
+
 ## How this file works
 
 - **Tier 1 queries** run every scan (your core domain)
