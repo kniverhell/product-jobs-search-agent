@@ -15,6 +15,10 @@ Rules that follow from that:
 - **State confidence on every dimension**, not just the verdict. High confidence needs a primary source: a filing, a published financial statement, a funding announcement from the company, a regulator's action.
 - **Missing data lowers confidence — it never becomes a mid score.** "No disclosed revenue" is not a 5/10 on unit economics. It is an unknown, and the score says so.
 - **Never invent a runway.** If burn isn't knowable, say the estimate depends on burn and name what would reveal it.
+- **Estimate in bands, never in point percentages.** "70–85%, low confidence" is honest; "82%" is not, and neither is "down from ~25% to under 15%." Two significant figures imply a model you do not have. If a band is wider than 20 points, say what would narrow it.
+- **Label every claim about a company's internals as observed, reported, or inferred.** Observed means you used the product yourself — signed up, hit the onboarding flow, saw the login and recovery surfaces. Reported means a named source said it. Inferred means you reasoned from a pattern, and inference never becomes evidence in the scorecard.
+- **Match the finding to the claim it supports.** An enforcement action about marketing claims is evidence about marketing claims, not about fraud controls. Regulatory history is only evidence for the dimension it actually touches — say which one, and what the action was actually for.
+- **Age every financial fact.** A large round four years ago is not current capital. State the date next to the number, and treat lender covenants, filing delays and debt terms as better current signals than the last equity headline.
 - **Too early to judge is a valid finding.** A seed-stage company with no shipped product cannot be scored for five-year survival. Say that instead of producing a number.
 
 ## Baseline rates to score against
@@ -25,7 +29,7 @@ Use these as the base rate, not as the answer.
 - Running out of cash is the last event, not the cause. The recurring root causes are no market need or weak product-market fit, bad timing, unsustainable unit economics, the wrong team, and being outcompeted.
 - **Funded is not safe.** Capital delays death; it does not create demand. A large recent raise moves the date, not the outcome.
 
-## The eight dimensions
+## The nine dimensions
 
 Score each 1–10 with the evidence behind it, the confidence (high / medium / low), and what would change the score. This is a 1–10 scale on purpose — it is deliberately not the 1–5 role rubric, because survival is a separate question from fit and the two should never be averaged together.
 
@@ -39,6 +43,9 @@ Score each 1–10 with the evidence behind it, the confidence (high / medium / l
 | 6 | **Timing & macro** | Is the window still open, or did the hype already peak? |
 | 7 | **Concentration risk** | One customer, one platform, one channel, one regulation? |
 | 8 | **Model quality** | Recurring or one-shot? Pricing power? Switching costs? |
+| 9 | **Risk culture & operating quality** | Does this company grow by accepting losses it hasn't priced — fraud, compliance debt, unserved customers? Is the operation run competently under pressure? |
+
+**Dimension 9 needs its own note.** Growth bought by tolerating fraud or deferring compliance looks like healthy growth in every public number, right up until it doesn't. The same is true of plain operational mismanagement: no filing records it. Score it from the proxies that do surface — enforcement actions, consent orders, regulator or CFPB-style complaint volume relative to peers, lawsuits from customers or partners, executive churn in risk, compliance, and finance roles, whether those functions report to someone with real authority, and consistent employee accounts of the same operational problem. Absent all of those, score it low confidence and say the question is unresolved. Do not read the absence of public failure as evidence of good operation.
 
 Flag these explicitly wherever they appear, because each one has killed companies faster than the base rate suggests: **thin AI wrappers** over someone else's model, **marketplace chicken-and-egg** where neither side shows up first, and **regulatory exposure** where one rule change removes the product.
 
@@ -47,6 +54,12 @@ Flag these explicitly wherever they appear, because each one has killed companie
 Search for, and cite: the last funding round with its date and size, headcount trend, any layoffs, customer names and whether any one of them is load-bearing, the competitive set including incumbents, pricing, any enforcement action or consent order, and executive departures in the last 12 months. For a public parent or acquirer, use the filings.
 
 Note what you could not find. A company with no discoverable customers after a real search is itself a finding.
+
+## What this mode structurally cannot see
+
+The most common causes of failure are the least visible from outside. Counterparty and customer concentration usually shows up in public reporting. A risk culture that buys growth with losses it hasn't priced, and day-to-day operational mismanagement, usually do not — they are visible to the people inside the company months or years before they reach a filing.
+
+So treat the score as a map of where to aim questions, not a verdict. **The dimensions that score lowest in confidence are the ones to spend interview questions on**, and the report should say which those are and who could answer them: the hiring manager, a recruiter, a former employee, someone in your network who works there now. A company that scores well on everything public and cannot answer a direct question about its own fraud losses or its last operational incident has told you something.
 
 ## Output
 
