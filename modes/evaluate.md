@@ -31,6 +31,8 @@ Which three stories from `04-story-bank.md` this role would draw on. If the role
 ## G. Legitimacy & blockers
 Ghost-job signals, scam signals, staleness, work authorization, relocation, anything that caps the score. State findings plainly.
 
+**Run `survive` before recommending Apply** when the employer is a private company at or below Series B, or when stage is unknown and the company is clearly venture-backed. A Fragile verdict caps the holistic at 3.0 — see `modes/survive.md`. Cite the survival verdict and confidence in this block; do not repeat the whole report.
+
 ---
 
 ## Recommendation

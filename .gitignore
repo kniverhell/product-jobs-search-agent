@@ -1,5 +1,6 @@
-# Scan output — contains role data, not for committing
+# Scan output and evaluation reports — contain role/company research, not for committing
 inbound/
+reports/
 
 # User's personal files — these live outside the repo
 00-master-resume.md

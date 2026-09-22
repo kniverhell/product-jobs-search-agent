@@ -54,6 +54,7 @@ Read the mode file before running it. Don't work from memory.
 | "draft the application email" | Formal application or referral email | `modes/email.md` |
 | "prep me for this interview" | Interview prep from the story bank | `modes/interview.md` |
 | "they made an offer" / "what should I ask for" | Comp research and negotiation prep | `modes/negotiate.md` |
+| "will they survive" / "run survival on X" | Company survival scoring (auto-runs for private companies at or below Series B) | `modes/survive.md` |
 | "where am I at" / "pipeline review" | Pipeline snapshot, follow-up triggers, Sheet sync | **Weekly Review** section below |
 | "something feels off in the tracker" | Dedup, status normalization, health check | `modes/integrity.md` |
 
