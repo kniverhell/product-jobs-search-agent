@@ -25,7 +25,7 @@ These queries contain no job titles and no company names. They find the problem,
 | Account takeover / contact-change fraud | `"contact change" "fraud" "product" site:linkedin.com` | PM roles at companies where ATO via phone/email update is a live threat |
 | Account takeover / contact-change fraud | `"account recovery" "risk" "drop-off" product` | Roles where recovery friction is the design tension |
 | Step-up authentication friction | `"step-up" "authentication" "product" "friction"` | Roles defining step-up policy; often buried in platform or trust orgs |
-| Step-up authentication friction | `"MFA" "abandonment" "product manager"` | Companies where MFA friction is causing measurable drop-off |
+| Step-up authentication friction | `"MFA" "abandonment" "authentication"` | Companies where MFA friction is causing measurable drop-off |
 | Onboarding/KYC conversion | `"KYC" "onboarding" "conversion" "product"` | Regulated fintechs where identity verification is a conversion bottleneck |
 | Onboarding/KYC conversion | `"identity verification" "funnel" "product" site:linkedin.com` | Roles where the business problem is verification-rate vs. fraud-rate tradeoff |
 

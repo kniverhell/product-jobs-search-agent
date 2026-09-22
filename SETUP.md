@@ -21,6 +21,8 @@ cd job-search-agent
 
 This is the **only file you personalize**. Everything else in the system reads from it.
 
+> **Privacy note:** `config.md` contains your comp floors and salary expectations. If you fork this repo and push, that data goes public. Either keep your fork private, or don't push `config.md` (add it to your `.gitignore`).
+
 Open `config.md` and fill in:
 
 - **Your background** — your domain, seniority level, and what kind of roles you're targeting

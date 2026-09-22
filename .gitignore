@@ -4,10 +4,14 @@ inbound/
 # User's personal files — these live outside the repo
 00-master-resume.md
 !templates/00-master-resume.md
+01-target-roles.md
+!templates/01-target-roles.md
 02-tracker.csv
 04-story-bank.md
 05-proof-points.md
 06-network.md
+07-application-answers.md
+!templates/07-application-answers.md
 
 # macOS
 .DS_Store
