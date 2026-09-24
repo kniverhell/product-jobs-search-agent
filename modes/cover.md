@@ -15,5 +15,5 @@ Read the evaluation report — block E is the whole letter. If block E is thin, 
 
 - No adjectives about yourself. "Passionate," "results-driven," "proven track record" — none of it. Show, don't claim.
 - Never restate the resume. The letter earns its place by saying something the resume can't.
-- Enforce all standing constraints from `config.md` and `05-proof-points.md`.
+- Enforce all standing constraints in `06-proof-points.md`.
 - If there's nothing specific and true to say about the company, the letter shouldn't exist. Say that instead of writing filler.

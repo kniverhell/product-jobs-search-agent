@@ -6,7 +6,7 @@ For any role 4.0+. Applications get you in the queue; a conversation gets you se
 
 - **The hiring manager** — usually the VP or Head this role reports to. Often findable from the JD's reporting line plus LinkedIn.
 - **A peer** — a product leader already in the relevant org. Best source of what the job actually is.
-- **A warm path** — anyone from `06-network.md` who connects you to this company or org. A weak tie beats a cold one every time. Check your prior employers, your vendor contacts, and your educational network.
+- **A warm path** — anyone from `07-network.md` who connects you to this company or org. A weak tie beats a cold one every time. Check your prior employers, your vendor contacts, and your educational network.
 
 Note in the tracker's `contact_name` and `contact_role` columns.
 

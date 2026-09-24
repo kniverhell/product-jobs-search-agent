@@ -5,6 +5,11 @@ and what to lead with in tailored materials.
 
 Read this file before scoring any role.
 
+**This is the only place your scoring rules live.** Title levels, location modifiers, company tiers,
+blockers, the no-go list, survival verdict effects and the trajectory rule are all here. `SKILL.md` holds the framework (dimensions,
+staleness, forks, the verification gate). `config.md` holds facts about you (floors, home metro,
+relocation). No other file (memory, notes, reports) may score, cap or block a role (`SKILL.md` rule 9).
+
 ---
 
 ## Your target archetypes
@@ -28,9 +33,9 @@ company where it's existential."]
 - [Proof point #3]
 
 **Score guidance:**
-- Domain: 4–5 if [your domain] is core; 2–3 if it's one of several platform areas
+- Domain: use the problem-ownership scale in `SKILL.md`. Name the problem this archetype exists to solve; see *Problem spaces you've owned* below
 - Level: 4–5 if it owns roadmap + people; 2–3 if it's IC wearing a Director title
-- Evidence: [your strongest evidence category for this archetype]
+- Evidence: [the ledger entries that usually carry this archetype's core requirements]
 
 ---
 
@@ -50,30 +55,142 @@ Typically at a company where you'd have significant scope but report into a Dire
 ### Archetype 3: [Optional — e.g. "Director, adjacent platform (non-core domain)"]
 
 [Add if you're open to roles outside your core domain. Define what "adjacent" means for you,
-and what makes a non-core role worth considering. See the Trajectory rule in `config.md`.]
+and what makes a non-core role worth considering. See *Trajectory rule* below.]
 
 ---
 
 ## Hard disqualifiers
 
 Any role with these characteristics is capped at 2.0 regardless of everything else.
-Supplement with the blockers in `config.md`.
+This is the complete list; there is no second one anywhere else.
 
-- Staffing agency or contract listing
+- Staffing agency or contract listing rather than direct employment
 - 90+ days posted with no ATS-verified refresh
 - IC role wearing a Director title (no direct reports, no roadmap ownership)
-- [Add your own — e.g. "Company stage pre-Series B if base < comp floor"]
+- Relocation required, **only if** `RELOCATION: no` in `config.md` (see *Location modifiers*)
+- [Add your own, e.g. "Crypto/Web3 mechanics as a core requirement", "Company stage pre-Series B if base < comp floor"]
+
+**Prefer a modifier to a blocker.** A blocker hides a role you might have wanted; a penalty shows it with
+the cost stated. Only add a blocker for things that are a hard no every single time.
+
+---
+
+## Survival verdicts
+
+What a `survive` verdict does to the role's holistic score. `modes/survive.md` produces the verdict; this table
+is the only place its effect is defined. Survival never raises a score.
+
+| Verdict | Effect on the role's holistic |
+|---|---|
+| Durable | none |
+| Conditional | note the risk in the report; no cap |
+| Fragile | cap at 3.0, and say the cap is what put it there |
+| Too early to judge | no cap, but state that the survival question is unanswered and must be asked in the process |
+
+A capped score is not a rejection. It means the offer has to be better to be worth the same risk, and cash has to
+carry more of the package. Change the cap to suit you.
+
+---
+
+## No-go list
+
+Specific employers you will not work for. Never surface, evaluate, or recommend.
+
+| Employer | Reason (optional) |
+|---|---|
+| [Employer name] | |
+
+---
+
+## Title levels
+
+Titles outside these levels are flagged, not automatically blocked. And never score level from a title:
+search the JD for "reports", "team of", "mentor", "recruit".
+
+```
+TITLE_ACCEPT:   [e.g. "VP of Product", "Head of Product", "Director of Product",
+                 "Senior Director of Product", "Principal PM"]
+TITLE_STRETCH:  [e.g. "Group Product Manager", "Staff PM"]
+TITLE_PASS:     [e.g. "Senior PM" (IC only, no team), "Associate PM"]
+```
+
+---
+
+## Location modifiers
+
+Applied after the holistic score. Show both numbers in every report (pre-modifier and final). Uses the facts in `config.md`.
+These values are defaults. Change any of them to suit you, including the −0.5 for relocation when
+`RELOCATION: yes`. `RELOCATION: no` is the one case that isn't a modifier: it's a hard blocker.
+
+```
+Remote (home metro or East Coast-friendly timezone):  0
+Hybrid 2 days/week or fewer:                         -0.2
+Hybrid 3 days/week:                                  -0.5
+On-site 4-5 days/week (home metro):                  -0.7
+Relocation required, RELOCATION: yes:                -0.5
+Relocation required, RELOCATION: open:               -0.5, and flag it prominently
+Relocation required, RELOCATION: no:                 hard blocker (see Hard disqualifiers)
+```
+
+---
+
+## Company tiers
+
+Scoring guidance for the Company dimension (1–5).
+
+```
+COMPANY_TIER1:  [Your highest-preference company types. e.g. "Identity vendors, fraud
+                 vendors, fintech infrastructure companies where your domain is existential"]
+COMPANY_TIER2:  [Good companies. e.g. "Fintech, digital banking, large FIs
+                 where identity/payments is a real platform"]
+COMPANY_TIER3:  [Acceptable. e.g. "Any well-run company with a genuine Director-level
+                 platform PM role in your domain"]
+COMPANY_AVOID:  [Company types that score low regardless of role. e.g. "Companies
+                 where identity is a utility function, not a product"]
+```
+
+---
+
+## Problem spaces you've owned
+
+Feeds the Domain fit scale in `SKILL.md` (problem ownership, 5 to 1). List problem spaces, not job titles or
+industries. Domain is judged on the problem the job exists to solve, never on the company's industry.
+
+```
+OWNED (5):        [Problem spaces you owned end to end. e.g. "customer onboarding and activation funnels"]
+ADJACENT (4):     [The same problems you owned in another form. e.g. "consolidating business lines onto a shared service"]
+PARTIAL (3):      [Spaces you owned part of, or worked alongside. e.g. "partnered with fraud ops on step-up rules"]
+NEVER OWNED (2):  [Named technical domains you haven't worked in. e.g. "building ML models", "ad auctions"]
+```
+
+Building models caps Domain at 2 unless you have built models; owning the decisions the models feed does not.
+See *Building models vs owning decisions* in `SKILL.md`.
+
+---
+
+## Trajectory rule
+
+Set `SPECIALTY_PATH` in `config.md` (`protect` or `open-to-drift`); `SKILL.md` → *Trajectory and specialty path*
+defines what each does. Add anything else that should shape Trajectory here.
+
+```
+TRAJECTORY_NOTE: [e.g. "Score on meaningful scope, career credibility of the company,
+                  and whether I can be strong in the role given my full background."]
+```
 
 ---
 
 ## Score guidance by company type
 
-| Company type | Domain score | Company score | Notes |
-|---|---|---|---|
-| Vendor in your exact domain | 5 | 5 | Core product, your background is the hire |
-| Fintech / regulated company where domain is existential | 4–5 | 4 | Identity/fraud/payments is their product |
-| Large enterprise where domain is a platform function | 3–4 | 3–4 | Scope may be large but domain is internal |
-| Company where domain is infrastructure, not product | 2 | 2–3 | You'll be maintaining, not building |
+Company type sets the **Company** score only. It never sets Domain: Domain is judged on the problem, not
+the industry.
+
+| Company type | Company score | Notes |
+|---|---|---|
+| Vendor in your exact domain | 5 | Core product, your background is the hire |
+| Regulated company where your domain is existential | 4 | It's their product, not a utility |
+| Large enterprise where your domain is a platform function | 3–4 | Scope may be large but the work is internal |
+| Company where your domain is infrastructure, not product | 2–3 | You'll be maintaining, not building |
 
 ---
 

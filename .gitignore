@@ -1,18 +1,34 @@
-# Scan output and evaluation reports — contain role/company research, not for committing
+# Your personal files: copied from templates/ and filled in. Anchored with a leading /
+# so the matching files inside templates/ stay tracked.
+/config.md
+/00-master-resume.md
+/01-target-roles.md
+/02-tracker.csv
+/03-portals.md
+/04-queries.md
+/05-story-bank.md
+/06-proof-points.md
+/07-network.md
+/08-application-answers.md
+/needs-evaluation.md
+/TASKS.md
+
+# Working notes, not product
+/HANDOFF.md
+
+# Per-role output: role/company research and what you submitted
 inbound/
 reports/
+tailored/
+sent/
 
-# User's personal files — these live outside the repo
-00-master-resume.md
-!templates/00-master-resume.md
-01-target-roles.md
-!templates/01-target-roles.md
-02-tracker.csv
-04-story-bank.md
-05-proof-points.md
-06-network.md
-07-application-answers.md
-!templates/07-application-answers.md
+# Resume files, backups, tracker_io.py archive and temp files
+resumes/
+archive/
+*.tsv
+*.bak
+*.bak-*
+.02-tracker.*.tmp
 
 # macOS
 .DS_Store

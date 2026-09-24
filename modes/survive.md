@@ -93,13 +93,4 @@ This is the part that separates the mode from an investor memo. You are not allo
 
 ## How this interacts with the role score
 
-Survival never raises a role score. It caps it.
-
-| Verdict | Effect on the role's holistic |
-|---|---|
-| Durable | none |
-| Conditional | note the risk in the report; no cap |
-| Fragile | cap at 3.0, and say the cap is what put it there |
-| Too early to judge | no cap, but state that the survival question is unanswered and must be asked in the process |
-
-A capped score is not a rejection. It means the offer has to be better to be worth the same risk, and cash has to carry more of the package.
+This mode produces a **verdict** (Durable · Conditional · Fragile · Too early to judge) and nothing else. It never changes a role score itself. What each verdict does to the score is defined in `01-target-roles.md` → *Survival verdicts*, because only `SKILL.md` and `01-target-roles.md` may score, cap or block a role (`SKILL.md` rule 9).

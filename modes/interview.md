@@ -1,6 +1,6 @@
 # Mode: Interview Prep
 
-1. Read the evaluation report, the deep research if it exists, and `04-story-bank.md`.
+1. Read the evaluation report, the deep research if it exists, and `05-story-bank.md`.
 2. **Map their likely questions to your existing stories.** Most of the work is retrieval, not invention — that's why the bank exists.
 3. Identify the two or three questions where your stories are weak or missing. Draft skeletons, ask the user to fill the detail, then commit them to the bank so the next interview is easier.
 4. Prep the specific questions this role will ask:

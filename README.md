@@ -2,6 +2,10 @@
 
 A file-based agentic system that runs a senior PM job search end to end. Built with [Claude Code](https://claude.ai/code). No external services, no subscriptions, no database.
 
+Based on career-ops ([career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops)) by Santiago Fernández de Valderrama ([@santifer](https://github.com/santifer)), MIT-licensed. Portions of this project are derived from it; see [NOTICE](NOTICE). Not affiliated with or endorsed by the career-ops project.
+
+What's derived from career-ops: the mode structure, the role archetypes, and the interview story bank.
+
 **Designed for:** Senior / Director / VP product managers in a specialized domain (identity, fintech, SaaS, data platforms, etc.) who want a structured system rather than ad-hoc AI prompting.
 
 ---
@@ -12,14 +16,14 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 
 - **Finds roles** — query-led web discovery, watchlist passes, and a Python ATS scanner across 27 boards
 - **Verifies them** — every role confirmed on the employer's own ATS before any effort goes into it
-- **Scores them** — 5-dimension rubric (domain, level, comp, location, company) with transparent modifiers, not keyword matching
+- **Scores them** — 5-dimension rubric: domain fit (have you *owned* this problem?), evidence match (can you *prove* this JD's asks with numbers from your ledger, requirement by requirement?), level fit, company fit, trajectory. Then location and staleness modifiers, shown as separate numbers. Not keyword matching, and never a hand-typed score
 - **Evaluates each role** — 7-block structured report covering fit, comp, personalization angle, interview stories, and blockers
 - **Tailors your materials** — resume and cover letter calibrated to one specific JD
 - **Prepares you** — company research, interview story mapping, negotiation prep
 - **Scores company survival** — 9 dimensions, stated confidence, and what it means for your equity and your next two years
-- **Keeps the pipeline honest** — dedup, staleness enforcement, proof-point integrity
+- **Keeps the pipeline honest** — dedup, staleness enforcement, proof-point integrity, and a validating tracker writer (`tracker_io.py`) so a stray comma can't shift a row
 
-**Key finding from 8 weeks of operation:** ~32% of apparently live job board listings are already closed *(measured: 8 of ~25 postings verified against employer ATS in the first week — dead reqs stay indexed on aggregators for months)*. The verification gate catches them before you invest any time. A "quiet market" that hasn't been verified is not a finding — it's an unread report.
+**Key finding:** ~32% of apparently live listings were already closed *(8 of ~25, first week, checked against the employer's own ATS)*. Dead reqs stay indexed on aggregators for months. The verification gate catches them before you invest any time. A "quiet market" that hasn't been verified is not a finding — it's an unread report.
 
 ---
 
@@ -38,7 +42,7 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 | "they made an offer" | **Negotiate** | Comp research + anchoring prep |
 | "something feels off in the tracker" | **Integrity** | Dedup, staleness, proof-point drift check |
 | "will they survive" | **Survive** | 9-dimension company survival score; auto-runs for private companies at or below Series B |
-| "where am I at" / "pipeline review" | **Weekly Review** | Pipeline snapshot, follow-up triggers, tracker sync |
+| "where am I at" / "pipeline review" | **Weekly Review** | New roles first, pipeline in one line, tracker sync (no follow-up nagging) |
 
 ---
 
@@ -64,11 +68,11 @@ These findings are now permanent rules in the system:
 
 **LinkedIn Boolean out-performs board sweeps.** One targeted query exposes role + connection degree in one pass, merging discovery and warm-path mapping.
 
-**Proof-point integrity is its own system.** Every external claim should have a status (Solid / Derived / Soft / Open). The system checks tailored resumes for numbers that aren't in the proof-points ledger. A claim that crept in without provenance is the one that blows up in an interview.
+**Proof-point integrity is its own system.** Every external claim should have a status (Solid / Derived / Soft / Open / Confidential / Closed as qualitative / Designed-only), and only Solid entries can carry a top Evidence score. The system checks tailored resumes for numbers that aren't in the proof-points ledger. A claim that crept in without provenance is the one that blows up in an interview.
 
 **Every mode but one verifies; `survive` estimates.** Survival scoring works from incomplete public data, so it states confidence per dimension and treats missing data as unknown rather than as a middling score. It can cap a role score, never raise one.
 
-**Access, not discovery, is the constraint at Director level.** The warm path (referral, vendor contact, former colleague) consistently outperforms the cold application. Build and work `06-network.md` before treating any target as a cold approach.
+**Access, not discovery, is the constraint at Director level.** The warm path (referral, vendor contact, former colleague) consistently outperforms the cold application. Build and work `07-network.md` before treating any target as a cold approach.
 
 ---
 
@@ -78,7 +82,7 @@ See [SETUP.md](SETUP.md).
 
 Short version:
 1. Clone this repo
-2. Open `config.md` and fill in your background, comp floors, location, domain, and blockers — this is the only file you personalize
+2. `cp templates/config.md config.md` and fill in the facts about you (background, comp floors, location, domain). Your scoring rules and blockers go in `01-target-roles.md`.
 3. Open Claude Code in this directory
 4. Paste a JD or say "run the scout"
 
@@ -109,4 +113,4 @@ Customize the company lists in `scan.py` to match your target employers. The def
 
 ## License
 
-MIT. Take it, adapt it, share it.
+MIT (see [LICENSE](LICENSE)). Take it, adapt it, share it. Portions are derived from career-ops (MIT); its copyright and license notice are kept in [NOTICE](NOTICE).

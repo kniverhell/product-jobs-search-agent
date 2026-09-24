@@ -6,7 +6,7 @@ Rules:
 - Every bullet in a tailored file must trace to a bullet here.
 - Never add a claim directly to a tailored file — add it here first, then pull it through.
 - Use `[TK — ...]` to mark placeholders you intend to fill in. Example: `[TK — confirm launch date with PM lead]`.
-- The proof-points ledger (`05-proof-points.md`) is the authority on numbers. A figure that isn't in the ledger cannot appear in any resume.
+- The proof-points ledger (`06-proof-points.md`) is the authority on numbers. A figure that isn't in the ledger cannot appear in any resume.
 
 ---
 
@@ -50,7 +50,7 @@ List roles in reverse chronological order. For each role:
 - [Cross-functional or influence bullet — worked with, drove alignment, negotiated]
 - [TK — ...]
 
-**Proof-point notes:** [Link each measurable figure to its status in 05-proof-points.md. Flag any Open items here.]
+**Proof-point notes:** [Link each measurable figure to its status in 06-proof-points.md. Flag any Open items here.]
 
 ---
 
@@ -89,6 +89,6 @@ List roles in reverse chronological order. For each role:
 
 [This section is for your eyes only — never included in a tailored resume.]
 
-- Standing constraints: [claims you've decided never to make, verbs that are off-limits near certain topics — mirror what's in config.md]
+- Standing constraints: [claims you've decided never to make, verbs that are off-limits near certain topics — mirror what's in 06-proof-points.md → Standing constraints]
 - Short-tenure disclosures: [roles where context matters; note what you'd say if asked]
 - Open proof points: [figures you're still trying to confirm or source]

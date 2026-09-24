@@ -7,6 +7,13 @@ Every number or claim that goes into any external document must appear here firs
 - **Derived** — arithmetic from stated figures; never present as if the resume says it directly
 - **Soft** — true but approximate or hard to source; fine for general use, be ready to hedge
 - **Open** — the claim exists but the number is missing; mark as `[TK]` in the resume
+- **Confidential** — real and numbered, but the number belongs to a former employer; cite only with approved directional phrasing
+- **Closed as qualitative** — real outcome, number unrecoverable; the qualitative phrasing stands and the number is never chased again
+- **Designed-only** — real work that never reached build (an architecture presented and shelved). Allowed in experience bullets *with its caveat attached*, never in a profile, headline or summary
+
+**How statuses count for Evidence match** (`SKILL.md`): only **Solid** entries carry an Evidence 4–5.
+**Confidential** and **Closed as qualitative** are partial evidence and can support a 3, never more.
+**Open** and **Designed-only** don't count.
 
 ---
 
@@ -65,7 +72,8 @@ positive signal in regulated industries — it shows you know what's proprietary
 ## Standing constraints
 
 List any verbs, phrases, or claim types that must never appear in tailored materials.
-The `integrity` mode checks these on every tailored file.
+The `integrity` mode checks these on every tailored file. **This is the only place claim rules live.**
+They used to sit in `config.md`; `config.md` now holds personal facts only.
 
 | Constraint | Reason |
 |---|---|
