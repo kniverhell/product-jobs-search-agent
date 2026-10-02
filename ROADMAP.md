@@ -18,9 +18,13 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 - **Required clauses:** an outcome that must always carry its context (e.g. a conversion lift that must always mention the fraud trade-off)
 - **Profile-only bans:** claims allowed in experience bullets but never in the headline or summary
 
+**Zero inputs is a FAIL.** If the globs match no files, the script prints a FAIL with its own message ("no files found at …, nothing checked"), never "0 FAIL". A missing source of truth must not look like a clean bill of health.
+
+**Test each rule against the violation alone.** A rule like "use the percentage, never a dollar figure" fires on any dollar figure in that context, not only when the permitted form is on the same line.
+
 Matching works per sentence and per bullet clause, not per line, so an unrelated "built" three items away doesn't trigger a false positive. Reviewer checklist lines that quote the rules back are skipped. The script exits 1 on any FAIL, so it can gate a pre-send step.
 
-**Done when:** a planted test file with one violation per rule type fails on every line, and the shipped templates pass clean.
+**Done when:** a planted test file with one violation per rule type fails on every line; each rule also fails on a line containing only its violation (no permitted form alongside); a run whose globs match nothing exits 1 with a "no files" FAIL; and the shipped templates pass clean.
 
 ### 2. Move "Titles lie" into `SKILL.md`
 **Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.

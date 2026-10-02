@@ -7,7 +7,7 @@ Every write:
   2. writes to a temp file next to the tracker, never to the tracker directly
   3. re-reads the temp file and validates header, row count and column width
   4. refuses to drop rows unless the caller passes allow_row_loss=True (see write_tracker)
-  5. copies the current tracker to archive/ with a timestamp
+  5. copies the current tracker to archive/ with a timestamp (suffixed -1, -2… if that name exists)
   6. renames the temp file over the tracker (atomic on the same filesystem)
 
 Usage:
@@ -81,6 +81,10 @@ def _atomic_write(path, header, records):
             os.makedirs(archive, exist_ok=True)
             stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
             backup = os.path.join(archive, f"{os.path.basename(path)}.bak-{stamp}")
+            n = 1
+            while os.path.exists(backup):  # two writes in the same second must not overwrite a backup
+                backup = os.path.join(archive, f"{os.path.basename(path)}.bak-{stamp}-{n}")
+                n += 1
             shutil.copy2(path, backup)
         os.replace(tmp, path)
         return backup

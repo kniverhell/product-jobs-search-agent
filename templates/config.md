@@ -41,6 +41,7 @@ COMP_FLOOR_ONSITE:    $[YOUR NUMBER]     # More than 2 days/week
 ```
 HOME_METRO:           [City, State]       # e.g. "Greater New York / NJ"
 MAX_COMMUTE_DAYS:     [0-5]               # Days/week on-site you'll accept
+MAX_COMMUTE_MINUTES:  [one-way, door to door, e.g. 90]
 RELOCATION:           [yes / no / open]   # Will you relocate for the right role?
 ```
 

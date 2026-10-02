@@ -15,6 +15,8 @@ Only for roles scoring 4.0+. If you ask for a lower-scored role, do it, but say 
 - Trim to two pages. Earlier Experience, Education, and Certifications compress first. Never cut a bullet that answers a top-six requirement.
 - **Enforce all standing constraints in `06-proof-points.md`.** These are claims you must never make. Check every bullet against them before finishing.
 - **`[TK]` placeholders never get filled, estimated, or dodged.** If a top-six requirement is best answered by a bullet whose number is TK, surface it at the top of the file: "This role wants X. Your strongest evidence is Y, but the number is still missing — worth getting before you send."
+- **Order the Profile by how long you've held the evidence, not by what's fashionable.** Lead with the longest-proven skill; a newer one (AI, say) comes second, framed as the current extension. Read the order from the *Held since* column in `06-proof-points.md` → *Skills by tenure*, so every version follows the same order; if a skill isn't there yet, add it before drafting. *Failure: a profile draft opened with a one-year skill ahead of an eight-year one; it read as misleading.*
+- **A delivered document is frozen.** Once a resume or letter has been handed over, suggest changes as exact wording in chat; don't edit the file or re-send it. Drafts before delivery can be edited freely. *Failure: repeated edits and re-sent files made so many copies that the current one got lost.*
 - Keep it ATS-plain: no tables, no columns, no text in graphics, standard section headers.
 
 ## Then, in the same file

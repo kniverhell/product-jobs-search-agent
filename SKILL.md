@@ -141,6 +141,10 @@ Terminal: `Rejected` · `Withdrawn` · `Ghosted` (no response 21+ days) · `Pass
 
 **A posting that closes after you applied is not `Expired`.** Your application is still live on their side. Record the date in `posting_closed_on` and leave the status as it is (`Applied`, `Screening`…). `Expired` is only for roles at `New`, `Evaluated` or `Tailored`.
 
+**`Applied` means you saw the confirmation screen.** Some ATS forms ask for an emailed verification code at submit; a form closed before that step was never submitted. Don't set `Applied` until you confirm you saw the thank-you page. *Failure: a role was marked Applied, then reverted when the submission turned out to have stalled on a verification code.*
+
+**When a status statement could match more than one row, ask which.** "Company X rejected me" is ambiguous when there are several reqs at that company. Name the candidate rows and ask before changing any. *Failure: a rejection was applied to the wrong req, flipping a live process to Rejected until the user corrected it.*
+
 ## Scoring — 1.0 to 5.0
 
 Score each dimension 1–5, then produce a **holistic** score. The holistic is a judgment call informed by the dimensions, not their average — a role that's a perfect domain fit but two levels too junior is not a 4.

@@ -4,6 +4,14 @@ The core mode. Triggered by any pasted JD or URL, with or without instruction.
 
 Write the report to `reports/YYYY-MM-DD-company-slug.md` with these seven blocks. Then update the tracker to `Evaluated` with the score and archetype, and remove the row from `needs-evaluation.md` if it was there. This is the only way a role gets a score.
 
+## Before you score
+
+- **Every re-score starts by re-verifying the posting** on the employer's own board. A rule change is a re-score trigger, and a re-score is a verification trigger. *Failure: a batch of re-scores after a rubric change found one posting already closed and one past 59 days; editing scores from notes would have caught neither.*
+- **Read location from the JD body, not the posting's location tag.** Check the office list, pay bands by city, and any "approved to work elsewhere" wording before applying a relocation penalty. *Failure: a role tagged with one far-away city was scored as relocation, but the JD body named an office in the user's metro and allowed approved remote work; the score was understated by up to a full band.*
+- **Before scoring a location-blocked role, search the board for the same title in other locations.** Large employers often post one req per city. *Failure: none yet; the check was a habit, not a written step.*
+
+- **An evaluation done elsewhere needs a source record before its score counts.** Save a short report in `reports/` (dimension scores, recommendation, a link to or pointer at the original conversation), then record the score. *Failure: one role's score existed in three places with three different values, and a summary had the wrong title; it was settled only by reading the original transcript.*
+
 ## A. Role summary
 What the job actually is, in three sentences, stripped of the recruiting language. What problem are they hiring this person to solve? Who does it report to and what does that reveal? If the JD is vague about scope, say so — vagueness at Director level is usually a signal about the org, not the writer.
 
@@ -29,7 +37,7 @@ The one thing you'd say that no other candidate would. Usually one of: the speci
 Which three stories from `05-story-bank.md` this role would draw on. If the role needs a story that doesn't exist yet, **draft the skeleton and append it to the story bank.** The bank grows on every evaluation — that's the compounding part.
 
 ## G. Legitimacy & blockers
-Ghost-job signals, scam signals, staleness, work authorization, relocation, anything that caps the score. State findings plainly.
+Ghost-job signals, scam signals, staleness, work authorization, relocation, anything that caps the score. State findings plainly. If the employer's board shows the title cloned across many locations, give postings vs distinct titles (`modes/scan.md` → *Collapse a board to distinct titles*).
 
 **Run `survive` before recommending Apply** when the employer is a private company at or below Series B, or when stage is unknown and the company is clearly venture-backed. Apply the verdict's effect from `01-target-roles.md` → *Survival verdicts* (by default, Fragile caps the holistic). Cite the survival verdict and confidence in this block; do not repeat the whole report.
 

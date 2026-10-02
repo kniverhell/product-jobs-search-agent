@@ -28,6 +28,19 @@ against this list during integrity checks.
 
 ---
 
+## Skills by tenure
+
+How long you've held the evidence for each skill. `tailor` orders the Profile by this column, longest-held first,
+so every version of your resume leads the same way. Use the year you first owned the work, not the year you
+first used the word.
+
+| Skill | Held since | Evidence (claims below) |
+|---|---|---|
+| [e.g. Customer onboarding and identity verification] | [year] | [the ledger rows that prove it] |
+| [e.g. AI-assisted product practice] | [year] | [the ledger rows that prove it] |
+
+---
+
 ## Money
 
 | Claim | Number | Status | How you'd defend it |

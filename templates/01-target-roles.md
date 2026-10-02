@@ -119,16 +119,20 @@ TITLE_PASS:     [e.g. "Senior PM" (IC only, no team), "Associate PM"]
 ## Location modifiers
 
 Applied after the holistic score. Show both numbers in every report (pre-modifier and final). Uses the facts in `config.md`.
-These values are defaults. Change any of them to suit you, including the −0.5 for relocation when
-`RELOCATION: yes`. `RELOCATION: no` is the one case that isn't a modifier: it's a hard blocker.
+These values are defaults. Change any of them to suit you, but keep one ordering: **relocation must cost at
+least as much as the worst commutable tier**, or a role you'd have to move for outranks one you could commute to.
+An office counts as relocation when its one-way commute exceeds `MAX_COMMUTE_MINUTES` in `config.md`. Judge by
+travel time and transfers, not distance.
+Relocation stays a penalty rather than a blocker (office-listed roles are sometimes approved for remote), except
+`RELOCATION: no`, which is a hard blocker.
 
 ```
 Remote (home metro or East Coast-friendly timezone):  0
 Hybrid 2 days/week or fewer:                         -0.2
 Hybrid 3 days/week:                                  -0.5
 On-site 4-5 days/week (home metro):                  -0.7
-Relocation required, RELOCATION: yes:                -0.5
-Relocation required, RELOCATION: open:               -0.5, and flag it prominently
+Relocation required, RELOCATION: yes:                -0.9   (never less than the worst commutable tier above)
+Relocation required, RELOCATION: open:               -0.9, and flag it prominently
 Relocation required, RELOCATION: no:                 hard blocker (see Hard disqualifiers)
 ```
 
