@@ -82,6 +82,18 @@ DOMAIN_TIER3:  [Broader platform/product areas that sometimes overlap with your 
 
 ---
 
+## Friction mode
+
+Settings for `modes/friction.md`, which runs only when you ask.
+
+```
+FRICTION_TRIGGER:          friction        # the phrase that starts it: "friction <company>"
+FRICTION_CURL_TIMEOUT:     20              # seconds
+FRICTION_SOURCES_BARRED:   []              # sources it must never read, e.g. ["a review site whose terms you don't accept"]
+```
+
+---
+
 ## Notes for the system
 
 Anything else the system should know about your situation. Facts, not scoring rules.

@@ -68,6 +68,7 @@ Read the mode file before running it. Don't work from memory.
 | "will they survive" / "run survival on X" | Company survival scoring (auto-runs for private companies at or below Series B) | `modes/survive.md` |
 | "where am I at" / "pipeline review" | New roles first, pipeline in one line, Sheet sync | **Weekly Review** section below |
 | "something feels off in the tracker" | Dedup, status normalization, health check | `modes/integrity.md` |
+| "friction <company>" | Mine low-star user complaints for interview prep. **On request only**; never scores or touches the tracker | `modes/friction.md` |
 
 **Default behavior:** if you paste a job posting with no instruction, run `evaluate`. That is almost always what you mean.
 
