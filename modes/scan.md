@@ -46,6 +46,7 @@ Each rule below came from a real miss. Apply them during step 3, before a role r
 ### Tool behaviour
 
 - **Pace aggregator page loads.** One query every few seconds, reading the rendered results. Never call an aggregator's unauthenticated data endpoint in a loop from the logged-in page. *Failure: ~30 rapid calls to a guest jobs endpoint returned padded results, then triggered a ten-minute rate-limit lockout of the whole site mid-scout.*
+- **Test scanner changes against saved output; run the live scan once per cycle.** Repeated live scans trigger rate limits at job-board hosts, and fetching several pages in parallel makes it worse. *Failure: several live reruns in one hour made three large boards return rate-limit errors (reported as unread, as designed).*
 - **Browser-tool output filters can block text that looks like `key=value`.** Print extraction results as plain lists, with no `=` and no ids glued to query-like strings. *Failure: an extractor printing "none=false" was blocked twice as cookie/query data, costing two query runs.*
 
 **4. Watchlist pass.** After the queries, check the ~15 employers in `03-portals.md` worth knowing about within days. Depth, not discovery.
@@ -77,6 +78,10 @@ At most ten, best first: Company | Title | Score | Location tier | Posted | Why 
 Update the run and qualifying counts in `04-queries.md`. A query with zero qualifying roles across six runs gets rewritten or retired.
 
 If a qualifying role arrives from outside the query set — a recruiter, a referral, something spotted manually — **work out which query would have caught it and add that query.** That is the mechanism by which this file improves rather than freezing.
+
+## Tuning the title screen
+
+`scan.py`'s title screen is a pattern plus exclusions plus core-phrase precedence: an include word, an exclusion list, and a short list of core phrases that beat an exclusion. Change one piece at a time, and measure each change on a saved scan output: rows before and after, titles added, titles dropped. List every dropped title before keeping a change. *Failure: an exclusion list removed real leadership titles because a department word appeared in them; it was only noticed by listing every dropped title.*
 
 ## When coverage is thin
 

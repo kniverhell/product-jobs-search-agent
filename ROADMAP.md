@@ -18,6 +18,10 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 - **Required clauses:** an outcome that must always carry its context (e.g. a conversion lift that must always mention the fraud trade-off)
 - **Profile-only bans:** claims allowed in experience bullets but never in the headline or summary
 
+**Waivers need an end condition.** If the linter supports waivers, each one records when it ends (the fix lands, a stage exits), lives in the task list, and needs the user's quote to remove. A blanket waiver hides every later failure on that path.
+
+**Role-framing check (candidate).** Product verbs, not engineering verbs, for the person's own work. Write it from a real failing example, not before; until then the rule lives in `modes/tailor.md`.
+
 **Zero inputs is a FAIL.** If the globs match no files, the script prints a FAIL with its own message ("no files found at …, nothing checked"), never "0 FAIL". A missing source of truth must not look like a clean bill of health.
 
 **Test each rule against the violation alone.** A rule like "use the percentage, never a dollar figure" fires on any dollar figure in that context, not only when the permitted form is on the same line.
@@ -26,7 +30,14 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 **Done when:** a planted test file with one violation per rule type fails on every line; each rule also fails on a line containing only its violation (no permitted form alongside); a run whose globs match nothing exits 1 with a "no files" FAIL; and the shipped templates pass clean.
 
-### 2. Move "Titles lie" into `SKILL.md`
+### 2. `scan.py` reads its rules instead of keeping copies
+**Problem:** `scan.py` keeps its own `COMP_FLOOR`, `SENIORITY` and `DOMAIN` lists, set by hand per `SETUP.md`. They drift from `config.md` and `01-target-roles.md` without any error (`SKILL.md` rule 17). Dedup against the tracker is also done by the agent by hand (rule 18).
+
+**Build:** `scan.py` reads the floor and keywords from a small machine-readable block in `config.md` and stops with a clear message when it can't. Add a dedup step that matches scan output against `02-tracker.csv` on req ID and URL (via `tracker_io.read_tracker`) and prints only new rows.
+
+**Done when:** changing the floor in `config.md` changes what `scan.py` drops, with no edit to `scan.py`; a missing or malformed block stops the scan with a message; a re-run against a saved output reports zero new rows for roles already tracked.
+
+### 3. Move "Titles lie" into `SKILL.md`
 **Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
 
 **Build:** Add the section under Scoring, with the observed title-vs-actual-level table, and reference it from the Level fit dimension.
@@ -35,22 +46,22 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 ## Later
 
-### 3. Resume variants as a first-class concept
+### 4. Resume variants as a first-class concept
 **Problem:** The system assumes one master resume plus per-JD tailoring. Real searches settle into a few standing variants: people-leader, senior IC, and a domain-specific one such as AI or decisioning. That produces stray copies and confusion about which file was submitted.
 
 **Build:** A `variants` table in `config.md` (file, archetype, when to use), a rule that every variant is a subset of the master, and linter coverage for all of them. `tailor` picks the variant before tailoring.
 
-### 4. `sent/` capture includes free-text answers
+### 5. `sent/` capture includes free-text answers
 **Problem:** ATS forms ask "why this company," "what qualifies you," and "salary expectation." Those answers are drafted in chat and then lost. The next application at the same company risks contradicting them, and nobody can later confirm which resume file was uploaded.
 
 **Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`.
 
-### 5. Install as a thin skill
+### 6. Install as a thin skill
 **Problem:** Installing the system as a packaged Claude skill copies the mode files into the skill. The repo keeps evolving, the installed copy doesn't, and the agent silently runs stale modes with outdated filenames.
 
 **Build:** Document an install path where the packaged skill contains `SKILL.md` only, with the repo path stated at the top ("all relative paths resolve to `<your clone>`"). Mode edits in the repo then take effect immediately, with no re-packaging. Add a one-line `make-skill` script to build the package.
 
-### 6. One master, one path
+### 7. One master, one path
 **Problem:** When the real master resume lived outside the project folder, `tailor` quietly read an older in-folder copy that was missing recent bullets.
 
 **Build:** `config.md` names the master's path explicitly. `SETUP.md` says to keep exactly one master, and `integrity` warns if more than one file matches `*master*resume*`.

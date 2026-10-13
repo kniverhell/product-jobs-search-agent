@@ -9,6 +9,7 @@ Only for roles scoring 4.0+. If you ask for a lower-scored role, do it, but say 
 ## Rules
 
 - **Reorder and re-weight only.** Every bullet traces to a line in the master resume. No new claims, no new numbers, no combining two accomplishments into one bigger-sounding one.
+- **Keep the person's role framing.** You reorder and re-weight their lines; you don't rewrite them for style. Use product verbs for their own work (led, owned, decided, defined), never engineering verbs (built, implemented, coded) unless the master resume says exactly that. *Failure: an agent rewriting a resume line for style changed what the person did, and nothing checked the verb.*
 - Lead the Profile with the two or three requirements you genuinely hit hardest. Rewrite it fully for each role — the Profile is the highest-leverage paragraph and a generic one wastes it.
 - Reorder the Capabilities line so the JD's vocabulary appears first. Mirror their terms *where your experience actually matches* — if they say "identity orchestration," use it; if they say "passwordless" and you've done architecture but not shipped it, don't imply you shipped it.
 - Promote the archetype's proof points from `01-target-roles.md` into the top third of each role's bullets.

@@ -42,8 +42,12 @@ Score each 1–10 with the evidence behind it, the confidence (high / medium / l
 | 5 | **Team** | Can this team execute the next stage, not just the pitch? Look at tenure and at who has left. |
 | 6 | **Timing & macro** | Is the window still open, or did the hype already peak? |
 | 7 | **Concentration risk** | One customer, one platform, one channel, one regulation? |
-| 8 | **Model quality** | Recurring or one-shot? Pricing power? Switching costs? |
+| 8 | **Model quality** | Recurring or one-shot? Pricing power? (Switching costs are assessed under dimension 4.) |
 | 9 | **Risk culture & operating quality** | Does this company grow by accepting losses it hasn't priced — fraud, compliance debt, unserved customers? Is the operation run competently under pressure? |
+
+**Dimension 4 needs its own note.** Assess whether the core product builds any of four compounding advantages: switching costs (it's embedded in how customers operate, e.g. an identity platform wired into every login and account flow); network effects (it gets better for everyone as more users or partners join, e.g. a fraud consortium sharing signals); scale economies (unit costs fall as volume grows, e.g. per-check verification costs); data advantages (usage produces data that measurably improves the product, e.g. risk models trained on transaction outcomes). For each, say whether it's present, with evidence and confidence (observed, reported or inferred). If none is found, say "no compounding advantage found" and whether that is a finding or an unknown. List other durable advantages separately (regulatory license or charter, compliance infrastructure, brand and trust) and note they protect but don't compound.
+
+The moat finding feeds the role score only through the survival verdict: it sets dimension 4's score, which counts toward the verdict, and the verdict's effect on the role is the one defined in `01-target-roles.md` → *Survival verdicts*. "No compounding advantage found" never caps a role by itself.
 
 **Dimension 9 needs its own note.** Growth bought by tolerating fraud or deferring compliance looks like healthy growth in every public number, right up until it doesn't. The same is true of plain operational mismanagement: no filing records it. Score it from the proxies that do surface — enforcement actions, consent orders, regulator or CFPB-style complaint volume relative to peers, lawsuits from customers or partners, executive churn in risk, compliance, and finance roles, whether those functions report to someone with real authority, and consistent employee accounts of the same operational problem. Absent all of those, score it low confidence and say the question is unresolved. Do not read the absence of public failure as evidence of good operation.
 
