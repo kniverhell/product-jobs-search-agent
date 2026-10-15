@@ -27,7 +27,7 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 
 ---
 
-## The 13 modes
+## The 14 modes
 
 | Trigger | Mode | What it does |
 |---|---|---|
@@ -42,6 +42,7 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 | "they made an offer" | **Negotiate** | Comp research + anchoring prep |
 | "something feels off in the tracker" | **Integrity** | Dedup, staleness, proof-point drift check |
 | "will they survive" | **Survive** | 9-dimension company survival score; auto-runs for private companies at or below Series B |
+| "triage against <role>" | **Triage** | Open roles sorted into apply + outreach / apply cold / skip against a role you name; read-only |
 | "friction <company>" | **Friction** | Low-star user complaints mined for failure modes, a 90-day thesis and a proof-point map. On request only |
 | "where am I at" / "pipeline review" | **Weekly Review** | New roles first, pipeline in one line, tracker sync (no follow-up nagging) |
 

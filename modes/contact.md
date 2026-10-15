@@ -1,6 +1,6 @@
 # Mode: Contact
 
-For any role 4.0+. Applications get you in the queue; a conversation gets you seen.
+For any role 4.0+ or any role you name. If outreach triage has run (`modes/triage.md`), its *apply and spend outreach* bucket goes first. Applications get you in the queue; a conversation gets you seen.
 
 ## Find two to three people
 

@@ -44,6 +44,7 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 | `01-target-roles.md` | **Your scoring rules, all of them:** archetypes, title levels, location modifiers, company tiers, blockers, no-go list, survival verdict effects, trajectory rule. Read before scoring anything. |
 | `02-tracker.csv` | One row per role. Statuses defined below. Optionally mirrored to Google Sheets. With sync on, ownership is split by column (see *Column ownership*). |
 | `tracker_io.py` | **The only tracker writer.** See rule 10. |
+| `triage.py` | Read-only data pull for outreach triage: benchmark, candidates, deadlines, unscored rows. Never writes. |
 | `needs-evaluation.md` | Unscored rows (blank or `TBD`) **with a decision still open**: `New`, `Evaluated`, or a live process (`Screening`, `Interviewing`, `Final`, `Offer`). Applied, closed and passed rows stay off; an applied role comes back if it moves to `Screening`. Remove a row when its score is written. Copied from `templates/needs-evaluation.md`. |
 | `TASKS.md` | The checklist for the current long task (rule 11). Unticked items carry over to the next session. |
 | `03-portals.md` | ATS registry and employer watchlist. Company tiers, confirmed ATS slugs, scan logs. |
@@ -75,6 +76,7 @@ Read the mode file before running it. Don't work from memory.
 | "will they survive" / "run survival on X" | Company survival scoring (auto-runs for private companies at or below Series B) | `modes/survive.md` |
 | "where am I at" / "pipeline review" | New roles first, pipeline in one line, Sheet sync | **Weekly Review** section below |
 | "something feels off in the tracker" | Dedup, status normalization, health check | `modes/integrity.md` |
+| "triage against <role>" / "who gets outreach" | Sort open roles into apply + outreach / apply cold / skip, against a role you name. **Read-only** | `modes/triage.md` |
 | "friction <company>" | Mine low-star user complaints for interview prep. **On request only**; never scores or touches the tracker | `modes/friction.md` |
 
 **Default behavior:** if you paste a job posting with no instruction, run `evaluate`. That is almost always what you mean.

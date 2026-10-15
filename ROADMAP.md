@@ -70,6 +70,7 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 ## Done
 
+- **Outreach triage mode** *(2026-10-15)*. `modes/triage.md` plus the read-only `triage.py`: the user names the benchmark role; deadlines inside 7 days come first; open roles go into apply + outreach / apply cold / skip by judgment. Scores are parsed in code (ranges on their upper bound, capped scores on the capped value), and network matches are whole-word hints, not confirmed paths.
 - **Merge-blocker fixes** *(2026-09-24)*. The survival cap table moved to `01-target-roles.md` (`survive` produces a verdict only; rule 9 unchanged). `tracker_io.py` counts raw records for the shrink guard and has a `repair` command that realigns only rows whose extra cells are empty. Sheet status overwrites only when non-empty. A new `posting_closed_on` column: `Expired` is only for roles never applied to.
 - **Domain fit and Evidence match split** *(2026-09-24)*. Domain is problem ownership (have you *owned* this problem?); Evidence is provable with numbers (this JD, requirement by requirement, against the ledger). The two scales sit side by side in `SKILL.md`, 5 to 1, with half points, a partial-evidence cap at 3, and two worked examples. The "generalist platform role = Domain 2" rule is retired, and company type no longer sets Domain.
 - **Building models vs owning decisions** *(2026-09-24)*. In ML-heavy domains, model-building roles cap Domain at 2 unless you've built models; roles that own the decisions the models feed score normally.
