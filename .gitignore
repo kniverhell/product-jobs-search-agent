@@ -16,6 +16,14 @@
 # Working notes, not product
 /HANDOFF.md
 
+# Privacy check inputs (personal terms and exceptions): local only, never committed
+/.privacy-patterns
+/.privacy-allow
+
+# Local Claude Code hook script and settings
+/.claude/hooks/privacy_before_push.py
+/.claude/settings.local.json
+
 # Per-role output: role/company research and what you submitted
 inbound/
 reports/

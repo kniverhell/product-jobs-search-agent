@@ -112,6 +112,33 @@ Output writes to `inbound/YYYY-MM-DD-scan-candidates.md`.
 
 ---
 
+## Before you push: privacy check
+
+If you push your copy anywhere, check that none of your personal terms (name, employers, phone, local paths) are in it.
+
+1. Create `.privacy-patterns` in the repo root: one term per line, `#` for comments. Matching is case-insensitive and whole-word (a pattern "cat" won't hit "category"; a number won't hit a longer number). The file is gitignored; `privacy_check.py` refuses to run if it's tracked, missing, or empty.
+2. Optional: `.privacy-allow` for lines you've decided are fine, one per line: `file | exact line text | YYYY-MM-DD | reason`. Only that exact line passes; a new or edited line with the term still fails. Also gitignored.
+3. Run it:
+   - `python3 privacy_check.py`: the staged diff (use as a pre-commit check)
+   - `python3 privacy_check.py --push`: what a push would publish, `HEAD` plus every unpushed commit
+   - `python3 privacy_check.py --all`: every tracked file in your working tree
+   - `python3 privacy_check.py --history`: every commit on every local branch, once
+
+**From Claude Code**, you can make the push check automatic with a PreToolUse hook in `.claude/settings.local.json` that blocks `git push`, `gh pr create` and `gh repo sync` when `privacy_check.py --push` fails:
+
+```json
+{"hooks": {"PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command",
+  "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/privacy_before_push.py\""}]}]}}
+```
+
+The hook script reads the tool input from stdin, runs the check only for those three commands, and exits 2 with the checker's output to block. Keep it in `.claude/hooks/` (gitignored).
+
+**From your own terminal**, run `python3 privacy_check.py --push` before pushing, or install a local git `pre-push` hook that runs it.
+
+**The history limit.** `--push` checks `HEAD` and your unpushed commits only. Anything already pushed stays in public history even if you delete it later. `--history` sweeps every commit on your local branches once, but not remote-only branches or other people's forks. The only fix for a hit in pushed history is rewriting history and force-pushing. That's a deliberate decision, never a routine one.
+
+---
+
 ## The one rule above all others
 
 **The system never submits, sends, or clicks anything.** Every mode stops at a draft. You review it; you decide; you act.
