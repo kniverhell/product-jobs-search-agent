@@ -3,22 +3,18 @@
 ATS systems ask the same questions repeatedly. Write your answers once here so they stay
 consistent across applications. The `tailor` and `email` modes read this file.
 
+**Facts live in `application-profile.md`, not here.** Name, contact details, links, work authorization,
+sponsorship, relocation and other knockout answers have one home: that file (template in
+`templates/application-profile.md`), which `fill` mode reads through `application_profile.py`. This file
+keeps the prose answers.
+
 Fill these out at the start of your search. Update when something changes.
 
 ---
 
 ## Personal information
 
-```
-Full name:
-Email:
-Phone:
-LinkedIn:
-Portfolio / GitHub (if applicable):
-Location (city, state):
-Work authorization: [US Citizen / Green Card / Need sponsorship / etc.]
-Willing to relocate: [Yes / No / Depends on role — see config.md]
-```
+Moved to `application-profile.md`: one home for every fact and knockout answer, so two files can't disagree.
 
 ---
 

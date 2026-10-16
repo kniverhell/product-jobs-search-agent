@@ -61,7 +61,14 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 **Build:** Document an install path where the packaged skill contains `SKILL.md` only, with the repo path stated at the top ("all relative paths resolve to `<your clone>`"). Mode edits in the repo then take effect immediately, with no re-packaging. Add a one-line `make-skill` script to build the package.
 
-### 7. One master, one path
+### 7. Block clicks during a fill session
+**Problem:** `fill` mode's "never submit" is an instruction, not an enforced block. A PreToolUse hook sees a tool's name and an element ref or coordinates, not what the element is, so it can't tell a Submit click from a field click.
+
+**Build:** A hook that blocks `computer` clicks, key presses and typing, and `navigate`, while a fill session is active, keyed to a session marker the mode sets and clears. Test it against the fixture with a planted Submit click.
+
+**Also scope the script guard to fill sessions.** `hooks/fill_js_guard.py` today blocks every browser script in the folder, in every session, so other work (debugging a page, checking a scan) can't run one. Key it to the same session marker: inside a fill session only the pinned read pages run; outside one, scripts are allowed. The preflight (`document.title` must come back blocked) then checks that the marker is set, not only that the hook is installed.
+
+### 8. One master, one path
 **Problem:** When the real master resume lived outside the project folder, `tailor` quietly read an older in-folder copy that was missing recent bullets.
 
 **Build:** `config.md` names the master's path explicitly. `SETUP.md` says to keep exactly one master, and `integrity` warns if more than one file matches `*master*resume*`.
@@ -70,6 +77,7 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 ## Done
 
+- **Fill mode** *(2026-10-16)*. `modes/fill.md` fills one page of an application you opened, from the resume and a new gitignored `application-profile.md` (the one home for facts and knockout answers; `08-application-answers.md` points to it). `application_profile.py` parses it in code and never prints denylisted keys (government ID, date of birth, bank details). Knockouts fill only from explicit answers; free text, EEO, uploads, passwords and submit are always yours; prefilled fields are replaced only with a yes. Field values are read by eight pinned read-only scripts (`hooks/fill_read/`), and `hooks/fill_js_guard.py` blocks every other browser script by sha256. A form in an unreadable frame stops the fill. Haiku and Sonnet both passed a fixture with stale prefills and a framed form; Haiku is the default.
 - **Privacy check in code** *(2026-10-15)*. `privacy_check.py` reads literal patterns from a gitignored `.privacy-patterns` and exact-line exceptions from `.privacy-allow`. It checks the staged diff, `--all`, `--push` (`HEAD` plus unpushed commits) or `--history`; it fails when it has nothing to check or a pattern file is tracked; it reports locations and pattern line numbers, never the terms. Enforced before push by a local Claude Code hook, and before commit by a local git hook; `SETUP.md` documents both and the history limit.
 - **Outreach triage mode** *(2026-10-15)*. `modes/triage.md` plus the read-only `triage.py`: the user names the benchmark role; deadlines inside 7 days come first; open roles go into apply + outreach / apply cold / skip by judgment. Scores are parsed in code (ranges on their upper bound, capped scores on the capped value), and network matches are whole-word hints, not confirmed paths.
 - **Merge-blocker fixes** *(2026-09-24)*. The survival cap table moved to `01-target-roles.md` (`survive` produces a verdict only; rule 9 unchanged). `tracker_io.py` counts raw records for the shrink guard and has a `repair` command that realigns only rows whose extra cells are empty. Sheet status overwrites only when non-empty. A new `posting_closed_on` column: `Expired` is only for roles never applied to.

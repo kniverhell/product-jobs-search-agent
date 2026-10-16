@@ -66,6 +66,7 @@ cp -n templates/*.md templates/02-tracker.csv .
 - `03-portals.md` — your ATS registry and employer watchlist
 - `04-queries.md` — your query set for web discovery (Tier 1 core, Tier 2 adjacent, Tier 3 geography)
 - `07-network.md` — everyone you actually know: former colleagues by employer, vendor contacts, warm ties
+- `application-profile.md` — facts and knockout answers for application forms (see *Filling applications* below)
 
 `07-network.md` is the most underused asset in most searches. The `contact` mode is only as good as what's in this file.
 
@@ -112,6 +113,27 @@ Output writes to `inbound/YYYY-MM-DD-scan-candidates.md`.
 
 ---
 
+## Filling applications
+
+`fill` mode fills one page of an application form from your own files and stops. You submit.
+
+1. **Fill in `application-profile.md`** (copied in Step 4; gitignored). One `Field: value` per line under `## Factual` (name, contact, links, location) and `## Knockout` (work authorization, sponsorship, relocation, in-office days, travel, clearance, age). Leave a value in `[brackets]` and the field stays blank on every form. **Never store** government ID, SSN, passport, driver's license, date of birth or bank details: `application_profile.py` refuses to print any key that looks like one. Check it with `python3 application_profile.py`.
+2. **Install the script guard.** Add this to `.claude/settings.local.json` (next to any hook you already have):
+
+   ```json
+   {"hooks": {"PreToolUse": [{"matcher": "mcp__.*javascript_tool", "hooks": [{"type": "command",
+     "command": "python3 \"$CLAUDE_PROJECT_DIR/hooks/fill_js_guard.py\""}]}]}}
+   ```
+
+   It blocks every browser script except the eight read-only pages in `hooks/fill_read/`, matched by sha256. Note that this blocks browser scripts in every session in this folder, not only `fill`. Start a new session after adding it. Fill mode checks it every time: its first step runs `document.title`, which the guard must block; if it comes back with a title, the mode stops with "fill guard not installed; see SETUP".
+3. **Use it.** Sign in and open the application in your own Chrome with Claude in Chrome connected, then say "fill this application for <role>". You get a planned table and a "Fill these?" question first; prefilled fields are replaced only if you name them.
+
+**What it never does:** write free-text answers (employers may have AI-use policies, and the first draft is yours), touch EEO / self-identification, upload files, create accounts, type passwords, solve CAPTCHAs, or click Next, Save or Submit. A form inside an embedded frame from another site can't be read; the mode says so and asks before filling anything.
+
+**Known limit:** "never submit" is an instruction, not an enforced block. A hook can't tell a Submit click from a field click, so the mode uses no clicking tools at all instead. Details in `modes/fill.md`.
+
+---
+
 ## Before you push: privacy check
 
 If you push your copy anywhere, check that none of your personal terms (name, employers, phone, local paths) are in it.
@@ -141,6 +163,6 @@ The hook script reads the tool input from stdin, runs the check only for those t
 
 ## The one rule above all others
 
-**The system never submits, sends, or clicks anything.** Every mode stops at a draft. You review it; you decide; you act.
+**The system never submits, sends, or clicks anything that submits, saves or advances.** `fill` may fill fields on a page you opened; every other mode stops at a draft. You review it; you decide; you submit.
 
 This is not a limitation — it is the point. The cost of a bad application or a tone-deaf outreach note is yours to carry. The system surfaces the draft and tells you what it notices. You own the decision.

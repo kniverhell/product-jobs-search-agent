@@ -11,7 +11,7 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 
 ## Non-negotiable rules
 
-1. **Never submit, send, or click anything.** Every mode stops at a draft you review. No auto-apply, no sending email, no clicking through an ATS. Ever.
+1. **Never submit, send, or click anything that submits, saves or advances.** Agents may fill fields (`fill` mode, one page, from your own files, after your yes); submitting is always yours. Every other mode stops at a draft you review. No auto-apply, no sending email, no clicking through an ATS. Ever.
 2. **Never invent a fact or a metric.** The master resume contains `[TK — ...]` placeholders where numbers are missing. If a strong bullet needs one, stop and ask. Do not estimate, round, or infer. Do not soften a claim to make an unverifiable version defensible — remove it or ask.
 3. **Every claim traces to `06-proof-points.md` or `00-master-resume.md`.** If it isn't in one of those, it doesn't go in a document.
 4. **This is a filter, not a firehose.** Nothing below 3.5/5 gets shown. Nothing below 4.0/5 gets recommended for application. A week that surfaces three genuinely strong roles is a good week.
@@ -47,6 +47,9 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 | `tracker_io.py` | **The only tracker writer.** See rule 10. |
 | `privacy_check.py` | Read-only check for personal terms before commit or push. Patterns from `.privacy-patterns`, exceptions from `.privacy-allow` (both gitignored). Staged diff by default; `--all`, `--push`, `--history`. Fails when it has nothing to check. |
 | `triage.py` | Read-only data pull for outreach triage: benchmark, candidates, deadlines, unscored rows. Never writes. |
+| `application-profile.md` | **Facts and knockout answers for application forms**, one `Field: value` per line under `## Factual` and `## Knockout`. The one home for them; `08-application-answers.md` points here. Copied from `templates/application-profile.md`; gitignored. |
+| `application_profile.py` | Read-only parse of `application-profile.md` for `fill`. Lists FACTUAL, KNOCKOUT, MISSING and REFUSED; never prints a value whose key looks like government ID, date of birth or bank details. |
+| `hooks/fill_js_guard.py` | PreToolUse hook for `fill`: blocks every browser `javascript_tool` call except the eight pinned read-only pages in `hooks/fill_read/`. |
 | `needs-evaluation.md` | Unscored rows (blank or `TBD`) **with a decision still open**: `New`, `Evaluated`, or a live process (`Screening`, `Interviewing`, `Final`, `Offer`). Applied, closed and passed rows stay off; an applied role comes back if it moves to `Screening`. Remove a row when its score is written. Copied from `templates/needs-evaluation.md`. |
 | `TASKS.md` | The checklist for the current long task (rule 11). Unticked items carry over to the next session. |
 | `03-portals.md` | ATS registry and employer watchlist. Company tiers, confirmed ATS slugs, scan logs. |
@@ -54,7 +57,7 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 | `05-story-bank.md` | Accumulating STAR+R interview stories. Grows on every evaluation. |
 | `06-proof-points.md` | The evidence ledger. Every number you can defend, its source, and standing constraints. |
 | `07-network.md` | **Who you actually know.** Former colleagues by employer, plus vendor contacts. `contact` mode is only as good as this file. |
-| `08-application-answers.md` | Standard ATS answers written once to stay consistent across applications. |
+| `08-application-answers.md` | Standard ATS prose answers written once to stay consistent across applications. Facts live in `application-profile.md`. |
 | `inbound/` | Raw JDs. `YYYY-MM-DD-company-slug.md` |
 | `reports/` | Evaluation reports. Same slug. |
 | `tailored/` | Resume + cover letter + outreach per role. Same slug. |
@@ -80,6 +83,7 @@ Read the mode file before running it. Don't work from memory.
 | "something feels off in the tracker" | Dedup, status normalization, health check | `modes/integrity.md` |
 | "triage against <role>" / "who gets outreach" | Sort open roles into apply + outreach / apply cold / skip, against a role you name. **Read-only** | `modes/triage.md` |
 | "friction <company>" | Mine low-star user complaints for interview prep. **On request only**; never scores or touches the tracker | `modes/friction.md` |
+| "fill this application for <role>" | Fill one page of an application you opened, from your resume and `application-profile.md`. Never free text, EEO, uploads or passwords; **never submits** | `modes/fill.md` |
 
 **Default behavior:** if you paste a job posting with no instruction, run `evaluate`. That is almost always what you mean.
 

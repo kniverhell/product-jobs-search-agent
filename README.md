@@ -27,7 +27,7 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 
 ---
 
-## The 14 modes
+## The 15 modes
 
 | Trigger | Mode | What it does |
 |---|---|---|
@@ -44,13 +44,14 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 | "will they survive" | **Survive** | 9-dimension company survival score; auto-runs for private companies at or below Series B |
 | "triage against <role>" | **Triage** | Open roles sorted into apply + outreach / apply cold / skip against a role you name; read-only |
 | "friction <company>" | **Friction** | Low-star user complaints mined for failure modes, a 90-day thesis and a proof-point map. On request only |
+| "fill this application for <role>" | **Fill** | Fills one page of an application you opened in Chrome from your own files; lists every field; never submits |
 | "where am I at" / "pipeline review" | **Weekly Review** | New roles first, pipeline in one line, tracker sync (no follow-up nagging) |
 
 ---
 
 ## What it won't do
 
-The system **never submits, sends, or clicks anything.** Every mode stops at a draft you review. No auto-apply, no sending email, no clicking through an ATS. Ever.
+The system **never submits, sends, or clicks anything that submits, saves or advances.** `fill` may fill fields on a page you opened; submitting is always yours. Every other mode stops at a draft you review. No auto-apply, no sending email, no clicking through an ATS. Ever.
 
 This is not an oversight — it is a design decision. An application is a human act. The tracker records it after the fact, when you say so.
 
