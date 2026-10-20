@@ -74,6 +74,11 @@ try:
                 "wc -l *.md", "echo /dev/null", "git log --oneline -3", "sed s/a/b/ 02-tracker.csv", "python3 - </dev/null", "echo https://example.com/a/b", "git commit -m fix", "date +%s", "grep -rn x --include=*.md .", "find . -type f ! -name '*.md'", "python3 -c 'print(1)'"]:
         rc, out = bash(cmd)
         check(f"Bash allowed: {cmd}", rc == 0 and out == "", out)
+    rc, out = bash("python3 -c 'print(1)' > /opt/x/escape.txt")
+    check("quoted parentheses don't split the command; the block names python3", rc == 2 and "python3:" in out and "': " not in out, out)
+    rc, out = bash("echo \"$(cat /etc/hosts)\"")
+    check("command substitution inside double quotes is still checked", rc == 2 and "cat:" in out, out)
+    check("a quoted ; or | is not a separator", bash("grep 'a;b|c' 02-tracker.csv")[0] == 0)
     check("Bash with a cwd outside the roots: relative find is blocked", bash("find . -name x", cwd=other)[0] == 2)
 
     # Self-checking

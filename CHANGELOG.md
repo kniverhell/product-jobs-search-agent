@@ -3,6 +3,13 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.1.1 (2026-10-20)
+
+- The scope guard no longer splits a command at parentheses, semicolons or pipes inside quotes, so a block names the
+  right command (before, `python3 -c 'print(1)' > /x` named a stray quote). Command substitution inside double quotes
+  is still checked.
+- README: start every session in your project folder.
+
 ## 1.1.0 (2026-10-20)
 
 - New scope guard hook: in a job-search project (a folder with `.job-search`), Read, Glob, Grep, Write, Edit and

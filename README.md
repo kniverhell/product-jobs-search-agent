@@ -92,11 +92,11 @@ These findings are now permanent rules in the system:
 ## Setup
 
 1. Install (one command, above).
-2. In an empty folder for your job search, say "run setup".
+2. Open Claude Code in an empty folder for your job search (start the session there, not in the plugin's folder or your home folder), then say "run setup".
 3. Fill in `config.md` (facts about you) and `01-target-roles.md` (your scoring rules), then `00-master-resume.md` and `06-proof-points.md`.
 4. Paste a JD or say "run the scout".
 
-Your files stay in that project folder; the plugin's folder holds only code. Manual install from a clone: [SETUP.md](SETUP.md).
+Your files stay in that project folder; the plugin's folder holds only code. Once set up, the scope guard keeps a session inside that project folder and the plugin, so start every job-search session in the project folder. Manual install from a clone: [SETUP.md](SETUP.md).
 
 ---
 

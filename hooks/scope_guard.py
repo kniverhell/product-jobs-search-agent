@@ -69,8 +69,31 @@ def glob_prefix(pattern, base):
 
 
 def segments(command):
-    command = re.sub(r"\$\(|`|\(|\)", ";", command)
-    return [s for s in re.split(r"[;&|\n]+", command) if s.strip()]
+    """Split a command at ; & | newlines, parentheses, $( and backticks, but not inside quotes."""
+    out, cur, quote, i = [], [], None, 0
+    while i < len(command):
+        ch = command[i]
+        if ch == "\\" and quote != "'" and i + 1 < len(command):
+            cur.append(command[i:i + 2]); i += 2; continue
+        if quote:
+            if ch == quote:
+                quote = None
+            elif ch in "$`" and quote == '"' and (ch == "`" or command[i + 1:i + 2] == "("):
+                out.append("".join(cur)); cur = []  # command substitution still runs inside double quotes
+                i += 2 if ch == "$" else 1
+                continue
+            cur.append(ch)
+        elif ch in "'\"":
+            quote = ch; cur.append(ch)
+        elif ch in ";&|\n()`":
+            out.append("".join(cur)); cur = []
+        elif ch == "$" and command[i + 1:i + 2] == "(":
+            out.append("".join(cur)); cur = []; i += 1
+        else:
+            cur.append(ch)
+        i += 1
+    out.append("".join(cur))
+    return [s for s in out if s.strip()]
 
 
 def path_like(tok):

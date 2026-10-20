@@ -68,6 +68,8 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 **Build:** A persistent test config folder outside the repo, signed in once by the maintainer (`CLAUDE_CONFIG_DIR=<test config> claude auth login`), used for every install test with its own plugin folder. The install tests refuse to run without it, and never fall back to the real config.
 
+**Evidence rule:** test runs keep commands-only evidence: the commands run, whether each was blocked or allowed, and the hash comparison. Never store prompts, model replies or transcript text, and delete the raw session logs when the run ends.
+
 **Done when:** a full install-test run (setup plus every script-calling mode, uninstall, reinstall, update) leaves `~/.claude/settings.json`, `known_marketplaces.json` and `installed_plugins.json` byte-identical, with no cleanup step needed.
 
 ### 9. One master, one path
