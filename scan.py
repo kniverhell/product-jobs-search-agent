@@ -5,103 +5,122 @@ Hits the public JSON APIs, filters for senior product/program roles,
 applies comp floor at scan time, auto-sets verified_on (API = live),
 and dumps candidates to inbound/YYYY-MM-DD-scan-candidates.md
 
-Usage:  python3 scan.py
+Usage:  python3 scan.py        (run from your project folder)
 
-Configuration:
-  - Set COMP_FLOOR to your base salary minimum
-  - Customize GREENHOUSE, ASHBY, LEVER company lists to match your targets
-  - Adjust SENIORITY and DOMAIN keyword lists to fit your specialty
+Configuration lives in your project folder, never in this script:
+  - The screen: a ```scan-screen block in 01-target-roles.md
+      comp floor: 160000            (0 turns the floor off)
+      level: "director", "head of", "vp "
+      include: "product", "platform"
+      exclude: "engineer", "sales"
+    Terms are double-quoted, so spaces and commas inside a term are kept ("vp ", "head,").
+    A key may repeat; its terms add up.
+  - The boards: a ```scan-boards block in 04-queries.md, one per line:
+      greenhouse | board-slug | Company label
+    ats is greenhouse, ashby or lever.
+A missing, empty, placeholder or malformed config stops the scan (exit 1) with the file and line.
 """
 
 import json
 import os
+import re
 import sys
 import urllib.request
 import urllib.error
 from datetime import date, datetime, timezone
 
+from kit_paths import project_dir
+
 # ── Config ─────────────────────────────────────────────────────────────────────
-COMP_FLOOR = 0   # ← Set your base salary floor. Roles where disclosed max is below this are dropped.
-                 #   Example: COMP_FLOOR = 160_000
-                 #   Set to 0 to disable comp floor filtering.
 TODAY = date.today()
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "inbound")
+OUTPUT_DIR = os.path.join(project_dir(), "inbound")
+SCREEN_FILE = "01-target-roles.md"
+BOARDS_FILE = "04-queries.md"
+ATS_NAMES = ("greenhouse", "ashby", "lever")
 
-# ── Company registry ──────────────────────────────────────────────────────────
-# These are example lists for an identity/fintech PM search.
-# Replace or extend with the companies relevant to your search.
-# Format: (ats_slug, display_label)
-# To find a slug: look for the company's Greenhouse/Ashby/Lever board and copy the
-# identifier from the URL (e.g., greenhouse.io/v1/boards/{slug}/jobs).
+# Filled from your files by load_config() before any board is read. No built-in defaults.
+COMP_FLOOR = None
+SENIORITY, DOMAIN, EXCLUDE = [], [], []
+GREENHOUSE, ASHBY, LEVER = [], [], []
 
-GREENHOUSE = [
-    # Identity / fraud / trust vendors
-    ("prove",           "Prove"),
-    ("forter",          "Forter"),
-    ("huntress",        "Huntress"),
-    ("workatbackbase",  "Backbase"),
-    ("alloy",           "Alloy"),
-    ("twilio",          "Twilio"),
-    # Fintech / payments
-    ("affirm",          "Affirm"),
-    # Consumer platforms with identity/trust/account surfaces
-    ("airbnb",          "Airbnb"),
-    ("reddit",          "Reddit"),
-    ("discord",         "Discord"),
-    ("fanduel",         "FanDuel"),
-    ("roblox",          "Roblox"),
-    # News / media (for reference, adjust to your search)
-    ("thenewyorktimes", "NYT"),
-    ("lyft",            "Lyft"),
-]
 
-ASHBY = [
-    # Identity / KYC / fraud vendors
-    ("socure",    "Socure"),
-    ("persona",   "Persona"),
-    ("stytch",    "Stytch"),
-    ("middesk",   "Middesk"),
-    ("sift",      "Sift"),
-    ("sentilink", "SentiLink"),
-    ("trulioo",   "Trulioo"),
-    ("sardine",   "Sardine"),
-    # Auth / access
-    ("workos",    "WorkOS"),
-    # Fintech
-    ("airwallex", "Airwallex"),
-    ("ramp",      "Ramp"),
-    ("unit",      "Unit"),
-]
+class ConfigError(Exception):
+    pass
 
-LEVER = [
-    ("narmi",  "Narmi"),
-    # Add Lever-based companies here. Format: (slug, label)
-    # Find the slug from job URLs like jobs.lever.co/{slug}/...
-]
 
-# ── Filters ───────────────────────────────────────────────────────────────────
-# Customize these to match your target seniority and domain.
+def read_block(name, tag):
+    """Return [(line_number, text)] inside the ```tag fence of a project file, skipping blanks and # comments."""
+    path = os.path.join(project_dir(), name)
+    if not os.path.exists(path):
+        raise ConfigError(f"{name} not found in {project_dir()}: run setup")
+    lines = open(path, encoding="utf-8").read().splitlines()
+    try:
+        first = next(i for i, l in enumerate(lines) if l.strip() == "```" + tag)
+    except StopIteration:
+        raise ConfigError(f"{name} has no ```{tag} block: run setup, or copy the block from templates/{name}")
+    try:
+        last = next(i for i in range(first + 1, len(lines)) if lines[i].strip() == "```")
+    except StopIteration:
+        raise ConfigError(f"{name}:{first + 1}: ```{tag} block is never closed")
+    return [(i + 1, lines[i].strip()) for i in range(first + 1, last)
+            if lines[i].strip() and not lines[i].strip().startswith("#")]
 
-SENIORITY = [
-    "director", "head of", "head,", "vp ", "vp,", "vice president",
-    "senior director", "sr director", "sr. director", "principal",
-    "staff product", "staff technical program", "staff program",
-]
 
-DOMAIN = [
-    "product", "program", "platform", "identity", "ciam", "authentication",
-    "auth", "trust", "fraud", "kyc", "onboarding", "iam", "verification",
-    "security", "access management",
-]
+def placeholder(text):
+    return "[" in text or "]" in text
 
-EXCLUDE = [
-    "engineer", "engineering", "sales", "marketing", "recruiter", "recruiting",
-    "financial analyst", "legal", "data scientist", "data science", "developer",
-    "architect", "design", "designer", "security researcher", "research scientist",
-    "business development", "account manager", "account executive",
-    "customer success",
-]
+
+def parse_terms(name, n, line, value):
+    """Quoted, comma-separated terms. Anything outside the quotes except commas and spaces is an error."""
+    terms = re.findall(r'"([^"]*)"', value)
+    if re.sub(r'"[^"]*"', "", value).strip(" ,") or not terms:
+        raise ConfigError(f"{name}:{n}: expected quoted terms like \"director\", \"head of\": {line}")
+    for t in terms:
+        if not t.strip():
+            raise ConfigError(f"{name}:{n}: empty term: {line}")
+        if placeholder(t):
+            raise ConfigError(f"{name}:{n}: placeholder not filled in: {line}")
+    return terms
+
+
+def load_config():
+    global COMP_FLOOR, SENIORITY, DOMAIN, EXCLUDE, GREENHOUSE, ASHBY, LEVER
+    floor, lists = None, {"level": [], "include": [], "exclude": []}
+    for n, line in read_block(SCREEN_FILE, "scan-screen"):
+        key, sep, value = line.partition(":")
+        key = key.strip().lower()
+        if not sep or (key != "comp floor" and key not in lists):
+            raise ConfigError(f"{SCREEN_FILE}:{n}: expected 'comp floor:', 'level:', 'include:' or 'exclude:': {line}")
+        if key == "comp floor":
+            if placeholder(value):
+                raise ConfigError(f"{SCREEN_FILE}:{n}: placeholder not filled in: {line}")
+            digits = value.strip().replace(",", "").replace("_", "")
+            if not digits.isdigit():
+                raise ConfigError(f"{SCREEN_FILE}:{n}: comp floor must be a whole number (0 = off): {line}")
+            floor = int(digits)
+        else:
+            lists[key] += parse_terms(SCREEN_FILE, n, line, value)
+    if floor is None:
+        raise ConfigError(f"{SCREEN_FILE}: the scan-screen block has no 'comp floor:' line")
+    for key, terms in lists.items():
+        if not terms:
+            raise ConfigError(f"{SCREEN_FILE}: the scan-screen block has no terms for '{key}:'")
+
+    boards = {a: [] for a in ATS_NAMES}
+    for n, line in read_block(BOARDS_FILE, "scan-boards"):
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) != 3 or parts[0].lower() not in ATS_NAMES or not parts[1] or not parts[2]:
+            raise ConfigError(f"{BOARDS_FILE}:{n}: expected 'greenhouse | slug | Label' (or ashby, lever): {line}")
+        if placeholder(line):
+            raise ConfigError(f"{BOARDS_FILE}:{n}: placeholder not filled in: {line}")
+        boards[parts[0].lower()].append((parts[1], parts[2]))
+    if not any(boards.values()):
+        raise ConfigError(f"{BOARDS_FILE}: the scan-boards block lists no boards")
+
+    COMP_FLOOR = floor
+    SENIORITY, DOMAIN, EXCLUDE = lists["level"], lists["include"], lists["exclude"]
+    GREENHOUSE, ASHBY, LEVER = boards["greenhouse"], boards["ashby"], boards["lever"]
 
 
 def passes_title(title: str) -> bool:
@@ -333,6 +352,11 @@ def scan_lever(slug, label):
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    try:
+        load_config()
+    except ConfigError as e:
+        print(f"STOP: {e}")
+        sys.exit(1)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     outpath = os.path.join(OUTPUT_DIR, f"{TODAY.isoformat()}-scan-candidates.md")
 
@@ -380,7 +404,7 @@ def main():
     # ── Build output ──────────────────────────────────────────────────────────
     comp_note = (f"Comp floor ${COMP_FLOOR:,} applied at scan time where compensation is disclosed."
                  if COMP_FLOOR > 0 else
-                 "No comp floor set. Set COMP_FLOOR in scan.py to filter by base salary.")
+                 "No comp floor set. Set 'comp floor:' in the scan-screen block of 01-target-roles.md to filter by base salary.")
 
     lines = [
         f"# ATS scan — {TODAY.isoformat()}",
@@ -427,7 +451,7 @@ def main():
         "",
         "- Greenhouse comp not in list endpoint — fetch per-job with `?content=true` for comp data.",
         "- Workday, Avature, custom career sites: not covered here.",
-        "- Lever: only confirmed-slug companies included. Add slugs to LEVER list as discovered.",
+        "- Lever: only confirmed-slug companies included. Add slugs to the scan-boards block in 04-queries.md as discovered.",
         "- `site:` dork results still need manual ATS verification before tracker entry.",
         "",
     ]

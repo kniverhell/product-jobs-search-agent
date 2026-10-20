@@ -198,6 +198,23 @@ the industry.
 
 ---
 
+## Scan screen (read by `scan.py`)
+
+`scan.py` keeps no settings of its own; it reads this block. Fill in every line: a placeholder left in `[brackets]`
+stops the scan. Terms are double-quoted, so spaces and commas inside a term are kept (`"vp "`, `"head,"`). A key may
+repeat; its terms add up. A title passes when it has a **level** term and an **include** term and no **exclude** term
+(case-insensitive substring match). `comp floor: 0` turns the floor off; otherwise a role whose disclosed maximum is
+below the floor is dropped.
+
+```scan-screen
+comp floor: [your base floor as a whole number, e.g. 160000; 0 = off]
+level: "[a level word, e.g. director]", "[another, e.g. head of]"
+include: "[a domain word, e.g. product]", "[another]"
+exclude: "[a word that rules a title out, e.g. engineer]", "[another]"
+```
+
+---
+
 ## Query tiers (for `04-queries.md`)
 
 **Tier 1 — Core domain:**

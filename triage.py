@@ -15,10 +15,11 @@ import os
 import re
 import sys
 
+from kit_paths import project_dir
 from tracker_io import TRACKER, TrackerError, read_tracker
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-NETWORK = os.path.join(HERE, "07-network.md")
+PROJECT = project_dir()
+NETWORK = os.path.join(PROJECT, "07-network.md")
 
 OPEN = {"New", "Evaluated", "Tailored"}
 LIVE = {"Interviewing", "Final", "Offer"}
@@ -74,7 +75,7 @@ def main(argv):
         argv = argv[:i] + argv[i + 2:]
 
     if not os.path.exists(TRACKER):
-        print(f"STOP  tracker not found: {os.path.relpath(TRACKER, HERE)}")
+        print(f"STOP  tracker not found: {os.path.relpath(TRACKER, PROJECT)}")
         return 1
     try:
         rows, _ = read_tracker()

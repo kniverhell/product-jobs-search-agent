@@ -17,8 +17,9 @@ import re
 import subprocess
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-PROFILE = os.path.join(HERE, "application-profile.md")
+from kit_paths import project_dir
+
+PROFILE = os.path.join(project_dir(), "application-profile.md")
 
 SECTIONS = {"factual": "FACTUAL", "knockout": "KNOCKOUT"}
 FIELD = re.compile(r"^([A-Za-z][^:]{0,60}):(?:\s+(.*))?$")

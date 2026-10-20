@@ -64,10 +64,10 @@ what specifically you're watching for.
 
 ## Company registry
 
-Employers scanned by `scan.py` are defined in the `GREENHOUSE`, `ASHBY`, and `LEVER` lists
-in `scan.py` itself. This file holds extended notes that don't belong in code.
+Employers scanned by `scan.py` are listed in the `scan-boards` block of `04-queries.md`.
+This file holds extended notes that don't belong in that list.
 
-For each employer you add to `scan.py`, add a row here with:
+For each employer you add to the `scan-boards` block, add a row here with:
 - Confirmed slug and date confirmed
 - What they're building that's relevant to your search
 - Any notes about the company (hiring pattern, team size, known contacts)

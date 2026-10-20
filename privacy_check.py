@@ -23,7 +23,9 @@ import re
 import subprocess
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+from kit_paths import project_dir
+
+HERE = project_dir()  # the project folder: patterns, allow list and the git repo checked
 PATTERNS = os.path.join(HERE, ".privacy-patterns")
 ALLOW = os.path.join(HERE, ".privacy-allow")
 

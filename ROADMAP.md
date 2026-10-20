@@ -30,12 +30,12 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 **Done when:** a planted test file with one violation per rule type fails on every line; each rule also fails on a line containing only its violation (no permitted form alongside); a run whose globs match nothing exits 1 with a "no files" FAIL; and the shipped templates pass clean.
 
-### 2. `scan.py` reads its rules instead of keeping copies
-**Problem:** `scan.py` keeps its own `COMP_FLOOR`, `SENIORITY` and `DOMAIN` lists, set by hand per `SETUP.md`. They drift from `config.md` and `01-target-roles.md` without any error (`SKILL.md` rule 17). Dedup against the tracker is also done by the agent by hand (rule 18).
+### 2. `scan.py` dedups against the tracker
+**Problem:** Dedup of scan output against the tracker is done by the agent by hand (rule 18). (The other half of this item, reading the screen and boards from your files, is done; see *Done*.)
 
-**Build:** `scan.py` reads the floor and keywords from a small machine-readable block in `config.md` and stops with a clear message when it can't. Add a dedup step that matches scan output against `02-tracker.csv` on req ID and URL (via `tracker_io.read_tracker`) and prints only new rows.
+**Build:** A dedup step that matches scan output against `02-tracker.csv` on req ID and URL (via `tracker_io.read_tracker`) and prints only new rows.
 
-**Done when:** changing the floor in `config.md` changes what `scan.py` drops, with no edit to `scan.py`; a missing or malformed block stops the scan with a message; a re-run against a saved output reports zero new rows for roles already tracked.
+**Done when:** a re-run against a saved output reports zero new rows for roles already tracked.
 
 ### 3. Move "Titles lie" into `SKILL.md`
 **Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
@@ -77,6 +77,7 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 ## Done
 
+- **`scan.py` reads its rules** *(2026-10-20)*. The comp floor and the level, include and exclude terms come from a `scan-screen` block in `01-target-roles.md`; the boards come from a `scan-boards` block in `04-queries.md`. The script holds no settings and no default company list. A missing, empty, placeholder or malformed line exits 1 with the file and line. Output is unchanged for the same config, except two hints that used to say "edit scan.py". All scripts now find your data in the project folder (the working directory, or `$JOB_SEARCH_DIR`), not next to themselves.
 - **Fill mode** *(2026-10-16)*. `modes/fill.md` fills one page of an application you opened, from the resume and a new gitignored `application-profile.md` (the one home for facts and knockout answers; `08-application-answers.md` points to it). `application_profile.py` parses it in code and never prints denylisted keys (government ID, date of birth, bank details). Knockouts fill only from explicit answers; free text, EEO, uploads, passwords and submit are always yours; prefilled fields are replaced only with a yes. Field values are read by eight pinned read-only scripts (`hooks/fill_read/`), and `hooks/fill_js_guard.py` blocks every other browser script by sha256. A form in an unreadable frame stops the fill. Haiku and Sonnet both passed a fixture with stale prefills and a framed form; Haiku is the default.
 - **Privacy check in code** *(2026-10-15)*. `privacy_check.py` reads literal patterns from a gitignored `.privacy-patterns` and exact-line exceptions from `.privacy-allow`. It checks the staged diff, `--all`, `--push` (`HEAD` plus unpushed commits) or `--history`; it fails when it has nothing to check or a pattern file is tracked; it reports locations and pattern line numbers, never the terms. Enforced before push by a local Claude Code hook, and before commit by a local git hook; `SETUP.md` documents both and the history limit.
 - **Outreach triage mode** *(2026-10-15)*. `modes/triage.md` plus the read-only `triage.py`: the user names the benchmark role; deadlines inside 7 days come first; open roles go into apply + outreach / apply cold / skip by judgment. Scores are parsed in code (ranges on their upper bound, capped scores on the capped value), and network matches are whole-word hints, not confirmed paths.

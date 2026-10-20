@@ -67,7 +67,7 @@ Your comp floor applies either way.
 
 ## Domain keywords
 
-Your specialty, in the words JDs use. Used to write `04-queries.md` and to set `DOMAIN` in `scan.py`.
+Your specialty, in the words JDs use. Used to write `04-queries.md` and the `include` terms of the `scan-screen` block in `01-target-roles.md`.
 
 ```
 DOMAIN_TIER1:  [Your core specialty. e.g. "identity, CIAM, authentication, IAM, login,

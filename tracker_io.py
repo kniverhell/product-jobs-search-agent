@@ -32,8 +32,9 @@ import sys
 import tempfile
 from datetime import datetime
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-TRACKER = os.path.join(HERE, "02-tracker.csv")
+from kit_paths import project_dir
+
+TRACKER = os.path.join(project_dir(), "02-tracker.csv")
 
 
 class TrackerError(Exception):

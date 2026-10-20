@@ -96,17 +96,17 @@ If you want to review the pipeline on your phone, the system can mirror `02-trac
 
 ## Optional: scan.py configuration
 
-Open `scan.py` and adjust:
+`scan.py` keeps no settings of its own. It reads two blocks in your files:
 
-- `COMP_FLOOR` — your base salary minimum (default: a placeholder — set this)
-- `SENIORITY` — title keywords to match (default covers Director/VP/Head of/Principal/Senior Director)
-- `DOMAIN` — specialty keywords for your area
-- `GREENHOUSE`, `ASHBY`, `LEVER` — company lists (the defaults are an example set; swap in your targets)
+- **The screen:** the `scan-screen` block in `01-target-roles.md`. `comp floor` (0 turns it off), and quoted `level`, `include` and `exclude` terms. A title passes with a level term and an include term and no exclude term.
+- **The boards:** the `scan-boards` block in `04-queries.md`, one `greenhouse | slug | Company` line per board (`ashby` and `lever` work too).
 
-Then:
+Both templates show the format with placeholders. A missing, empty, placeholder or malformed line stops the scan with the file and line number; there are no built-in defaults.
+
+Then, from your project folder:
 
 ```bash
-python scan.py
+python3 scan.py
 ```
 
 Output writes to `inbound/YYYY-MM-DD-scan-candidates.md`.

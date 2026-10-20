@@ -96,12 +96,10 @@ Short version:
 A standalone Python 3 script (no dependencies outside stdlib) that queries the public JSON APIs of Greenhouse, Ashby, and Lever boards directly — faster and more reliable than scraping rendered pages.
 
 ```bash
-python scan.py
+python3 scan.py
 ```
 
-Filters by your `SENIORITY` and `DOMAIN` keywords, enforces your comp floor, applies staleness bands, writes a Markdown candidate table to `inbound/`.
-
-Customize the company lists in `scan.py` to match your target employers. The default list is a starting point, not a recommendation.
+Screens titles with your level, include and exclude terms, enforces your comp floor, applies staleness bands, and writes a Markdown candidate table to `inbound/`. The screen comes from the `scan-screen` block in your `01-target-roles.md` and the boards from the `scan-boards` block in your `04-queries.md`; the script itself holds no settings, and stops with the file and line if either block is missing or unfilled.
 
 ---
 

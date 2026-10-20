@@ -40,6 +40,19 @@ Those words are your query terms.
 
 ---
 
+## Boards scanned by `scan.py`
+
+`scan.py` reads the public job boards listed in this block, one per line: `ats | board slug | company label`. `ats` is
+`greenhouse`, `ashby` or `lever`. The slug is the identifier in the board's URL (`boards.greenhouse.io/{slug}`,
+`jobs.ashbyhq.com/{slug}`, `jobs.lever.co/{slug}`). A placeholder left in `[brackets]` stops the scan.
+
+```scan-boards
+greenhouse | [board-slug] | [Company]
+ashby | [board-slug] | [Company]
+```
+
+---
+
 ## How this file works
 
 - **Tier 1 queries** run every scan (your core domain)
