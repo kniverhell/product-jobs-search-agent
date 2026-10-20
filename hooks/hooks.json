@@ -2,6 +2,17 @@
   "hooks": {
     "PreToolUse": [
       {
+        "matcher": "Read|Glob|Grep|Bash|Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/scope_guard.py\"",
+            "timeout": 10,
+            "statusMessage": "Scope check"
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
