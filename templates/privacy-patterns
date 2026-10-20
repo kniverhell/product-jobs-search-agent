@@ -1,0 +1,3 @@
+# Privacy check terms, one per line: your name, employers, phone, email, home city, local paths.
+# Matching is case-insensitive and whole-word ("cat" doesn't hit "category"). Lines starting with # are comments.
+# This file is personal: keep it out of git. Until it holds at least one term, the push check is skipped.

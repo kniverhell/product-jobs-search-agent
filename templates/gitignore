@@ -1,0 +1,26 @@
+# Your job-search files are personal. Keep them out of git.
+/config.md
+/00-master-resume.md
+/01-target-roles.md
+/02-tracker.csv
+/03-portals.md
+/04-queries.md
+/05-story-bank.md
+/06-proof-points.md
+/07-network.md
+/08-application-answers.md
+/application-profile.md
+/needs-evaluation.md
+/TASKS.md
+/.privacy-patterns
+/.privacy-allow
+inbound/
+reports/
+tailored/
+sent/
+resumes/
+archive/
+*.bak
+*.bak-*
+.02-tracker.*.tmp
+.DS_Store

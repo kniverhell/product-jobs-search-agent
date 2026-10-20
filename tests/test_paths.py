@@ -16,6 +16,14 @@ try:
         shutil.copy(os.path.join(REPO, f), kit)
     proj = os.path.join(T, "proj")
     os.makedirs(proj)
+    # without the .job-search marker every data script stops
+    for script, args in (("tracker_io.py", []), ("triage.py", ["x"]), ("application_profile.py", []), ("scan.py", [])):
+        r = subprocess.run([sys.executable, os.path.join(kit, script)] + args, cwd=proj, capture_output=True, text=True)
+        check(f"no marker: {script} exits 1 with 'not a job-search folder'", r.returncode == 1 and "not a job-search folder" in r.stdout, r.stdout + r.stderr)
+    code = f"import sys; sys.path.insert(0, {kit!r}); from tracker_io import read_tracker; read_tracker()"
+    r = subprocess.run([sys.executable, "-c", code], cwd=proj, capture_output=True, text=True)
+    check("no marker: read_tracker() from Python stops too", r.returncode == 1 and "not a job-search folder" in r.stdout, r.stdout + r.stderr)
+    open(os.path.join(proj, ".job-search"), "w").write("job-search project folder\nformat: 1\ncreated: 2026-10-20\n")
     fields = open(os.path.join(REPO, "templates", "02-tracker.csv")).readline().strip().split(",")
     def row(**kw):
         return {f: kw.get(f, "") for f in fields}

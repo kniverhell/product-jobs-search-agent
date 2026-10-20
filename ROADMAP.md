@@ -56,19 +56,28 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 **Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`.
 
-### 6. Install as a thin skill
-**Problem:** Installing the system as a packaged Claude skill copies the mode files into the skill. The repo keeps evolving, the installed copy doesn't, and the agent silently runs stale modes with outdated filenames.
-
-**Build:** Document an install path where the packaged skill contains `SKILL.md` only, with the repo path stated at the top ("all relative paths resolve to `<your clone>`"). Mode edits in the repo then take effect immediately, with no re-packaging. Add a one-line `make-skill` script to build the package.
-
-### 7. Block clicks during a fill session
+### 6. Block clicks during a fill session
 **Problem:** `fill` mode's "never submit" is an instruction, not an enforced block. A PreToolUse hook sees a tool's name and an element ref or coordinates, not what the element is, so it can't tell a Submit click from a field click.
 
 **Build:** A hook that blocks `computer` clicks, key presses and typing, and `navigate`, while a fill session is active, keyed to a session marker the mode sets and clears. Test it against the fixture with a planted Submit click.
 
 **Also scope the script guard to fill sessions.** `hooks/fill_js_guard.py` today blocks every browser script in the folder, in every session, so other work (debugging a page, checking a scan) can't run one. Key it to the same session marker: inside a fill session only the pinned read pages run; outside one, scripts are allowed. The preflight (`document.title` must come back blocked) then checks that the marker is set, not only that the hook is installed.
 
-### 8. One master, one path
+### 7. Keep the agent inside the project and the kit
+**Problem:** In a fresh-install test, a session that didn't load the skill searched the whole disk for a script, read another job-search folder's files and ran its scanner. The SessionStart hook now tells every session in a marked folder to stay inside the project and the kit root, but that's an instruction, not a block.
+
+**Build:** A PreToolUse hook, active only when the project has the `.job-search` marker, that blocks Read, Glob and Grep on paths outside the project folder and the kit root, and blocks `find` and recursive listings outside them in Bash. Reads are easy to check; Bash is not (paths hide in scripts, variables and `python3 -c`), which is why this isn't built yet. Decide how strict Bash can be without breaking the modes before building it.
+
+**Done when:** in a marked folder, a Read of a path outside both roots is blocked, `find ~` is blocked, every mode still runs, and an unmarked folder is untouched.
+
+### 8. A dedicated, signed-in test config for install tests
+**Problem:** The fresh-install tests run `claude -p` sessions against a test marketplace. A fully separate config (`CLAUDE_CONFIG_DIR` pointing at a temp folder) isn't signed in, so the tests used the maintainer's real config with a temp plugin folder. Adding a marketplace still wrote to the real `~/.claude/settings.json` and `known_marketplaces.json`; the tests removed those entries and checked the files against a baseline, but a test should never touch the real config at all.
+
+**Build:** A persistent test config folder outside the repo, signed in once by the maintainer (`CLAUDE_CONFIG_DIR=<test config> claude auth login`), used for every install test with its own plugin folder. The install tests refuse to run without it, and never fall back to the real config.
+
+**Done when:** a full install-test run (setup plus every script-calling mode, uninstall, reinstall, update) leaves `~/.claude/settings.json`, `known_marketplaces.json` and `installed_plugins.json` byte-identical, with no cleanup step needed.
+
+### 9. One master, one path
 **Problem:** When the real master resume lived outside the project folder, `tailor` quietly read an older in-folder copy that was missing recent bullets.
 
 **Build:** `config.md` names the master's path explicitly. `SETUP.md` says to keep exactly one master, and `integrity` warns if more than one file matches `*master*resume*`.
@@ -77,6 +86,7 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 ## Done
 
+- **One-command install as a Claude Code plugin** *(2026-10-20, v1.0.0)*. `claude plugin install job-search-agent --marketplace kniverhell/product-jobs-search-agent`, then "run setup" in an empty folder. The repo is both the marketplace and the plugin; the one `SKILL.md` lives at `skills/job-search-ops/`, and clone installs use the clone as a local marketplace (this closes *Install as a thin skill*). Your data lives in your project folder, marked by `.job-search`; data scripts stop anywhere else, and setup refuses your home folder, `/` and the kit's own folder. Setup never overwrites. Both hooks ship with the plugin and check themselves (the push check needs terms in `.privacy-patterns`; the fill guard needs `application-profile.md`), so a fresh install is never blocked. Semantic versions with a CHANGELOG; nothing updates without a version bump.
 - **`scan.py` reads its rules** *(2026-10-20)*. The comp floor and the level, include and exclude terms come from a `scan-screen` block in `01-target-roles.md`; the boards come from a `scan-boards` block in `04-queries.md`. The script holds no settings and no default company list. A missing, empty, placeholder or malformed line exits 1 with the file and line. Output is unchanged for the same config, except two hints that used to say "edit scan.py". All scripts now find your data in the project folder (the working directory, or `$JOB_SEARCH_DIR`), not next to themselves.
 - **Fill mode** *(2026-10-16)*. `modes/fill.md` fills one page of an application you opened, from the resume and a new gitignored `application-profile.md` (the one home for facts and knockout answers; `08-application-answers.md` points to it). `application_profile.py` parses it in code and never prints denylisted keys (government ID, date of birth, bank details). Knockouts fill only from explicit answers; free text, EEO, uploads, passwords and submit are always yours; prefilled fields are replaced only with a yes. Field values are read by eight pinned read-only scripts (`hooks/fill_read/`), and `hooks/fill_js_guard.py` blocks every other browser script by sha256. A form in an unreadable frame stops the fill. Haiku and Sonnet both passed a fixture with stale prefills and a framed form; Haiku is the default.
 - **Privacy check in code** *(2026-10-15)*. `privacy_check.py` reads literal patterns from a gitignored `.privacy-patterns` and exact-line exceptions from `.privacy-allow`. It checks the staged diff, `--all`, `--push` (`HEAD` plus unpushed commits) or `--history`; it fails when it has nothing to check or a pattern file is tracked; it reports locations and pattern line numbers, never the terms. Enforced before push by a local Claude Code hook, and before commit by a local git hook; `SETUP.md` documents both and the history limit.
@@ -102,3 +112,4 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 - **Blockers hide; modifiers reveal.** Prefer a penalty with the cost stated over a filter that hides the role.
 - **Never report an absence without the denominator.**
 - **The system drafts; the human sends.**
+- **Every release bumps the version.** `version` in `.claude-plugin/plugin.json` and a `CHANGELOG.md` entry change in the same commit; installed copies don't update otherwise.

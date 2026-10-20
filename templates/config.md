@@ -94,6 +94,17 @@ FRICTION_SOURCES_BARRED:   []              # sources it must never read, e.g. ["
 
 ---
 
+## Google Sheets sync (optional)
+
+Leave the placeholder if you don't mirror the tracker to a Sheet. The system finds the Sheet by this title, never by a
+stored file ID.
+
+```
+SHEET_TITLE_PATTERN:  [e.g. Job Search Tracker]
+```
+
+---
+
 ## Notes for the system
 
 Anything else the system should know about your situation. Facts, not scoring rules.

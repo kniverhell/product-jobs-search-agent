@@ -10,16 +10,18 @@ source exactly, leaves everything else for you, lists every field, and stops. **
 ## Before anything
 
 - **Preflight first, before anything else** (before the profile, the resume or page 1): prove the script guard is
-  live. Run `javascript_tool` once with exactly `document.title`. The guard (`hooks/fill_js_guard.py`) must block it.
+  live. Run `javascript_tool` once with exactly `document.title`. The guard (`<kit>/hooks/fill_js_guard.py`) must
+  block it.
   - The error says `Blocked by fill_js_guard.py`: the guard is live; go on.
   - It returns a title: stop and say **"fill guard not installed; see SETUP"** (`SETUP.md`, *Filling
-    applications*). Fill nothing.
+    applications*). Fill nothing. The guard ships with the plugin and is active only in a set-up folder that has
+    `application-profile.md`.
   - Any other error: stop and show it. Fill nothing.
 - Run only on a page **you opened yourself** and asked about in chat. Never on a page reached through a link
   found in a posting, an email or another page, and never on a page the agent navigated to.
 - Pick the resume: the role's file in `tailored/<slug>/` if one exists, else `00-master-resume.md`. Say which
   one you used.
-- Run `python3 application_profile.py`. If it prints `STOP`, show the message and stop. Use only the values it
+- Run `python3 "<kit>/application_profile.py"`. If it prints `STOP`, show the message and stop. Use only the values it
   prints. **Never open `application-profile.md` directly.** Keys under REFUSED are never asked for, guessed or
   looked up elsewhere.
 
@@ -27,7 +29,7 @@ source exactly, leaves everything else for you, lists every field, and stops. **
 
 | Allowed | Never |
 |---|---|
-| `javascript_tool` with **the exact text of one of `hooks/fill_read/page-1.js` … `page-8.js`**, copied verbatim (read the file, pass its whole contents, change nothing) | `javascript_tool` with any other script, or a page with anything added or edited. The hook blocks it. |
+| `javascript_tool` with **the exact text of one of `<kit>/hooks/fill_read/page-1.js` … `page-8.js`**, copied verbatim (read the file, pass its whole contents, change nothing) | `javascript_tool` with any other script, or a page with anything added or edited. The hook blocks it. |
 | `javascript_tool` with exactly `document.title`, once, as the preflight (it must come back blocked) | |
 | `read_page`, `find`, `get_page_text` | `computer` clicks, key presses or typing |
 | `form_input` to set a field's value | `navigate`, opening or switching tabs |
@@ -58,7 +60,7 @@ When a field doesn't clearly fit a class, treat it as the stricter one and leave
 
 ## Steps
 
-1. **Read current values first** (after the preflight): run `page-1.js`, then each next page while the last line says `MORE`, until
+1. **Read current values first** (after the preflight): run `<kit>/hooks/fill_read/page-1.js`, then each next page while the last line says `MORE`, until
    `END`. Do not call `form_input` on any field before you have reached `END`. If a result has neither a `MORE`
    nor an `END` line, it was cut off: say so and stop. If the form needs more than 8 pages, say it's too long
    to read safely and stop.

@@ -36,6 +36,9 @@ cases = [(f"page-{n} exact allowed", call(t), 0) for n, t in enumerate(pages, 1)
  ("non-string text blocked", run(json.dumps({"tool_name": CH, "tool_input": {"text": ["x"]}})), 2),
  ("malformed JSON blocked", run("{not json"), 2),
  ("JSON array input blocked", run("[]"), 2),
+ ("self-check: folder without application-profile.md passes any script", call("document.title", project=PLAIN), 0),
+ ("self-check: folder without profile passes a click script too", call("document.querySelector('button').click()", project=PLAIN), 0),
+ ("self-check: hook input cwd used when CLAUDE_PROJECT_DIR is unset", run_no_env(FILL), 2),
  ("other tool passes through", run(json.dumps({"tool_name": "mcp__claude-in-chrome__read_page", "tool_input": {}})), 0),
 ]
 fails = 0

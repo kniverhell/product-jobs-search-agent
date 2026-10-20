@@ -2,7 +2,7 @@
 
 Run monthly, or whenever the tracker feels off.
 
-0. **Tracker shape** — run `python3 tracker_io.py`. If it fails, run `python3 tracker_io.py repair` to see which rows can be realigned, then `repair --write`. Report every row it leaves as-is; those need a person.
+0. **Tracker shape** — run `python3 "<kit>/tracker_io.py"`. If it fails, run `python3 "<kit>/tracker_io.py" repair` to see which rows can be realigned, then `repair --write`. Report every row it leaves as-is; those need a person.
 1. **Dedup** — same company + similar title within 30 days is one role. Merge, keep the earliest `date_found` and the richest notes.
 2. **Status normalization** — every row uses exactly the canonical statuses in `SKILL.md`. Fix anything else.
 3. **Orphans** — a `reports/` file with no tracker row, a tracker row at `Tailored` with no file in `tailored/`, a slug that doesn't match across folders. Fix or flag.

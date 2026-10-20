@@ -2,6 +2,9 @@
 """Claude Code PreToolUse hook for fill mode: block every browser javascript_tool call except the approved read-only
 snippets in hooks/fill_read/ (page-1.js … page-8.js, generated from source.js by make_pages.py).
 
+Self-checking: the guard is active only in a project folder that holds application-profile.md (a job-search folder
+set up for fill mode). Everywhere else, including a fresh install before setup, every call passes untouched.
+
 The script text in the call is hashed (sha256, after stripping leading and trailing whitespace and turning CRLF into
 LF) and compared with APPROVED_SHA256 below, one hash per page. Anything else, including a page plus one extra
 statement, is blocked with exit 2. A malformed call is blocked too: this hook fails closed.
@@ -10,12 +13,11 @@ APPROVED_SHA256 is pinned here on purpose. Editing source.js changes every page'
 blocked until this list is updated from make_pages.py's output, and that update is a guardrail change that needs its
 own approval (SKILL.md rule 12).
 
-Wire it in .claude/settings.local.json (see SETUP.md, "Filling applications"):
-    {"matcher": "mcp__.*javascript_tool", "hooks": [{"type": "command",
-     "command": "python3 \\"$CLAUDE_PROJECT_DIR/hooks/fill_js_guard.py\\""}]}
+Ships with the plugin, wired in hooks/hooks.json.
 """
 import hashlib
 import json
+import os
 import sys
 
 APPROVED_SHA256 = {
@@ -50,6 +52,9 @@ def main():
         return block("unreadable hook input")
     if not str(call.get("tool_name", "")).endswith("javascript_tool"):
         return 0  # the matcher should never send other tools here; don't interfere if it does
+    project = os.environ.get("CLAUDE_PROJECT_DIR") or call.get("cwd") or os.getcwd()
+    if not os.path.isfile(os.path.join(project, "application-profile.md")):
+        return 0  # not a fill-ready job-search folder: the guard stays out of the way
     text = (call.get("tool_input") or {}).get("text")
     if not isinstance(text, str) or not text.strip():
         return block("no script text")

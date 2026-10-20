@@ -29,7 +29,7 @@ import urllib.request
 import urllib.error
 from datetime import date, datetime, timezone
 
-from kit_paths import project_dir
+from kit_paths import project_dir, require_project
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 TODAY = date.today()
@@ -352,6 +352,7 @@ def scan_lever(slug, label):
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    require_project()
     try:
         load_config()
     except ConfigError as e:

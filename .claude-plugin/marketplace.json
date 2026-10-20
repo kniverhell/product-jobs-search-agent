@@ -1,0 +1,11 @@
+{
+  "name": "product-jobs-search-agent",
+  "owner": { "name": "kniverhell" },
+  "plugins": [
+    {
+      "name": "job-search-agent",
+      "source": ".",
+      "description": "A product-leader job search run by Claude. Install, then say \"run setup\" in an empty project folder."
+    }
+  ]
+}

@@ -57,7 +57,7 @@ Each rule below came from a real miss. Apply them during step 3, before a role r
 
 ## Reporting — coverage first, always
 
-Open with the denominator. It counts **every query in `04-queries.md`** and **every source**: LinkedIn, the ATS API script (`scan.py`), Workday `site:` queries, and the watchlist. Name whatever wasn't run.
+Open with the denominator. It counts **every query in `04-queries.md`** and **every source**: LinkedIn, the ATS API script (`python3 "<kit>/scan.py"`, run from the project folder; it reads the `scan-screen` block in `01-target-roles.md` and the `scan-boards` block in `04-queries.md`), Workday `site:` queries, and the watchlist. Name whatever wasn't run.
 
 > `Queries run: 12 of 16 (not run: Q10–Q13, geography). Sources: LinkedIn ✓ · scan.py ✓ · Workday site: ✗ not run · watchlist ✓. Candidates: 31. Verified live: 12. Dead or unverifiable: 19. Above threshold: 4.`
 
@@ -81,7 +81,7 @@ If a qualifying role arrives from outside the query set — a recruiter, a refer
 
 ## Tuning the title screen
 
-`scan.py`'s title screen is a pattern plus exclusions plus core-phrase precedence: an include word, an exclusion list, and a short list of core phrases that beat an exclusion. Change one piece at a time, and measure each change on a saved scan output: rows before and after, titles added, titles dropped. List every dropped title before keeping a change. *Failure: an exclusion list removed real leadership titles because a department word appeared in them; it was only noticed by listing every dropped title.*
+`scan.py`'s title screen (the `scan-screen` block in `01-target-roles.md`) is a pattern plus exclusions plus core-phrase precedence: an include word, an exclusion list, and a short list of core phrases that beat an exclusion. Change one piece at a time, and measure each change on a saved scan output: rows before and after, titles added, titles dropped. List every dropped title before keeping a change. *Failure: an exclusion list removed real leadership titles because a department word appeared in them; it was only noticed by listing every dropped title.*
 
 ## When coverage is thin
 

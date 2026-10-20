@@ -1,5 +1,8 @@
 # Setup Guide
 
+**Most people should install the plugin** with the one command in the README, then say "run setup" in an empty
+folder. This guide is the manual route: installing from a clone, and what each file is for.
+
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/code) installed (free tier works)
@@ -8,24 +11,43 @@
 
 ---
 
-## Step 1: Clone the repo
+## Step 1: Clone and install from the clone
 
 ```bash
-git clone https://github.com/[your-handle]/job-search-agent.git
-cd job-search-agent
+git clone https://github.com/kniverhell/product-jobs-search-agent.git
+claude plugin marketplace add ./product-jobs-search-agent
+claude plugin install job-search-agent@product-jobs-search-agent
 ```
+
+The clone is a local marketplace, so the plugin loads straight from it: edits to modes and scripts apply in your next
+session, no reinstall. (Inside a session the same steps are `/plugin marketplace add ./product-jobs-search-agent` and
+`/plugin install job-search-agent@product-jobs-search-agent`.)
+
+**The clone holds code only.** Your files go in a separate project folder, never in the clone. If you open Claude
+Code in the clone without installing, the root `CLAUDE.md` points it at the skill as a fallback.
+
+## Step 1b: Make your project folder and run setup
+
+```bash
+mkdir ~/job-search && cd ~/job-search
+claude
+```
+
+Say **"run setup"** (or `/job-search-agent:setup`). Setup:
+
+- writes a `.job-search` marker (the scripts stop in any folder without it);
+- copies every template that's missing, placeholders only, and never overwrites a file;
+- creates `.privacy-patterns` (comments only), a `.gitignore` if there's none, and the output folders;
+- checks that the plugin's hooks loaded, and lists what to fill in first.
+
+It refuses to run in your home folder, in `/`, or in the clone.
 
 ---
 
 ## Step 2: Copy and fill out `config.md`
 
-Before your first run, copy the template to the repo root:
-
-```bash
-cp templates/config.md config.md
-```
-
-Edit the root `config.md`, not the template. It's gitignored, so your comp floors never get pushed, even if you forget. The same goes for every personal file you create in the root (see `.gitignore`).
+Setup put `config.md` in your project folder. Edit that copy, never the template. If your project folder is a git
+repo, the `.gitignore` setup wrote keeps every personal file out of it.
 
 `config.md` holds **facts about you**, and only facts:
 
@@ -41,7 +63,7 @@ Edit the root `config.md`, not the template. It's gitignored, so your comp floor
 
 ## Step 3: Add your resume and proof points
 
-Copy the two templates to the root (`cp -n templates/00-master-resume.md templates/06-proof-points.md .`), then paste your resume into `00-master-resume.md`. This is the source of truth. Tailored resumes are always a subset — nothing gets added that isn't here.
+Paste your resume into `00-master-resume.md` (setup created it). This is the source of truth. Tailored resumes are always a subset — nothing gets added that isn't here.
 
 Then fill out `06-proof-points.md` with your defensible evidence:
 - Every number you can cite, with its source and how you'd defend it in a room
@@ -55,11 +77,7 @@ This takes a few hours the first time. Do it. The payoff is that you never overc
 
 ## Step 4: Populate the reference files
 
-Copy the remaining templates to the repo root and fill them in:
-
-```bash
-cp -n templates/*.md templates/02-tracker.csv .
-```
+Setup created these too; fill them in:
 
 - `01-target-roles.md`: **all of your scoring rules.** Role archetypes, the problem spaces you've owned (this feeds Domain fit), title levels, location modifiers, company tiers, hard blockers, no-go list, trajectory rule
 - `needs-evaluation.md`: starts empty. The system lists unscored roles with an open decision here; a score only ever comes from an evaluation
@@ -72,13 +90,10 @@ cp -n templates/*.md templates/02-tracker.csv .
 
 ---
 
-## Step 5: Start Claude Code
+## Step 5: Use it
 
-```bash
-claude
-```
-
-Paste a JD or say "run the scout." The system will load `SKILL.md` and run the matching mode.
+In your project folder, paste a JD or say "run the scout." The plugin's skill loads by itself and runs the matching
+mode.
 
 ---
 
@@ -87,7 +102,7 @@ Paste a JD or say "run the scout." The system will load `SKILL.md` and run the m
 If you want to review the pipeline on your phone, the system can mirror `02-tracker.csv` to a Google Sheet.
 
 1. Create a blank Sheet in your Google Drive
-2. Open `SKILL.md` and set your Sheet **title pattern** where indicated. Don't store a file ID: each session picks the newest Sheet matching the title and says which one it used
+2. Set `SHEET_TITLE_PATTERN` in your `config.md`. Don't store a file ID: each session picks the newest Sheet matching the title and says which one it used
 3. Use the `weekly` review trigger ("where am I at") to sync
 
 **Critical rule:** always read the Sheet *before* writing to the CSV. Any edits you made on your phone live in the Sheet, not the CSV. Writing without reading first destroys them.
@@ -103,10 +118,10 @@ If you want to review the pipeline on your phone, the system can mirror `02-trac
 
 Both templates show the format with placeholders. A missing, empty, placeholder or malformed line stops the scan with the file and line number; there are no built-in defaults.
 
-Then, from your project folder:
+Then say "run the scout", or from your project folder:
 
 ```bash
-python3 scan.py
+python3 <clone>/scan.py
 ```
 
 Output writes to `inbound/YYYY-MM-DD-scan-candidates.md`.
@@ -117,15 +132,7 @@ Output writes to `inbound/YYYY-MM-DD-scan-candidates.md`.
 
 `fill` mode fills one page of an application form from your own files and stops. You submit.
 
-1. **Fill in `application-profile.md`** (copied in Step 4; gitignored). One `Field: value` per line under `## Factual` (name, contact, links, location) and `## Knockout` (work authorization, sponsorship, relocation, in-office days, travel, clearance, age). Leave a value in `[brackets]` and the field stays blank on every form. **Never store** government ID, SSN, passport, driver's license, date of birth or bank details: `application_profile.py` refuses to print any key that looks like one. Check it with `python3 application_profile.py`.
-2. **Install the script guard.** Add this to `.claude/settings.local.json` (next to any hook you already have):
-
-   ```json
-   {"hooks": {"PreToolUse": [{"matcher": "mcp__.*javascript_tool", "hooks": [{"type": "command",
-     "command": "python3 \"$CLAUDE_PROJECT_DIR/hooks/fill_js_guard.py\""}]}]}}
-   ```
-
-   It blocks every browser script except the eight read-only pages in `hooks/fill_read/`, matched by sha256. Note that this blocks browser scripts in every session in this folder, not only `fill`. Start a new session after adding it. Fill mode checks it every time: its first step runs `document.title`, which the guard must block; if it comes back with a title, the mode stops with "fill guard not installed; see SETUP".
+1. **Fill in `application-profile.md`** (created by setup; keep it out of git). One `Field: value` per line under `## Factual` (name, contact, links, location) and `## Knockout` (work authorization, sponsorship, relocation, in-office days, travel, clearance, age). Leave a value in `[brackets]` and the field stays blank on every form. **Never store** government ID, SSN, passport, driver's license, date of birth or bank details: `application_profile.py` refuses to print any key that looks like one. 2. **The script guard ships with the plugin** (`hooks/fill_js_guard.py`, wired in `hooks/hooks.json`). It blocks every browser script except the eight read-only pages in `hooks/fill_read/`, matched by sha256, but **only in a project folder that has `application-profile.md`**: other projects, and a fresh install, are never affected. Inside your job-search folder it blocks browser scripts in every session, not only `fill`. Fill mode checks it every time: its first step runs `document.title`, which the guard must block; if it comes back with a title, the mode stops with "fill guard not installed; see SETUP".
 3. **Use it.** Sign in and open the application in your own Chrome with Claude in Chrome connected, then say "fill this application for <role>". You get a planned table and a "Fill these?" question first; prefilled fields are replaced only if you name them.
 
 **What it never does:** write free-text answers (employers may have AI-use policies, and the first draft is yours), touch EEO / self-identification, upload files, create accounts, type passwords, solve CAPTCHAs, or click Next, Save or Submit. A form inside an embedded frame from another site can't be read; the mode says so and asks before filling anything.
@@ -138,24 +145,18 @@ Output writes to `inbound/YYYY-MM-DD-scan-candidates.md`.
 
 If you push your copy anywhere, check that none of your personal terms (name, employers, phone, local paths) are in it.
 
-1. Create `.privacy-patterns` in the repo root: one term per line, `#` for comments. Matching is case-insensitive and whole-word (a pattern "cat" won't hit "category"; a number won't hit a longer number). The file is gitignored; `privacy_check.py` refuses to run if it's tracked, missing, or empty.
+1. Add your terms to `.privacy-patterns` in your project folder (setup created it): one term per line, `#` for comments. Matching is case-insensitive and whole-word (a pattern "cat" won't hit "category"; a number won't hit a longer number). The file is gitignored; `privacy_check.py` refuses to run if it's tracked, missing, or empty.
 2. Optional: `.privacy-allow` for lines you've decided are fine, one per line: `file | exact line text | YYYY-MM-DD | reason`. Only that exact line passes; a new or edited line with the term still fails. Also gitignored.
 3. Run it:
-   - `python3 privacy_check.py`: the staged diff (use as a pre-commit check)
-   - `python3 privacy_check.py --push`: what a push would publish, `HEAD` plus every unpushed commit
-   - `python3 privacy_check.py --all`: every tracked file in your working tree
-   - `python3 privacy_check.py --history`: every commit on every local branch, once
+   From your project folder, with `<clone>` the path to the kit:
+   - `python3 <clone>/privacy_check.py`: the staged diff (use as a pre-commit check)
+   - `python3 <clone>/privacy_check.py --push`: what a push would publish, `HEAD` plus every unpushed commit
+   - `python3 <clone>/privacy_check.py --all`: every tracked file in your working tree
+   - `python3 <clone>/privacy_check.py --history`: every commit on every local branch, once
 
-**From Claude Code**, you can make the push check automatic with a PreToolUse hook in `.claude/settings.local.json` that blocks `git push`, `gh pr create` and `gh repo sync` when `privacy_check.py --push` fails:
+**In Claude Code the push check is automatic.** The plugin's hook (`hooks/privacy_before_push.py`) runs `privacy_check.py --push` before any `git push`, `gh pr create` or `gh repo sync` and blocks it on a hit. Until `.privacy-patterns` has a term it allows the push and shows "privacy check not configured", so a fresh install is never blocked. Each check is logged to `.git/privacy-push.log`.
 
-```json
-{"hooks": {"PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command",
-  "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/privacy_before_push.py\""}]}]}}
-```
-
-The hook script reads the tool input from stdin, runs the check only for those three commands, and exits 2 with the checker's output to block. Keep it in `.claude/hooks/` (gitignored).
-
-**From your own terminal**, run `python3 privacy_check.py --push` before pushing, or install a local git `pre-push` hook that runs it.
+**From your own terminal**, run the `--push` check before pushing, or install a local git `pre-push` hook that runs it.
 
 **The history limit.** `--push` checks `HEAD` and your unpushed commits only. Anything already pushed stays in public history even if you delete it later. `--history` sweeps every commit on your local branches once, but not remote-only branches or other people's forks. The only fix for a hit in pushed history is rewriting history and force-pushing. That's a deliberate decision, never a routine one.
 

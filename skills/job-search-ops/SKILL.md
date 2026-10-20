@@ -1,9 +1,11 @@
 ---
 name: job-search-ops
-description: Runs a senior PM job search end to end — scans for roles matching your domain and level, evaluates them against a structured seven-block rubric, tailors your resume, drafts outreach and cover letters, builds your interview story bank, and keeps the pipeline honest. Use this skill whenever you mention a job posting, a company you're targeting, a recruiter conversation, an interview, comp or negotiation, or say anything like "run the scout", "evaluate this", "tailor my resume", "who should I contact", "where am I at" — even if you don't name this skill.
+description: Runs a senior PM job search end to end from the files in this project folder: scans for roles, evaluates and scores them, tailors resumes, drafts outreach and cover letters, preps interviews, triages who gets outreach, checks and updates the tracker (02-tracker.csv), mines company friction, fills one application page (never submits), and sets up a new job-search folder. Use it for ANY request in a folder that has a .job-search marker or files like 02-tracker.csv, 01-target-roles.md or application-profile.md, and whenever the user mentions a job posting, a role, a company they're targeting, the tracker, a recruiter, an interview, comp, an application form, or says things like "run setup", "run the scout", "evaluate this", "tailor my resume", "triage against", "something feels off in the tracker", "add this role", "fill this application", "who should I contact" or "where am I at", even if they don't name this skill. Its scripts live in the kit root it names; never search the disk for them.
 ---
 
 # Job Search Ops
+
+**Where things are.** Kit root (scripts, modes, templates): `${CLAUDE_PLUGIN_ROOT}`. Mode files write kit paths as `<kit>/…`; `<kit>` is the kit root above. Run kit scripts by full path from the project folder, e.g. `python3 "<kit>/triage.py"`. **Every other path in this skill and the modes is in the current project folder**: your files, never the kit's. Never write inside the kit root, and never write its path into any file. **Never search outside the project folder and the kit root**: no `find` or recursive listing of the home folder or other folders, and never read another job-search folder or another copy of the kit. If something isn't in those two places, say so and ask. If the project folder has no `.job-search` marker, or a file a mode needs is missing, say so and offer "run setup" (`${CLAUDE_PLUGIN_ROOT}/modes/setup.md`).
 
 Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about you**: background, comp floors, home metro, relocation, domain keywords. `01-target-roles.md` holds **your scoring rules**: archetypes, title levels, location modifiers, company tiers, blockers, no-go list. Claim rules live in `06-proof-points.md`. Every mode inherits from these three.
 
@@ -20,7 +22,7 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 7. **The vendor bench is the most underused asset in the file.** If you've been a *buyer* of vendors in your domain, those AEs and SEs know which of their customers are hiring before it's posted, and a referral from a real customer carries unusual weight for a product role at the vendor itself. Check `07-network.md` before treating any target as a cold approach.
 8. **Pull down Sheet edits before you write anything to the tracker.** See *Google Sheets sync* below. Writing to the CSV without reading the Sheet first will silently discard whatever you changed on your phone.
 9. **Only `SKILL.md` and `01-target-roles.md` may score, cap, or block a role.** `SKILL.md` holds the framework; `01-target-roles.md` holds your rules. Memory, notes, reports and scan logs can inform an evaluation but never set a score. If a rule you want to apply lives anywhere else, say so and ask for it to be moved into one of these two files. *(Learned in live use: a role was scored 2.5 off a remembered rule the target-roles file never contained.)*
-10. **All tracker writes go through `tracker_io.py`. Never write `02-tracker.csv` any other way.** No one-off scripts, no inline `csv.DictWriter`, no hand edits. `read_tracker()` / `write_tracker(rows, fields)` quote every field, write to a temp file, validate row count and column width, back up to `archive/`, then rename over the original. `python3 tracker_io.py` validates without writing. If the tracker is malformed, `python3 tracker_io.py repair` reports which rows it can realign (only rows whose extra cells are empty) and `repair --write` fixes those and leaves the rest untouched for you; `integrity` may run it. `allow_row_loss=True` switches off only the shrink guard: use it for a deliberate removal and report which rows went. *(Learned in live use: hand-appended rows with one extra or missing cell silently shifted every later value one column over, 8 of ~98 rows, and a careless fix then dropped data.)*
+10. **All tracker writes go through `tracker_io.py`. Never write `02-tracker.csv` any other way.** No one-off scripts, no inline `csv.DictWriter`, no hand edits. From Python, `sys.path.insert(0, "<kit>")` then `from tracker_io import read_tracker, write_tracker`. `read_tracker()` / `write_tracker(rows, fields)` quote every field, write to a temp file, validate row count and column width, back up to `archive/`, then rename over the original. `python3 "<kit>/tracker_io.py"` validates without writing. If the tracker is malformed, `python3 "<kit>/tracker_io.py" repair` reports which rows it can realign (only rows whose extra cells are empty) and `repair --write` fixes those and leaves the rest untouched for you; `integrity` may run it. `allow_row_loss=True` switches off only the shrink guard: use it for a deliberate removal and report which rows went. *(Learned in live use: hand-appended rows with one extra or missing cell silently shifted every later value one column over, 8 of ~98 rows, and a careless fix then dropped data.)*
 11. **Long tasks run off `TASKS.md`.** For anything multi-step (the scout, a pipeline review, a Sheet merge, a batch of evaluations), write the steps as a checklist in `TASKS.md` first. Tick each item the moment it's done, and add anything new you find as a new unticked item. Leave unfinished items in place for the next session; never delete an unticked item without saying why.
 12. **Keep going on bookkeeping; stop for decisions that are yours.** Don't end a message with "want me to…?" for work that doesn't need you.
     - **Keep going:** bookkeeping and verification. Reading the Sheet and merging under *Column ownership*, tracker writes through `tracker_io.py`, ATS verification, scoring, writing reports, `inbound/` saves, `04-queries.md` counts, `TASKS.md`, `needs-evaluation.md`, story-bank skeletons.
@@ -28,7 +30,7 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
     - **An approval of an outcome is not an approval of the code that produces it.** A change to a guardrail file (`tracker_io.py`, `scan.py`, a checker script, `SKILL.md`, `01-target-roles.md`) needs its own approval that names the file. Put the code change in the request, or ask before building it. *Failure: a waiver was approved, the matching script change was built without an approval naming the script, and an audit failed on that alone.*
     - **A housekeeping step that needs fresh approval every time should become a standing rule.** If the same cleanup keeps coming back for approval, ask once for a standing rule that names the condition, and write it into this file. *Failure: the same removal was asked for on three separate occasions.*
     - When unsure which side something falls on, do the reversible part and ask about the rest in the same message.
-    - Before any `git push`, `gh pr create` or `gh repo sync`, a Claude Code PreToolUse hook runs `python3 privacy_check.py --push` (what the push would publish: `HEAD` plus every unpushed commit) and blocks it if the check fails (maintainer setup; see `SETUP.md` to add your own).
+    - Before any `git push`, `gh pr create` or `gh repo sync`, the plugin's PreToolUse hook runs `privacy_check.py --push` in the project folder (what the push would publish: `HEAD` plus every unpushed commit) and blocks it if the check fails. Until `.privacy-patterns` has terms, it allows the push and says the check isn't configured.
 13. **End every long run with three headings, in this order: Blocked on me · Changed · Found.** *Blocked on me* lists only decisions or actions waiting on you, one line each, or says "Nothing." *Changed* is what was written: files, tracker rows, rules. *Found* holds the results; for the scout, that's the denominator line and then the roles table. Short runs and plain answers don't need the headings.
 14. **One session per project folder.** Never let two sessions write the same project at once; a scheduled run must exit if another session has the folder open (build a lock before scheduling). *Failure: two sessions wrote the handoff log together and an entry landed out of order. A scheduled run would have had no human to notice.*
 15. **Check a summarized rule against the rule file before acting on it.** A paraphrase drifts. If a summary in chat or in a log disagrees with `SKILL.md`, `01-target-roles.md` or a mode file, the file wins, and the correction goes in the log or the rule, not only in chat. *Failure: a triage step was described as dropping off-target roles; the rule file allowed only three named reasons, and the wrong claim was already in the log.*
@@ -38,19 +40,17 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 
 ## Files
 
+**Your files** live in the project folder, created by setup. Paths elsewhere in this skill mean these.
+
 | File | What it is |
 |---|---|
-| `config.md` | **Facts about you:** background, comp floors, home metro, relocation, domain keywords. Copied from `templates/config.md`. **No rules.** |
+| `.job-search` | The marker setup writes: this folder holds your job search. Data scripts stop anywhere without it. Holds a format number and a date, never a path. |
+| `config.md` | **Facts about you:** background, comp floors, home metro, relocation, domain keywords. Created by setup. **No rules.** |
 | `00-master-resume.md` | Source of truth for your experience. Tailored resumes are always a *subset*. |
 | `01-target-roles.md` | **Your scoring rules, all of them:** archetypes, title levels, location modifiers, company tiers, blockers, no-go list, survival verdict effects, trajectory rule. Read before scoring anything. |
 | `02-tracker.csv` | One row per role. Statuses defined below. Optionally mirrored to Google Sheets. With sync on, ownership is split by column (see *Column ownership*). |
-| `tracker_io.py` | **The only tracker writer.** See rule 10. |
-| `privacy_check.py` | Read-only check for personal terms before commit or push. Patterns from `.privacy-patterns`, exceptions from `.privacy-allow` (both gitignored). Staged diff by default; `--all`, `--push`, `--history`. Fails when it has nothing to check. |
-| `triage.py` | Read-only data pull for outreach triage: benchmark, candidates, deadlines, unscored rows. Never writes. |
-| `application-profile.md` | **Facts and knockout answers for application forms**, one `Field: value` per line under `## Factual` and `## Knockout`. The one home for them; `08-application-answers.md` points here. Copied from `templates/application-profile.md`; gitignored. |
-| `application_profile.py` | Read-only parse of `application-profile.md` for `fill`. Lists FACTUAL, KNOCKOUT, MISSING and REFUSED; never prints a value whose key looks like government ID, date of birth or bank details. |
-| `hooks/fill_js_guard.py` | PreToolUse hook for `fill`: blocks every browser `javascript_tool` call except the eight pinned read-only pages in `hooks/fill_read/`. |
-| `needs-evaluation.md` | Unscored rows (blank or `TBD`) **with a decision still open**: `New`, `Evaluated`, or a live process (`Screening`, `Interviewing`, `Final`, `Offer`). Applied, closed and passed rows stay off; an applied role comes back if it moves to `Screening`. Remove a row when its score is written. Copied from `templates/needs-evaluation.md`. |
+| `application-profile.md` | **Facts and knockout answers for application forms**, one `Field: value` per line under `## Factual` and `## Knockout`. The one home for them; `08-application-answers.md` points here. Created by setup; keep it out of git. |
+| `needs-evaluation.md` | Unscored rows (blank or `TBD`) **with a decision still open**: `New`, `Evaluated`, or a live process (`Screening`, `Interviewing`, `Final`, `Offer`). Applied, closed and passed rows stay off; an applied role comes back if it moves to `Screening`. Remove a row when its score is written. Created by setup. |
 | `TASKS.md` | The checklist for the current long task (rule 11). Unticked items carry over to the next session. |
 | `03-portals.md` | ATS registry and employer watchlist. Company tiers, confirmed ATS slugs, scan logs. |
 | `04-queries.md` | **Primary discovery surface.** Query set (Tier 1–3), per-query run/qualifying counts, Workday `site:` discovery. Read before scanning. |
@@ -62,6 +62,22 @@ Read `config.md` and `01-target-roles.md` first. `config.md` holds **facts about
 | `reports/` | Evaluation reports. Same slug. |
 | `tailored/` | Resume + cover letter + outreach per role. Same slug. |
 | `sent/` | Exactly what was submitted, with date. Never edited after it lands here. |
+| `.privacy-patterns` | Your personal terms for the privacy check (one per line; created by setup with comments only). Exceptions go in `.privacy-allow`. Keep both out of git. |
+
+**Kit files** live under `<kit>` and are never edited by a mode.
+
+| File | What it is |
+|---|---|
+| `tracker_io.py` | **The only tracker writer.** See rule 10. |
+| `privacy_check.py` | Read-only check for personal terms before commit or push. Patterns from `.privacy-patterns`, exceptions from `.privacy-allow` (both gitignored). Staged diff by default; `--all`, `--push`, `--history`. Fails when it has nothing to check. |
+| `triage.py` | Read-only data pull for outreach triage: benchmark, candidates, deadlines, unscored rows. Never writes. |
+| `application_profile.py` | Read-only parse of `application-profile.md` for `fill`. Lists FACTUAL, KNOCKOUT, MISSING and REFUSED; never prints a value whose key looks like government ID, date of birth or bank details. |
+| `hooks/fill_js_guard.py` | PreToolUse hook for `fill`, active only in a folder with `application-profile.md`: blocks every browser `javascript_tool` call except the eight pinned read-only pages in `hooks/fill_read/`. |
+| `setup.py` | Creates your files from `templates/` in the project folder; never overwrites; refuses your home folder, `/` and the kit's own folder. |
+| `scan.py` | ATS scanner. Reads its screen from `01-target-roles.md` and its boards from `04-queries.md`; holds no settings. |
+| `hooks/privacy_before_push.py` | PreToolUse hook: the privacy check before a push (see rule 12). Self-checking: skipped until `.privacy-patterns` has terms. |
+| `kit_paths.py` | Finds your project folder (the working directory, or `$JOB_SEARCH_DIR`) and checks the `.job-search` marker. |
+| `templates/` | The starting copy of every file in your folder. Setup copies them; you never edit them here. |
 
 ## Modes
 
@@ -69,21 +85,22 @@ Read the mode file before running it. Don't work from memory.
 
 | Say this | Mode | File |
 |---|---|---|
-| "run the scout" / "any new roles" | Scan portals and queries for new postings | `modes/scan.md` |
-| paste a JD or URL | Full evaluation → report → tracker entry | `modes/evaluate.md` |
-| "tailor for X" | Tailored resume against one JD | `modes/tailor.md` |
-| "write the cover letter" | Cover letter | `modes/cover.md` |
-| "who should I contact" | Hiring manager / recruiter / peer + LinkedIn notes | `modes/contact.md` |
-| "dig into this company" | Six-axis company research | `modes/deep.md` |
-| "draft the application email" | Formal application or referral email | `modes/email.md` |
-| "prep me for this interview" | Interview prep from the story bank | `modes/interview.md` |
-| "they made an offer" / "what should I ask for" | Comp research and negotiation prep | `modes/negotiate.md` |
-| "will they survive" / "run survival on X" | Company survival scoring (auto-runs for private companies at or below Series B) | `modes/survive.md` |
+| "run setup" | Make this folder a job-search folder: your files from templates, never overwriting; checks the hooks | `${CLAUDE_PLUGIN_ROOT}/modes/setup.md` |
+| "run the scout" / "any new roles" | Scan portals and queries for new postings | `${CLAUDE_PLUGIN_ROOT}/modes/scan.md` |
+| paste a JD or URL | Full evaluation → report → tracker entry | `${CLAUDE_PLUGIN_ROOT}/modes/evaluate.md` |
+| "tailor for X" | Tailored resume against one JD | `${CLAUDE_PLUGIN_ROOT}/modes/tailor.md` |
+| "write the cover letter" | Cover letter | `${CLAUDE_PLUGIN_ROOT}/modes/cover.md` |
+| "who should I contact" | Hiring manager / recruiter / peer + LinkedIn notes | `${CLAUDE_PLUGIN_ROOT}/modes/contact.md` |
+| "dig into this company" | Six-axis company research | `${CLAUDE_PLUGIN_ROOT}/modes/deep.md` |
+| "draft the application email" | Formal application or referral email | `${CLAUDE_PLUGIN_ROOT}/modes/email.md` |
+| "prep me for this interview" | Interview prep from the story bank | `${CLAUDE_PLUGIN_ROOT}/modes/interview.md` |
+| "they made an offer" / "what should I ask for" | Comp research and negotiation prep | `${CLAUDE_PLUGIN_ROOT}/modes/negotiate.md` |
+| "will they survive" / "run survival on X" | Company survival scoring (auto-runs for private companies at or below Series B) | `${CLAUDE_PLUGIN_ROOT}/modes/survive.md` |
 | "where am I at" / "pipeline review" | New roles first, pipeline in one line, Sheet sync | **Weekly Review** section below |
-| "something feels off in the tracker" | Dedup, status normalization, health check | `modes/integrity.md` |
-| "triage against <role>" / "who gets outreach" | Sort open roles into apply + outreach / apply cold / skip, against a role you name. **Read-only** | `modes/triage.md` |
-| "friction <company>" | Mine low-star user complaints for interview prep. **On request only**; never scores or touches the tracker | `modes/friction.md` |
-| "fill this application for <role>" | Fill one page of an application you opened, from your resume and `application-profile.md`. Never free text, EEO, uploads or passwords; **never submits** | `modes/fill.md` |
+| "something feels off in the tracker" | Dedup, status normalization, health check | `${CLAUDE_PLUGIN_ROOT}/modes/integrity.md` |
+| "triage against <role>" / "who gets outreach" | Sort open roles into apply + outreach / apply cold / skip, against a role you name. **Read-only** | `${CLAUDE_PLUGIN_ROOT}/modes/triage.md` |
+| "friction <company>" | Mine low-star user complaints for interview prep. **On request only**; never scores or touches the tracker | `${CLAUDE_PLUGIN_ROOT}/modes/friction.md` |
+| "fill this application for <role>" | Fill one page of an application you opened, from your resume and `application-profile.md`. Never free text, EEO, uploads or passwords; **never submits** | `${CLAUDE_PLUGIN_ROOT}/modes/fill.md` |
 
 **Default behavior:** if you paste a job posting with no instruction, run `evaluate`. That is almost always what you mean.
 
@@ -93,7 +110,7 @@ If you want to review the pipeline on your phone, the system can mirror `02-trac
 
 **Find the Sheet by title, never by a stored file ID.** Regenerating creates a new file, and a phone edit can land in any copy, so an ID saved here goes stale. Every session: search Drive for Sheets matching your title pattern, take the one with the most recent `modifiedTime`, and **report which Sheet was chosen, with its title and modified time.**
 
-**Sheet title pattern:** `[YOUR_SHEET_TITLE_PATTERN]` *(e.g. "Job Search Tracker")*
+**Sheet title pattern:** `SHEET_TITLE_PATTERN` in `config.md`. If it's still a placeholder, Sheet sync is off.
 
 ### Column ownership
 
@@ -106,7 +123,7 @@ Sheet and CSV each own different columns. Neither file wins everything.
 | **Merge** | `notes` | **Never overwrite, either direction.** Sheet → CSV: append any Sheet text not already in the CSV note, tagged `[SHEET <date>: …]`. Ignore truncated text ending `[FULL NOTE IN 02-tracker.csv]`; that's an artifact, not an edit. CSV → Sheet: keep your existing cell text verbatim. |
 | *Unlisted* (`company`, `title`, `date_found`) | — | CSV wins; a Sheet value fills a **blank** CSV cell; a conflicting non-blank Sheet value is **reported, not applied**. |
 
-**No human scores.** The Sheet's `score` and `score_pre_modifier` columns are **ignored in every merge**. A score comes only from an evaluation (`modes/evaluate.md`). A row created from the Sheet starts with a **blank** score and goes on `needs-evaluation.md` if its decision is still open.
+**No human scores.** The Sheet's `score` and `score_pre_modifier` columns are **ignored in every merge**. A score comes only from an evaluation (`${CLAUDE_PLUGIN_ROOT}/modes/evaluate.md`). A row created from the Sheet starts with a **blank** score and goes on `needs-evaluation.md` if its decision is still open.
 
 **Code never writes `status` back to the Sheet.** Status flows Sheet → CSV only. If the Sheet is regenerated, status cells and your custom columns are copied verbatim from the Sheet as last read; a row the Sheet has never seen goes in with an **empty** status for you to set.
 
@@ -134,7 +151,7 @@ A CSV-to-Sheets conversion can drop rows and report success. This happened: two 
 
 ## Auto-scheduled runs
 
-- **Coverage is structurally limited** when no browser session is active. Every auto report must open with the coverage line from `modes/scan.md`: all queries in `04-queries.md` and all sources, naming what wasn't run, so limited coverage is never mistaken for a quiet market. Auto runs never read LinkedIn (see `modes/scan.md` → *Terms of use*).
+- **Coverage is structurally limited** when no browser session is active. Every auto report must open with the coverage line from `${CLAUDE_PLUGIN_ROOT}/modes/scan.md`: all queries in `04-queries.md` and all sources, naming what wasn't run, so limited coverage is never mistaken for a quiet market. Auto runs never read LinkedIn (see `${CLAUDE_PLUGIN_ROOT}/modes/scan.md` → *Terms of use*).
 - **Never report an absence without stating the denominator.** "The market is quiet" after running three queries is not a finding. The difference between a quiet market and an unread one is the entire value of the scan.
 - Auto runs **never** set a status to `Applied` — only your own word does that. An application is a human act.
 - **Statuses auto runs may set:** `New`, `Evaluated`, `Expired` — observable from the posting. `Expired` only for a role never applied to; when an applied role's posting closes, set `posting_closed_on` and leave the status alone.

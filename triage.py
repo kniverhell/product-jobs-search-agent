@@ -15,7 +15,7 @@ import os
 import re
 import sys
 
-from kit_paths import project_dir
+from kit_paths import project_dir, require_project
 from tracker_io import TRACKER, TrackerError, read_tracker
 
 PROJECT = project_dir()
@@ -68,6 +68,7 @@ def line(r, *extra):
 
 
 def main(argv):
+    require_project()
     today = datetime.date.today()
     if "--today" in argv:
         i = argv.index("--today")

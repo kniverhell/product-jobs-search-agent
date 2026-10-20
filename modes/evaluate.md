@@ -37,7 +37,7 @@ The one thing you'd say that no other candidate would. Usually one of: the speci
 Which three stories from `05-story-bank.md` this role would draw on. If the role needs a story that doesn't exist yet, **draft the skeleton and append it to the story bank.** The bank grows on every evaluation — that's the compounding part.
 
 ## G. Legitimacy & blockers
-Ghost-job signals, scam signals, staleness, work authorization, relocation, anything that caps the score. State findings plainly. If the employer's board shows the title cloned across many locations, give postings vs distinct titles (`modes/scan.md` → *Collapse a board to distinct titles*).
+Ghost-job signals, scam signals, staleness, work authorization, relocation, anything that caps the score. State findings plainly. If the employer's board shows the title cloned across many locations, give postings vs distinct titles (`<kit>/modes/scan.md` → *Collapse a board to distinct titles*).
 
 **Run `survive` before recommending Apply** when the employer is a private company at or below Series B, or when stage is unknown and the company is clearly venture-backed. Apply the verdict's effect from `01-target-roles.md` → *Survival verdicts* (by default, Fragile caps the holistic). Cite the survival verdict and confidence in this block; do not repeat the whole report.
 

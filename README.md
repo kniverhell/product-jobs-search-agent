@@ -8,6 +8,16 @@ What's derived from career-ops: the mode structure, the role archetypes, and the
 
 **Designed for:** Senior / Director / VP product managers in a specialized domain (identity, fintech, SaaS, data platforms, etc.) who want a structured system rather than ad-hoc AI prompting.
 
+## Install
+
+```bash
+claude plugin install job-search-agent --marketplace kniverhell/product-jobs-search-agent
+```
+
+Then make an empty folder for your job search, open Claude Code in it, and say **"run setup"** (or `/job-search-agent:setup`). Every mode also has its own command, such as `/job-search-agent:triage` or `/job-search-agent:fill`. Setup creates your files from templates (placeholders only, never overwriting) and tells you what to fill in first.
+
+Inside a Claude Code session the same install works as `/plugin install job-search-agent --marketplace kniverhell/product-jobs-search-agent`. On older Claude Code versions use two steps: `claude plugin marketplace add kniverhell/product-jobs-search-agent`, then `claude plugin install job-search-agent@product-jobs-search-agent`. To install from a clone instead, see [SETUP.md](SETUP.md).
+
 ---
 
 ## The problem this solves
@@ -81,13 +91,12 @@ These findings are now permanent rules in the system:
 
 ## Setup
 
-See [SETUP.md](SETUP.md).
+1. Install (one command, above).
+2. In an empty folder for your job search, say "run setup".
+3. Fill in `config.md` (facts about you) and `01-target-roles.md` (your scoring rules), then `00-master-resume.md` and `06-proof-points.md`.
+4. Paste a JD or say "run the scout".
 
-Short version:
-1. Clone this repo
-2. `cp templates/config.md config.md` and fill in the facts about you (background, comp floors, location, domain). Your scoring rules and blockers go in `01-target-roles.md`.
-3. Open Claude Code in this directory
-4. Paste a JD or say "run the scout"
+Your files stay in that project folder; the plugin's folder holds only code. Manual install from a clone: [SETUP.md](SETUP.md).
 
 ---
 
@@ -100,6 +109,21 @@ python3 scan.py
 ```
 
 Screens titles with your level, include and exclude terms, enforces your comp floor, applies staleness bands, and writes a Markdown candidate table to `inbound/`. The screen comes from the `scan-screen` block in your `01-target-roles.md` and the boards from the `scan-boards` block in your `04-queries.md`; the script itself holds no settings, and stops with the file and line if either block is missing or unfilled.
+
+---
+
+## Fill mode: filling an application form
+
+Sign in and open the application in your own Chrome (Claude in Chrome), then say "fill this application for <role>". The agent fills one page from your own files, lists every field, and stops. **You review and click Submit.**
+
+- **Sources:** your resume (the role's tailored version if there is one) and `application-profile.md`, the one home for facts and knockout answers (name, contact, work authorization, sponsorship, relocation, in-office days). It's gitignored; a template is in `templates/`.
+- **Fills:** factual fields, and knockout questions only when your profile answers them explicitly. A missing answer stays blank and is listed.
+- **Never fills:** free-text answers (employers may have AI-use policies, and the first draft is yours), EEO / self-identification, file uploads, passwords, account creation, CAPTCHAs, government ID, date of birth or bank details. It never clicks Next, Save or Submit.
+- **Asks first:** before filling anything ("Fill these?"), before replacing a value the site already filled in, and before touching a form inside an embedded frame it can't read.
+- **Enforced:** browser scripts are limited to eight pinned read-only scripts by a hook that ships with the plugin (`hooks/fill_js_guard.py`). It's active only in a job-search folder that has `application-profile.md`, so it never touches other projects; the mode checks it's live before every run and stops if it isn't.
+- **Not enforced:** "never submit" is an instruction. A hook can't tell a Submit click from a field click, so the mode uses no clicking tools at all. Pages over about 50 fields stop; you fill those yourself.
+
+Tested on a local fixture with fictional data: Haiku (the default) and Sonnet both passed with every knockout right, zero clicks and zero submissions. Setup: [SETUP.md](SETUP.md#filling-applications). Rules: [`modes/fill.md`](modes/fill.md).
 
 ---
 

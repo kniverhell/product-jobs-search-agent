@@ -32,7 +32,7 @@ import sys
 import tempfile
 from datetime import datetime
 
-from kit_paths import project_dir
+from kit_paths import project_dir, require_project
 
 TRACKER = os.path.join(project_dir(), "02-tracker.csv")
 
@@ -97,6 +97,8 @@ def _atomic_write(path, header, records):
 
 def read_tracker(path=TRACKER):
     """Return (rows, fieldnames). Raises TrackerError if any row is malformed."""
+    if path == TRACKER:
+        require_project()
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         fields = list(reader.fieldnames)
@@ -118,6 +120,8 @@ def write_tracker(rows, fields, path=TRACKER, allow_row_loss=False):
     allow_row_loss=True turns the shrink guard off, and nothing else. Use it only for a deliberate removal
     (a dedup merge, or a row the user asked to delete), and report how many rows were removed and which.
     """
+    if path == TRACKER:
+        require_project()
     fields = list(fields)
     for r in rows:
         extra = set(r) - set(fields)
@@ -145,6 +149,8 @@ def repair_tracker(path=TRACKER, write=False):
     With write=False nothing is changed. With write=True the file is rewritten only if at least one row
     was realigned; untouched rows are written back with the same values.
     """
+    if path == TRACKER:
+        require_project()
     header, records = _read_records(path)
     width = len(header)
     realigned, untouched, out = [], [], []
@@ -169,6 +175,7 @@ def repair_tracker(path=TRACKER, write=False):
 
 
 def _main(argv):
+    require_project()
     if argv[:1] == ["repair"]:
         write = "--write" in argv[1:]
         realigned, untouched = repair_tracker(write=write)

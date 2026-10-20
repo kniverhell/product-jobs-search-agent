@@ -17,7 +17,7 @@ import re
 import subprocess
 import sys
 
-from kit_paths import project_dir
+from kit_paths import project_dir, require_project
 
 PROFILE = os.path.join(project_dir(), "application-profile.md")
 
@@ -72,8 +72,9 @@ def parse(path):
 
 
 def main(argv):
+    require_project()
     if not os.path.exists(PROFILE):
-        stop("no application-profile.md in the repo root. Copy templates/application-profile.md and fill it in.")
+        stop("no application-profile.md in the project folder. Run setup, then fill it in.")
     if tracked(PROFILE):
         stop("application-profile.md is tracked by git. It must be gitignored, never committed.")
     rows = parse(PROFILE)

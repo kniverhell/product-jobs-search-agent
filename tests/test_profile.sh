@@ -3,6 +3,9 @@ REPO=$(cd "$(dirname "$0")/.." && pwd)
 pass=0; fail=0
 ok(){ if [ "$1" = 0 ]; then pass=$((pass+1)); echo "ok   $2"; else fail=$((fail+1)); echo "FAIL $2"; fi; }
 T=$(mktemp -d); cd "$T"; git init -q; cp "$REPO/application_profile.py" "$REPO/kit_paths.py" .
+# no marker: refused
+python3 application_profile.py > out.txt 2>&1; rc=$?; ok $([ $rc = 1 ] && grep -q "not a job-search folder" out.txt; echo $?) "no .job-search marker exits 1"
+touch .job-search
 run(){ python3 application_profile.py "$@" > out.txt 2>&1; echo $? > rc.txt; }
 # 1 missing profile
 run; ok $([ "$(cat rc.txt)" = 1 ] && grep -q "no application-profile.md" out.txt; echo $?) "missing profile exits 1"

@@ -5,7 +5,7 @@ export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER
 check() { local name="$1" want="$2"; shift 2; out=$("$@" 2>&1); got=$?; if [ "$got" = "$want" ]; then PASS=$((PASS+1)); echo "ok   [$got] $name"; else FAILN=$((FAILN+1)); echo "FAIL [$got want $want] $name"; echo "$out" | sed 's/^/      /'; fi; LAST="$out"; }
 noleak() { if echo "$LAST" | grep -qi -e zorblax -e "quuxing" -e "731-555"; then FAILN=$((FAILN+1)); echo "FAIL leaked pattern/line text: $1"; else PASS=$((PASS+1)); echo "ok   no pattern/line text in output: $1"; fi; }
 git init -q --bare remote.git; git init -q repo; cd repo
-cp $SRC/privacy_check.py $SRC/kit_paths.py .; 
+cp $SRC/privacy_check.py $SRC/kit_paths.py .; mkdir -p hooks; cp $SRC/hooks/privacy_before_push.py hooks/
 printf '/.privacy-patterns\n/.privacy-allow\n/hooks/\n' > .gitignore
 printf '# test patterns\nzorblax\nquux\n731\nexamplecorp\n' > .privacy-patterns
 printf 'hello\n' > a.txt; printf '    ("examplecorp", "ExampleCorp"),\nother\n' > scan.py
@@ -38,6 +38,24 @@ printf 'zorblax old\n' > h.txt; git add h.txt; git commit -qm old; git rm -q h.t
 check "hit only in pushed history: --push passes" 0 $P --push
 check "--history catches it" 1 $P --history; echo "     $(echo "$LAST" | grep HIT | head -1)"
 git checkout -q -b nouptream; printf 'zorblax local\n' > n.txt; git add n.txt; git commit -qm local; check "no upstream: falls back to HEAD --not --remotes (hit caught)" 1 $P --push; git checkout -q -; git branch -q -D nouptream
+echo "== Claude Code push hook (hooks/privacy_before_push.py)"
+H="hooks/privacy_before_push.py"; export CLAUDE_PROJECT_DIR="$PWD"
+hook_hit() { printf 'zorblax hh\n' >> a.txt; git commit -qam hh; printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}' "$1" | python3 $H; local rc=$?; git reset -q --hard HEAD~1; return $rc; }
+hook() { printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}' "$1" | python3 $H; }
+printf 'zorblax head\n' >> a.txt; git commit -qam headhit
+check "git push with HEAD hit blocked" 2 hook "git push"; echo "$LAST" | grep -q "Blocked by privacy_check.py" && echo "     reason shown"
+check "gh pr create --fill with hit blocked" 2 hook "gh pr create --fill"
+check "gh repo sync with hit blocked" 2 hook "gh repo sync"
+check "cd x && git push origin main checked" 2 hook "cd x && git push origin main"
+git reset -q --hard HEAD~1; check "clean git push allowed" 0 hook "git push"
+mv .privacy-patterns pp.bak; check "git status untouched (checker not run: would fail with no patterns)" 0 hook "git status"; mv pp.bak .privacy-patterns
+mv .privacy-patterns pp.bak
+check "path .git/privacy-push.log does not trigger" 0 hook "tail -2 .git/privacy-push.log"
+check "git stash push does not trigger" 0 hook "git stash push -m x"
+check "echo git push (quoted text) does not trigger" 0 hook "echo 'git push'"
+mv pp.bak .privacy-patterns
+check "/usr/bin/git -C repo push triggers" 2 hook_hit "/usr/bin/git -C . push"
+check "gh repo sync (no hit) passes with JSON pass message" 0 hook "gh repo sync"; echo "$LAST" | grep -q '"systemMessage": "privacy check passed' && echo "     pass message: $LAST"
 echo "== pre-commit hook"
 printf '#!/bin/sh\nexec python3 "$(git rev-parse --show-toplevel)/privacy_check.py"\n' > .git/hooks/pre-commit; chmod +x .git/hooks/pre-commit
 printf 'zorblax precommit\n' >> a.txt; git add a.txt; check "pre-commit blocks staged hit" 1 git commit -qm blocked; git reset -q --hard

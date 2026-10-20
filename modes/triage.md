@@ -13,7 +13,7 @@ from memory; its facts come from the tracker, read in code.
 
 ## 1. Pull the data
 
-Run `python3 triage.py "<benchmark>"`. The argument is the role's URL, or words that all appear in its company and
+Run `python3 "<kit>/triage.py" "<benchmark>"`. The argument is the role's URL, or words that all appear in its company and
 title ("Acme Director Product"). If it exits with `STOP`, show its message and stop: the benchmark is missing, not
 found, or matches more than one row (ask which).
 
