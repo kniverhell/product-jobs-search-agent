@@ -3,6 +3,16 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.1.0 (2026-10-20)
+
+- New scope guard hook: in a job-search project (a folder with `.job-search`), Read, Glob, Grep, Write, Edit and
+  NotebookEdit are limited to the project folder and the kit, and so is every path in a Bash command, including
+  redirect targets. `locate` and `mdfind` are blocked. Scratch files are allowed only in this project's own
+  `/private/tmp/claude-<uid>/<slug>/` folder.
+- Fails closed with a message if it cannot check a call. Other folders are untouched.
+- Known gap: paths built inside `python3 -c`, scripts or shell variables are not seen.
+- Run `claude plugin update` to get it.
+
 ## 1.0.0 (2026-10-20)
 
 First plugin release.
