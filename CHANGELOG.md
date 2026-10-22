@@ -3,6 +3,11 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.1.2 (2026-10-22)
+
+- contact: LinkedIn searches are always done by the user by hand; the agent never opens or reads LinkedIn.
+- scan: neutral wording for a rate-limit failure note.
+
 ## 1.1.1 (2026-10-20)
 
 - The scope guard no longer splits a command at parentheses, semicolons or pipes inside quotes, so a block names the

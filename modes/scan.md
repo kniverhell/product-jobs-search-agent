@@ -45,7 +45,7 @@ Each rule below came from a real miss. Apply them during step 3, before a role r
 
 ### Tool behaviour
 
-- **Pace aggregator page loads.** One query every few seconds, reading the rendered results. Never call an aggregator's unauthenticated data endpoint in a loop from the logged-in page. *Failure: ~30 rapid calls to a guest jobs endpoint returned padded results, then triggered a ten-minute rate-limit lockout of the whole site mid-scout.*
+- **Pace aggregator page loads.** One query every few seconds, reading the rendered results. Never call an aggregator's unauthenticated data endpoint in a loop from the logged-in page. *Failure: rapid repeated requests to one job site triggered a temporary rate-limit lockout mid-scout.*
 - **Test scanner changes against saved output; run the live scan once per cycle.** Repeated live scans trigger rate limits at job-board hosts, and fetching several pages in parallel makes it worse. *Failure: several live reruns in one hour made three large boards return rate-limit errors (reported as unread, as designed).*
 - **Browser-tool output filters can block text that looks like `key=value`.** Print extraction results as plain lists, with no `=` and no ids glued to query-like strings. *Failure: an extractor printing "none=false" was blocked twice as cookie/query data, costing two query runs.*
 

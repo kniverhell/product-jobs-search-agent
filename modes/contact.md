@@ -10,8 +10,9 @@ For any role 4.0+ or any role you name. If outreach triage has run (`<kit>/modes
 
 ### Finding the warm path on LinkedIn
 
+- You run these searches yourself, by hand, in your own logged-in browser. The agent never opens, searches, or reads LinkedIn for you. That would be automated access, which LinkedIn's User Agreement prohibits. Paste what you find into the chat, and the agent takes it from there.
 - **Search the company's People page, filtered by keyword, and read which 1st-degree connection shows up as the shared mutual.** "Connections of" only works for your own 1st-degree connections, so you can't browse a 2nd-degree contact's network. One company-page search usually names the bridge. *Failure: the plan was to browse a former colleague's contacts; he was 2nd degree, so the list was invisible, while the company-page search showed one 1st-degree connection behind nearly every employee.*
-- **Budget people searches; LinkedIn's monthly cap is real.** Roughly 15–20 people-search loads in a day can hit it, after which results blur until the monthly reset. Prefer company-page filters over repeated global searches, and stop at the first "monthly limit" banner. *Failure: the cap hit mid-lookup, and the one search that mattered came back blurred for the rest of the month.*
+- **Budget people searches; LinkedIn's monthly cap is real.** In one person's experience, roughly 15–20 people-search loads in a day hit it, after which results blur until the monthly reset. Prefer company-page filters over repeated global searches, and stop at the first "monthly limit" banner. *Failure: the cap hit mid-lookup, and the one search that mattered came back blurred for the rest of the month.*
 
 Record them in the tracker's `hiring_manager`, `recruiter` and `warm_contact` columns, names only. Titles, profile links and mutual connections go in `notes`.
 
