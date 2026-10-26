@@ -3,6 +3,15 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.2.0 (2026-10-26)
+
+- interview: prep is now by round (recruiter or coordinator screen, hiring manager, peer or panel, executive or final),
+  so depth matches what that person decides.
+- interview: sources are ranked JD, then your proof-point ledger, then your resume (checked against the ledger);
+  anything else is a claim. Unverified facts, yours or theirs, are labeled and turned into a question to ask.
+- interview: anchors for the call come from the ledger with their status; interviewer research is pasted in by you,
+  never looked up by the agent.
+
 ## 1.1.2 (2026-10-22)
 
 - contact: LinkedIn searches are always done by the user by hand; the agent never opens or reads LinkedIn.

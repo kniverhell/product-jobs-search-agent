@@ -1,5 +1,5 @@
 ---
-description: Interview prep from your story bank
+description: Round-specific interview prep from your story bank and proof points
 argument-hint: "<company or role>"
 ---
 
