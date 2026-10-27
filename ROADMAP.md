@@ -8,27 +8,8 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 ## Next
 
-### 1. Claims linter: `check_claims.py`
-**Problem:** Proof-point integrity is enforced today by the `integrity` mode, which is a manual read. In live use, a stray duplicate resume file (`resume (1).md`) carried a claim marked "designed, never built" into the profile section, and nothing would have caught it before submission. Rules that live only in a ledger depend on someone remembering to check.
-
-**Build:** A stdlib-only Python script that scans the master resume, every variant, and `tailored/` and `sent/`. Rules are read from the *Standing constraints* table in `06-proof-points.md` (the one home for claim rules), and nothing is hardcoded:
-- **Retired figures:** numbers that must never appear (e.g. a headline figure you've decided not to defend)
-- **Restricted verbs:** topics that must never sit near "shipped / launched / deployed / delivered" (e.g. something you designed but never built)
-- **Required qualifiers:** a figure that must always travel with a word (e.g. a savings number that must always say "projected")
-- **Required clauses:** an outcome that must always carry its context (e.g. a conversion lift that must always mention the fraud trade-off)
-- **Profile-only bans:** claims allowed in experience bullets but never in the headline or summary
-
-**Waivers need an end condition.** If the linter supports waivers, each one records when it ends (the fix lands, a stage exits), lives in the task list, and needs the user's quote to remove. A blanket waiver hides every later failure on that path.
-
-**Role-framing check (candidate).** Product verbs, not engineering verbs, for the person's own work. Write it from a real failing example, not before; until then the rule lives in `modes/tailor.md`.
-
-**Zero inputs is a FAIL.** If the globs match no files, the script prints a FAIL with its own message ("no files found at …, nothing checked"), never "0 FAIL". A missing source of truth must not look like a clean bill of health.
-
-**Test each rule against the violation alone.** A rule like "use the percentage, never a dollar figure" fires on any dollar figure in that context, not only when the permitted form is on the same line.
-
-Matching works per sentence and per bullet clause, not per line, so an unrelated "built" three items away doesn't trigger a false positive. Reviewer checklist lines that quote the rules back are skipped. The script exits 1 on any FAIL, so it can gate a pre-send step.
-
-**Done when:** a planted test file with one violation per rule type fails on every line; each rule also fails on a line containing only its violation (no permitted form alongside); a run whose globs match nothing exits 1 with a "no files" FAIL; and the shipped templates pass clean.
+### 1. Claims checking
+Claim Check is available as a separate kit.
 
 ### 2. `scan.py` dedups against the tracker
 **Problem:** Dedup of scan output against the tracker is done by the agent by hand (rule 18). (The other half of this item, reading the screen and boards from your files, is done; see *Done*.)
