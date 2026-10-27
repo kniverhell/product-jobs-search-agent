@@ -30,7 +30,7 @@ Claim Check is available as a separate kit.
 ### 4. Resume variants as a first-class concept
 **Problem:** The system assumes one master resume plus per-JD tailoring. Real searches settle into a few standing variants: people-leader, senior IC, and a domain-specific one such as AI or decisioning. That produces stray copies and confusion about which file was submitted.
 
-**Build:** A `variants` table in `config.md` (file, archetype, when to use), a rule that every variant is a subset of the master, and linter coverage for all of them. `tailor` picks the variant before tailoring.
+**Build:** A `variants` table in `config.md` (file, archetype, when to use), a rule that every variant is a subset of the master, and the `integrity` mode covering all of them. `tailor` picks the variant before tailoring.
 
 ### 5. `sent/` capture includes free-text answers
 **Problem:** ATS forms ask "why this company," "what qualifies you," and "salary expectation." Those answers are drafted in chat and then lost. The next application at the same company risks contradicting them, and nobody can later confirm which resume file was uploaded.
@@ -81,7 +81,7 @@ Practice rounds where the agent asks questions and grades the answers. Parked: t
 - **Building models vs owning decisions** *(2026-09-24)*. In ML-heavy domains, model-building roles cap Domain at 2 unless you've built models; roles that own the decisions the models feed score normally.
 - **`SPECIALTY_PATH` setting** *(2026-09-24)*. `protect` (default) or `open-to-drift`, set in `config.md`; `open-to-drift` bans "re-label"/"detour" language in reports. The comp floor applies either way.
 - **No human scores** *(2026-09-24)*. The Sheet's score columns are ignored in every merge; scores come only from evaluations; Sheet-created rows start blank. New `templates/needs-evaluation.md` lists unscored rows with an open decision.
-- **"Designed-only" claim status** *(2026-09-24)*. It's in the ledger template alongside Confidential and Closed as qualitative, each with how it counts for Evidence. Wiring it into the claims linter stays in *Claims linter* above.
+- **"Designed-only" claim status** *(2026-09-24)*. It's in the ledger template alongside Confidential and Closed as qualitative, each with how it counts for Evidence.
 - **Session rules** *(2026-09-24)*. Long tasks run off `TASKS.md`; keep going on bookkeeping and stop for the user's decisions (named list); long runs end with Blocked on me · Changed · Found.
 - **Scan learnings** *(2026-09-24)*. LinkedIn's "No matching jobs found" padding counts as zero; background tabs render ~7 cards, so titles come from `/jobs/view/{id}`; LinkedIn reading stays user-initiated and low volume. The coverage line counts every query and every source. The Sheet is chosen by title pattern and newest `modifiedTime`, never a stored ID.
 - **Weekly Review: lead with roles, drop follow-up auditing** *(2026-09-24)*. It now runs new roles first, then the pipeline in one line, one deadlined item and one action. Past-due dates stay in the tracker and aren't surfaced.
