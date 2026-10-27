@@ -8,8 +8,18 @@ not for everything you know.
 
 ## 0. Name the round first
 
-Recruiter or coordinator screen · hiring manager · peer or panel · executive or final. If the user hasn't said, ask once.
-The round sets the depth and **which sections to produce. Produce only the sections listed for that round.**
+**First, sort the request. Exactly one of these applies:**
+- **A request that includes a lookup** (look someone up, find or research a person's background, on LinkedIn or anywhere
+  else), alone or inside a prep request: do not search or fetch anything about the person (no web search, no fetch,
+  no browser). Say you didn't, ask the user to paste what they want used, and **stop**. No prep sections, even if a
+  round was named.
+- **Any other side request** (not a prep request): do that request; this mode's sections don't apply.
+- **A prep request with no round named:** ask which round, and **stop**. No prep sections.
+- **A prep request with a round:** produce that round's sections only, from the table below.
+
+The rounds: recruiter or coordinator screen · hiring manager · peer or panel · executive or final. The round sets the
+depth and **which sections to produce. Produce only the sections listed for that round; do not add one the table
+doesn't list for it, however useful.**
 
 | Round | What they decide | Sections |
 |---|---|---|
@@ -139,6 +149,7 @@ sentence you couldn't keep because the ledger doesn't support it.
 - **Interviewer research is pasted in by the user.** The agent never opens, searches or reads LinkedIn (see
   `<kit>/modes/contact.md`). If the user wants interviewer background, ask them to paste it. Names and notes about
   interviewers go in the tracker row (`hiring_manager`, `recruiter`, `notes`) or the user's own files, never in the kit.
+- **Prep output goes to chat.** Write a file only when the user asks, and only to a path the user names.
 - **Nothing is sent, booked or submitted for the user.**
 
 ## After the interview

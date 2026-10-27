@@ -45,5 +45,12 @@ check("practice loop is the closing line, verbatim",
 check("resume vs Derived ledger figure: flag the resume, offer the Derived figure with arithmetic, do not drop both",
       "flag the resume figure" in text and "offer that figure with its arithmetic, labeled Derived" in text
       and "do not drop both" in text)
+check("request-type rule comes before the round table: lookup-only, no round named, round named",
+      0 < text.find("First, sort the request") < text.find("| Round | What they decide | Sections |")
+      and "A request that includes a lookup" in text and "do not search or fetch anything about the person" in text and "ask the user to paste what they want used" in text and "even if a round was named" in text
+      and "A prep request with no round named:** ask which round, and **stop**" in text
+      and "A prep request with a round:** produce that round's sections only" in text and text.count("No prep sections") == 2 and "do not add one the table doesn't list" in text)
+check("prep goes to chat; a file only when asked, to a path the user names",
+      "**Prep output goes to chat.** Write a file only when the user asks, and only to a path the user names." in text)
 print(f"{'FAILED' if fails else 'passed'}: {fails} failure(s)")
 raise SystemExit(1 if fails else 0)

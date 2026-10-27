@@ -3,6 +3,13 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.3.1 (2026-10-27)
+
+- interview: the request is sorted before any prep. A lookup-only or side request is refused (ask for a paste, no prep
+  sections); a prep request with no round named gets one question; a prep request with a round gets that round's
+  sections only. Before, a lookup-only request could produce a blended prep with sections the round doesn't get.
+- interview: prep goes to chat. A file is written only when you ask, to a path you name.
+
 ## 1.3.0 (2026-10-26)
 
 - interview: each round now lists the sections it gets, and only those are produced (a recruiter screen no longer gets
