@@ -45,3 +45,6 @@ archive/
 # Python
 __pycache__/
 *.pyc
+
+# Local build briefs (name employers); never committed
+/briefs/
