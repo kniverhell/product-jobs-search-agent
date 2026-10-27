@@ -42,9 +42,13 @@ Those words are your query terms.
 
 ## Boards scanned by `scan.py`
 
-`scan.py` reads the public job boards listed in this block, one per line: `ats | board slug | company label`. `ats` is
-`greenhouse`, `ashby` or `lever`. The slug is the identifier in the board's URL (`boards.greenhouse.io/{slug}`,
-`jobs.ashbyhq.com/{slug}`, `jobs.lever.co/{slug}`). A placeholder left in `[brackets]` stops the scan.
+`scan.py` reads the public job boards listed in this block, one per line:
+`ats | board slug | company label | status | source`. `ats` is `greenhouse`, `ashby` or `lever`. The slug is the
+identifier in the board's URL (`boards.greenhouse.io/{slug}`, `jobs.ashbyhq.com/{slug}`, `jobs.lever.co/{slug}`).
+The last two fields are optional. `status` is `active` (the default when missing, so three-field lines keep working),
+`probation` (added from an alert; becomes active after a scan reads real listings) or `paused` (still scanned; its
+roles are labeled `paused: rejected <date>`). `source` is free text, e.g. `alert 2026-11-03` or
+`paused 2026-10-20 rejected`. A placeholder left in `[brackets]` stops the scan.
 
 ```scan-boards
 greenhouse | [board-slug] | [Company]

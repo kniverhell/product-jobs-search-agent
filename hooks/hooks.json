@@ -33,6 +33,17 @@
             "statusMessage": "Fill mode: script allow-list"
           }
         ]
+      },
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/label_guard.py\"",
+            "timeout": 10,
+            "statusMessage": "Label guard"
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -41,6 +52,18 @@
           {
             "type": "command",
             "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/session_start.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/label_guard.py\"",
             "timeout": 10
           }
         ]

@@ -3,6 +3,23 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.4.0 (2026-10-27)
+
+- New `discover` mode: reads your labeled job-alert emails (Gmail connector, read-only, one label; or `.eml` files),
+  finds the employers' public boards, and adds them to `04-queries.md` on probation. A company whose board can't be
+  confirmed goes to the watchlist as `alerts-only`. Detection is code: at most 3 slug candidates, and the board must
+  confirm the company.
+- `scan-boards` lines take two optional fields, `status` (`active`, `probation`, `paused`) and `source`. Three-field
+  lines still work. Probation boards become active after a scan reads real listings. Boards added from alerts that show
+  no role passing the screen after 30 days are proposed for retirement; nothing retires on its own.
+- After a rejection the mode asks: keep scanning, pause 90 days, or remove. No answer changes nothing. Pause is a label:
+  the board is still scanned and its roles show `paused: rejected <date>`. Remove adds the company to the no-go list and
+  stops scanning it. `scan.py decide` applies the answer.
+- New hook `label_guard.py`: mail searches must AND `label:<alerts_label>` with the rest (no `OR`, groups, other labels);
+  reads by ID are allowed only for IDs a label-scoped search returned in the session. Its connector tool names are not
+  verified on a real install (see README).
+- `scan.py` gains `alerts`, `parse-alerts` and `decide`. `config.md` gains `alerts_label`.
+
 ## 1.3.2 (2026-10-29)
 
 - fill: never on linkedin.com, including Easy Apply. LinkedIn's terms prohibit automated actions on its site, so the

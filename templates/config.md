@@ -105,6 +105,18 @@ SHEET_TITLE_PATTERN:  [e.g. Job Search Tracker]
 
 ---
 
+## Job-alert label (discover mode)
+
+The Gmail label your job-alert emails are filed under. `discover` reads this label and nothing else in your mailbox;
+the label guard hook blocks any search that is not restricted to it. Leave the placeholder until you have set up the
+filter (README, "Discover: boards from your own job-alert emails").
+
+```
+alerts_label: [your Gmail label, e.g. job-alerts]
+```
+
+---
+
 ## Notes for the system
 
 Anything else the system should know about your situation. Facts, not scoring rules.

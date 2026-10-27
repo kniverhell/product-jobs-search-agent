@@ -37,12 +37,13 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 
 ---
 
-## The 15 modes
+## The 16 modes
 
 | Trigger | Mode | What it does |
 |---|---|---|
 | "run the scout" / "any new roles" | **Scan** | Query-led discovery + ATS verification |
 | Paste a JD or URL | **Evaluate** | 7-block report + score + tracker entry |
+| "discover" / "read my alerts" | **Discover** | Finds boards you aren't scanning from your labeled job-alert emails; asks what to do after a rejection |
 | "tailor for [company]" | **Tailor** | Resume calibrated to one JD |
 | "write the cover letter" | **Cover** | Under 250 words, company-specific |
 | "who should I contact" | **Contact** | Hiring manager + peer + warm-path notes |
@@ -109,6 +110,32 @@ python3 scan.py
 ```
 
 Screens titles with your level, include and exclude terms, enforces your comp floor, applies staleness bands, and writes a Markdown candidate table to `inbound/`. The screen comes from the `scan-screen` block in your `01-target-roles.md` and the boards from the `scan-boards` block in your `04-queries.md`; the script itself holds no settings, and stops with the file and line if either block is missing or unfilled.
+
+---
+
+## Discover: boards from your own job-alert emails
+
+Board scanning finds roles only at employers already on your board list. Job-alert emails reach past it. `discover`
+reads alert emails from your own inbox (never a job site), finds employers' public boards, and adds them to your list
+on probation.
+
+**Set up the filter.** In Gmail, create a label (for example `job-alerts`) and a filter that applies it to your alert
+emails. Put the label's name in `config.md` as `alerts_label`. Connect the Gmail connector in Claude. No connector?
+Drop the alert emails as `.eml` files in `inbound/alerts/` instead.
+
+**What it can read.** Only that label. A hook (`hooks/label_guard.py`) blocks any mail search that is not restricted to
+`label:<alerts_label>` (no `OR`, no groups, no other labels), and any read by message or thread ID that a label-scoped
+search in the same session did not return. Limits, stated plainly:
+- The hook recognises the connector's tools by name pattern. The names in the hook have **not been verified on a real
+  install**; list your connector's tool names and fix `SEARCH_TOOLS`, `READ_TOOLS`, `QUERY_KEYS` and `ID_KEYS` in the
+  hook before you rely on it. A tool the hook does not recognise is not guarded.
+- Reads by ID depend on the hook remembering IDs in the session. If it has no session ID, or cannot write its small
+  state file, every read by ID is blocked.
+- The alert parser matches a simple pattern (title line, then `Company · Location`). Alerts it cannot read are named,
+  and the model reads only those, recorded as `parsed by model`.
+
+**What it stores.** Company, title, location and date per role, in `inbound/alerts-YYYY-MM-DD.csv`. No bodies, no links.
+Alert roles are leads: only the employer's own posting counts as evidence.
 
 ---
 

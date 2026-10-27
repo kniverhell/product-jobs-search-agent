@@ -87,6 +87,7 @@ Read the mode file before running it. Don't work from memory.
 |---|---|---|
 | "run setup" | Make this folder a job-search folder: your files from templates, never overwriting; checks the hooks | `${CLAUDE_PLUGIN_ROOT}/modes/setup.md` |
 | "run the scout" / "any new roles" | Scan portals and queries for new postings | `${CLAUDE_PLUGIN_ROOT}/modes/scan.md` |
+| "discover" / "read my alerts" | Boards you aren't scanning, found from your labeled alert emails; the rejection question | `${CLAUDE_PLUGIN_ROOT}/modes/discover.md` |
 | paste a JD or URL | Full evaluation → report → tracker entry | `${CLAUDE_PLUGIN_ROOT}/modes/evaluate.md` |
 | "tailor for X" | Tailored resume against one JD | `${CLAUDE_PLUGIN_ROOT}/modes/tailor.md` |
 | "write the cover letter" | Cover letter | `${CLAUDE_PLUGIN_ROOT}/modes/cover.md` |
