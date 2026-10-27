@@ -24,5 +24,26 @@ check("LinkedIn: pasted in, never opened, cites contact.md",
       re.search(r"never opens, searches or reads LinkedIn", text) and "modes/contact.md" in text)
 check("does not claim a hook or rule number enforces it", "hook" not in text.lower() and "rule 18" not in text.lower())
 check("keeps the story-bank loop", "commit them to the bank" in text and "compounding asset" in text)
+check("round table says which sections each round gets", "| Sections |" in text and "Produce only the sections listed" in text)
+check("pain-to-asset map has its columns and the partial rule",
+      "| Company pressure | My evidence (ledger entry + status) | Match: strong / partial / none | Risk if they probe |" in text
+      and "Never upgrade a partial match into a strong one." in text)
+check("scenarios: five parts, missing metric marked, no invention",
+      "situation → choice → what shipped or was killed → metric → why this company cares" in text
+      and "never invent one" in text and "Prefer trade-off stories" in text and "fewer stories" in text)
+check("persona strategy: names only from pastes, two revealing questions",
+      "two questions that reveal their real constraint or success metric" in text and "only from what the user pastes" in text)
+check("screening answers: floor from 01-target-roles.md, [UNKNOWN] otherwise",
+      "01-target-roles.md" in text and "[UNKNOWN]" in text and "[YOUR FLOOR]" in text)
+check("positioning: 60-90 seconds, no passion language, at most five domain bullets labeled",
+      "60–90 second" in text and "no passion language" in text and "at most five bullets" in text)
+check("checklist for every round: numbers, breaking claims, traps, 48 hours",
+      all(k in text for k in ("Numbers to memorize", "break under follow-up", "Trap answers", "Next 48 hours")))
+check("practice loop is the closing line, verbatim",
+      "End every prep with exactly: \"Practice this out loud. Reply with your version of the elevator pitch and I will cut it.\"" in text
+      and "Remove, never add" in text)
+check("resume vs Derived ledger figure: flag the resume, offer the Derived figure with arithmetic, do not drop both",
+      "flag the resume figure" in text and "offer that figure with its arithmetic, labeled Derived" in text
+      and "do not drop both" in text)
 print(f"{'FAILED' if fails else 'passed'}: {fails} failure(s)")
 raise SystemExit(1 if fails else 0)

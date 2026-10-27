@@ -77,6 +77,14 @@ Matching works per sentence and per bullet clause, not per line, so an unrelated
 
 **Build:** `config.md` names the master's path explicitly. `SETUP.md` says to keep exactly one master, and `integrity` warns if more than one file matches `*master*resume*`.
 
+### 10. Ship the LinkedIn ban as a hook
+**Problem:** "The agent never opens, searches or reads LinkedIn" (`modes/contact.md`, `modes/interview.md`) is an instruction. A lock on one door is not a lock.
+
+**Build:** A PreToolUse hook that blocks browser navigation, search and fetch calls to linkedin.com in a marked project, with a test against the fixture. Instructions stay; the hook is the enforcement.
+
+### 11. Graded mock interviews (parked)
+Practice rounds where the agent asks questions and grades the answers. Parked: the current practice loop only cuts and tightens what the user says. Not planned.
+
 ---
 
 ## Done

@@ -9,14 +9,14 @@ not for everything you know.
 ## 0. Name the round first
 
 Recruiter or coordinator screen · hiring manager · peer or panel · executive or final. If the user hasn't said, ask once.
-The round sets the depth:
+The round sets the depth and **which sections to produce. Produce only the sections listed for that round.**
 
-| Round | What they decide | Prep depth |
+| Round | What they decide | Sections |
 |---|---|---|
-| Recruiter or coordinator screen | Logistics and basic fit (comp, availability, location, level), then pass you on | Role at a glance, a 30-second pitch, a few likely questions, questions that close open items. Little capability selling. |
-| Hiring manager | Can you do this job, and will you work well for them | The full prep below: stories, the gaps, a point of view on their problem, a 30–45 day plan. |
-| Peer or panel | Craft, judgment, collaboration | Behavioral and product-sense questions mapped to stories; how you work with their function. |
-| Executive or final | Scope, strategy, risk | Your view of where the business is heading, the hardest tradeoff you owned, the questions that test the mandate. |
+| Recruiter or coordinator screen | Logistics and basic fit (comp, availability, location, level), then pass you on | 2, 3, 5 (the pitch), A, F, G. Little capability selling. |
+| Hiring manager | Can you do this job, and will you work well for them | 2, 3, 4, 5 (the plan), 6, 7, 8, B, C, F, G |
+| Peer or panel | Craft, judgment, collaboration | 2, 3, 4, 6, D, F, G |
+| Executive or final | Scope, strategy, risk | 2, 3, 6, 7, E, F, G |
 
 ## 1. Source hierarchy
 
@@ -37,7 +37,7 @@ requirements. So nobody scrolls the posting mid-call.
 List every fact you might repeat on the call, each labeled:
 - **Confirmed** (name the source: JD, ledger, evaluation);
 - **Claim** (name where it came from); do not repeat it as fact;
-- **Unknown**, with the question that resolves it.
+- **Unknown**, with the question that resolves it (the resolving question).
 
 Unverified is labeled, never dropped and never stated as fact. This covers their facts as well as yours: team size,
 budget, reporting line, why the role is open. Same rule as unknowns in scoring: a fork with a resolving question.
@@ -60,8 +60,11 @@ bank so the next interview is easier.
 
 A few proof points, with the exact figure and its status, so numbers are never improvised. Use each by its status:
 Solid as stated; Derived only as labeled arithmetic; Soft hedged; Confidential only in its approved directional phrasing;
-Designed-only only with its caveat attached; Open and Closed-as-qualitative never as a number. A figure that is on the
-resume but not in the ledger is not an anchor: flag it.
+Designed-only only with its caveat attached; Open and Closed-as-qualitative never as a number.
+
+**A resume figure that conflicts with the ledger:** flag the resume figure. If the ledger's figure is Derived, offer that
+figure with its arithmetic, labeled Derived; do not drop both. If the ledger's figure is Open, or the ledger has nothing
+for it, the resume figure is not an anchor: flag it and say what would settle it.
 
 ## 7. Questions to ask
 
@@ -72,6 +75,63 @@ the culture like."
 
 Requirements against ledger evidence, requirement by requirement. Include the exposure list from block B of the
 evaluation: every gap will be probed, so have an honest bridge for each, and pick the one gap to lead with.
+
+## A. Screening answers (screen)
+
+Short, speakable answers to what a recruiter asks first:
+- **Comp:** anchored to the user's own floor in `config.md` (comp floors) and the role rules in `01-target-roles.md`. Say the floor and the range logic,
+  not a guess at theirs. In the kit these are placeholders: `[YOUR FLOOR]`.
+- **Scope and level:** what you have owned, from the ledger, at the level the JD names.
+- **Work model:** the user's stated preference and any flexibility they have actually stated.
+- **Prioritization script:** three sentences on how you decide what to do first.
+
+Anything the user hasn't stated is `[UNKNOWN]` plus the question to ask them. Never guess a floor or a preference.
+
+## B. Pain-to-asset map (hiring manager)
+
+What the company is under pressure to fix (from the JD and deep research), against what you can prove.
+
+| Company pressure | My evidence (ledger entry + status) | Match: strong / partial / none | Risk if they probe |
+|---|---|---|---|
+
+**Never upgrade a partial match into a strong one.** A partial stays partial, with the missing piece named in the last
+column. Lead with the strongest rows; bridge the partials honestly; say plainly where there is none.
+
+## C. Three delivery scenarios (hiring manager)
+
+Three, from the user's own ledger and story bank only. Each one: **situation → choice → what shipped or was killed →
+metric → why this company cares.** If the metric is missing, or its ledger status is not Solid or Derived, say so on that
+line (`[METRIC: not in ledger]`); never invent one. Prefer trade-off stories (what you chose against, and why). Prefer
+fewer stories the user can defend over more they can't. Two defensible scenarios beat three where one is thin.
+
+## D. Persona strategy (panel)
+
+Per interviewer, or per role type (engineering lead, design lead, peer PM) if names are thin. For each: what they
+optimize for, the question types to expect, which scenario from section C or the story bank to use, and **two questions
+that reveal their real constraint or success metric.** Names and backgrounds come only from what the user pastes; with
+none, work by role type and say so.
+
+## E. Strategic positioning and domain notes (executive or final)
+
+- **Positioning:** a 60–90 second narrative linking one or two proven outcomes to the company's stated tension. Plain
+  language, no passion language ("I'm passionate about…").
+- **Domain notes:** at most five bullets: how the company makes money, what its customers care about, the main tension.
+  Each labeled **Confirmed** (source) or **Claim**.
+
+## F. Checklist (every round)
+
+- **Numbers to memorize:** from the ledger, each with its status. Confidential: approved wording only. Soft: hedged.
+  Open: never.
+- **Claims that will break under follow-up:** from the ledger's never-claim limits and the evaluation's exposure list.
+- **Trap answers to avoid:** the ones this role and this profile invite.
+- **Next 48 hours:** the few actions that close open items from section 3.
+
+## G. Practice loop (the closing line)
+
+End every prep with exactly: "Practice this out loud. Reply with your version of the elevator pitch and I will cut it."
+
+When the user replies, cut and tighten their version. Remove, never add: no new claims, figures or adjectives. Flag any
+sentence you couldn't keep because the ledger doesn't support it.
 
 ## Rules
 
