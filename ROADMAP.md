@@ -46,7 +46,7 @@ Not specced. Whether to build it, and how, is undecided.
 ### 5. `sent/` capture includes free-text answers
 **Problem:** ATS forms ask "why this company," "what qualifies you," and "salary expectation." Those answers are drafted in chat and then lost. The next application at the same company risks contradicting them, and nobody can later confirm which resume file was uploaded.
 
-**Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`. It also records the `applied_on` date, which item 13 needs; build the two together.
+**Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`. It also records the `applied_on` date, also useful for item 13 if that goes ahead.
 
 ### 6. Block clicks during a fill session
 *Today this is an instruction, not enforced.*
