@@ -24,12 +24,10 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 **Done when:** an unlabeled search and a read by an unreturned ID are both blocked against the real connector, and the README drops its "not verified" caveat.
 
-### 13. Funnel counts per run
+### 13. Funnel counts per run (under consideration)
 **Problem:** There is no measurement of the search over time. The tracker keeps only the current status (no `applied_on`, no status history), and `scan.py` prints its coverage line without saving it, so a funnel cannot be derived after the fact.
 
-**Build:** (a) `tracker_io.write_tracker` appends every status change to an append-only `status-log.csv` and records `applied_on`; (b) `scan.py` saves found / verified / above-threshold counts per run to `runs.csv`; (c) a read-only `funnel.py`, modelled on `triage.py`, reports found → verified → scored → applied → response → interview over 30 / 90 / all-time windows and weekly, always with the denominator; Weekly Review step 3 calls it. History starts the day (a) ships; earlier periods print "no history before <date>", never back-filled guesses. Depends on item 2 for "found" to mean net-new. Touches guardrail files (`tracker_io.py`, `scan.py`, `SKILL.md`): each needs its own approval.
-
-**Done when:** a fixture tracker with a planted status history reports known counts per window.
+Not specced. Whether to build it, and how, is undecided.
 
 ### 3. Move "Titles lie" into `SKILL.md`
 **Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
