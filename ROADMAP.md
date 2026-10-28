@@ -4,12 +4,11 @@ Improvements queued from continued live use of the system. Each item names the f
 
 Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
+**Separate kits:** Claim Check is planned.
+
 ---
 
 ## Next
-
-### 1. Claims checking
-Claim Check is available as a separate kit.
 
 ### 2. `scan.py` dedups against the tracker
 **Problem:** Dedup of scan output against the tracker is done by the agent by hand (rule 18). (The other half of this item, reading the screen and boards from your files, is done; see *Done*.)
@@ -43,6 +42,9 @@ Claim Check is available as a separate kit.
 **Build:** A hook that blocks `computer` clicks, key presses and typing, and `navigate`, while a fill session is active, keyed to a session marker the mode sets and clears. Test it against the fixture with a planted Submit click.
 
 **Also scope the script guard to fill sessions.** `hooks/fill_js_guard.py` today blocks every browser script in the folder, in every session, so other work (debugging a page, checking a scan) can't run one. Key it to the same session marker: inside a fill session only the pinned read pages run; outside one, scripts are allowed. The preflight (`document.title` must come back blocked) then checks that the marker is set, not only that the hook is installed.
+
+### 7. Retired
+Shipped as the scope guard in v1.1.0; see *Done*. The number stays so the others keep theirs.
 
 ### 8. A dedicated, signed-in test config for install tests
 **Problem:** The fresh-install tests run `claude -p` sessions against a test marketplace. A fully separate config (`CLAUDE_CONFIG_DIR` pointing at a temp folder) isn't signed in, so the tests used the maintainer's real config with a temp plugin folder. Adding a marketplace still wrote to the real `~/.claude/settings.json` and `known_marketplaces.json`; the tests removed those entries and checked the files against a baseline, but a test should never touch the real config at all.
@@ -83,7 +85,7 @@ Practice rounds where the agent asks questions and grades the answers. Parked: t
 - **No human scores** *(2026-09-24)*. The Sheet's score columns are ignored in every merge; scores come only from evaluations; Sheet-created rows start blank. New `templates/needs-evaluation.md` lists unscored rows with an open decision.
 - **"Designed-only" claim status** *(2026-09-24)*. It's in the ledger template alongside Confidential and Closed as qualitative, each with how it counts for Evidence.
 - **Session rules** *(2026-09-24)*. Long tasks run off `TASKS.md`; keep going on bookkeeping and stop for the user's decisions (named list); long runs end with Blocked on me · Changed · Found.
-- **Scan learnings** *(2026-09-24)*. LinkedIn's "No matching jobs found" padding counts as zero; background tabs render ~7 cards, so titles come from `/jobs/view/{id}`; LinkedIn reading stays user-initiated and low volume. The coverage line counts every query and every source. The Sheet is chosen by title pattern and newest `modifiedTime`, never a stored ID.
+- **Scan learnings** *(2026-09-24)*. LinkedIn's "No matching jobs found" padding counts as zero; background tabs render ~7 cards, so titles come from `/jobs/view/{id}`; LinkedIn reading stays user-initiated and low volume. The coverage line counts every query and every source. The Sheet is chosen by title pattern and newest `modifiedTime`, never a stored ID. Superseded: the agent no longer reads LinkedIn (see item 10).
 - **Weekly Review: lead with roles, drop follow-up auditing** *(2026-09-24)*. It now runs new roles first, then the pipeline in one line, one deadlined item and one action. Past-due dates stay in the tracker and aren't surfaced.
 - **Tracker column-width validation** *(2026-09-24)*. `tracker_io.py` is now the only writer (SKILL.md rule 10). It quotes every field, validates width and row count on a temp file, refuses silent shrinkage, backs up to `archive/`, and swaps atomically. `python3 tracker_io.py` validates without writing.
 - **One rule source** *(2026-09-24)*. `config.md` holds facts only; scoring and blockers live in `01-target-roles.md` (SKILL.md rule 9); claim rules live in `06-proof-points.md`.
