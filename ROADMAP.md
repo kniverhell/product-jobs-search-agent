@@ -17,22 +17,17 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 **Done when:** a re-run against a saved output reports zero new rows for roles already tracked.
 
+### 3. Move "Titles lie" into `SKILL.md`
+**Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
+
+**Build:** Add the section under Scoring, with the observed title-vs-actual-level table, and reference it from the Level fit dimension.
+
 ### 12. Verify the label guard on a real install
 **Problem:** `hooks/label_guard.py` shipped in 1.4.0 with connector tool and parameter names written without a Gmail connector attached. A tool the hook does not recognise is not guarded, so it can fail open. Until verified, the README's "can only read that label" is unproven.
 
 **Build:** With the Gmail connector attached, list its real tool names and parameters; fix `SEARCH_TOOLS`, `READ_TOOLS`, `QUERY_KEYS` and `ID_KEYS`; add the real names to `tests/test_label_guard.py`.
 
 **Done when:** an unlabeled search and a read by an unreturned ID are both blocked against the real connector, and the README drops its "not verified" caveat.
-
-### 13. Funnel counts per run (under consideration)
-**Problem:** There is no measurement of the search over time. The tracker keeps only the current status (no `applied_on`, no status history), and `scan.py` prints its coverage line without saving it, so a funnel cannot be derived after the fact.
-
-Not specced. Whether to build it, and how, is undecided.
-
-### 3. Move "Titles lie" into `SKILL.md`
-**Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
-
-**Build:** Add the section under Scoring, with the observed title-vs-actual-level table, and reference it from the Level fit dimension.
 
 ---
 
@@ -83,6 +78,11 @@ Shipped as the scope guard in v1.1.0; see *Done*. The number stays so the others
 
 ### 11. Graded mock interviews (parked)
 Practice rounds where the agent asks questions and grades the answers. Parked: the current practice loop only cuts and tightens what the user says. Not planned.
+
+### 13. Funnel counts per run (under consideration)
+**Problem:** There is no measurement of the search over time. The tracker keeps only the current status (no `applied_on`, no status history), and `scan.py` prints its coverage line without saving it, so a funnel cannot be derived after the fact.
+
+Not specced. Whether to build it, and how, is undecided.
 
 ---
 
