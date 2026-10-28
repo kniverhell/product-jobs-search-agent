@@ -22,6 +22,8 @@ Inside a Claude Code session the same install works as `/plugin install job-sear
 
 ## The problem this solves
 
+Application tools write your applications. This decides which ones are worth writing and keeps every claim traceable.
+
 Most AI job search tools stop at resume rewriting. This one runs the whole operation:
 
 - **Finds roles** — query-led web discovery, watchlist passes, and a Python ATS scanner across 27 boards
@@ -64,7 +66,9 @@ Most AI job search tools stop at resume rewriting. This one runs the whole opera
 
 The system **never submits, sends, or clicks anything that submits, saves or advances.** `fill` may fill fields on a page you opened; submitting is always yours. Every other mode stops at a draft you review. No auto-apply, no sending email, no clicking through an ATS. Ever.
 
-This is not an oversight — it is a design decision. An application is a human act. The tracker records it after the fact, when you say so.
+This is not an oversight — it is a design decision. An application is a human act. The tracker records it after the fact, when you say so. That is also why the kit has no email-sending and no job-aggregator feeds: sending is yours, and a role counts only once the employer's own site confirms it.
+
+What is enforced by a hook and what is an instruction: the scope guard, push privacy check, fill script allow-list and label guard are hooks. "Never submit" and "never open LinkedIn" are instructions only; hooks for both are on the [roadmap](ROADMAP.md).
 
 ---
 

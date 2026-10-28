@@ -17,6 +17,20 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 **Done when:** a re-run against a saved output reports zero new rows for roles already tracked.
 
+### 12. Verify the label guard on a real install
+**Problem:** `hooks/label_guard.py` shipped in 1.4.0 with connector tool and parameter names written without a Gmail connector attached. A tool the hook does not recognise is not guarded, so it can fail open. Until verified, the README's "can only read that label" is unproven.
+
+**Build:** With the Gmail connector attached, list its real tool names and parameters; fix `SEARCH_TOOLS`, `READ_TOOLS`, `QUERY_KEYS` and `ID_KEYS`; add the real names to `tests/test_label_guard.py`.
+
+**Done when:** an unlabeled search and a read by an unreturned ID are both blocked against the real connector, and the README drops its "not verified" caveat.
+
+### 13. Funnel counts per run
+**Problem:** There is no measurement of the search over time. The tracker keeps only the current status (no `applied_on`, no status history), and `scan.py` prints its coverage line without saving it, so a funnel cannot be derived after the fact.
+
+**Build:** (a) `tracker_io.write_tracker` appends every status change to an append-only `status-log.csv` and records `applied_on`; (b) `scan.py` saves found / verified / above-threshold counts per run to `runs.csv`; (c) a read-only `funnel.py`, modelled on `triage.py`, reports found → verified → scored → applied → response → interview over 30 / 90 / all-time windows and weekly, always with the denominator; Weekly Review step 3 calls it. History starts the day (a) ships; earlier periods print "no history before <date>", never back-filled guesses. Depends on item 2 for "found" to mean net-new. Touches guardrail files (`tracker_io.py`, `scan.py`, `SKILL.md`): each needs its own approval.
+
+**Done when:** a fixture tracker with a planted status history reports known counts per window.
+
 ### 3. Move "Titles lie" into `SKILL.md`
 **Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
 
@@ -34,9 +48,11 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 ### 5. `sent/` capture includes free-text answers
 **Problem:** ATS forms ask "why this company," "what qualifies you," and "salary expectation." Those answers are drafted in chat and then lost. The next application at the same company risks contradicting them, and nobody can later confirm which resume file was uploaded.
 
-**Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`.
+**Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`. It also records the `applied_on` date, which item 13 needs; build the two together.
 
 ### 6. Block clicks during a fill session
+*Today this is an instruction, not enforced.*
+
 **Problem:** `fill` mode's "never submit" is an instruction, not an enforced block. A PreToolUse hook sees a tool's name and an element ref or coordinates, not what the element is, so it can't tell a Submit click from a field click.
 
 **Build:** A hook that blocks `computer` clicks, key presses and typing, and `navigate`, while a fill session is active, keyed to a session marker the mode sets and clears. Test it against the fixture with a planted Submit click.
@@ -61,6 +77,8 @@ Shipped as the scope guard in v1.1.0; see *Done*. The number stays so the others
 **Build:** `config.md` names the master's path explicitly. `SETUP.md` says to keep exactly one master, and `integrity` warns if more than one file matches `*master*resume*`.
 
 ### 10. Ship the LinkedIn ban as a hook
+*Today this is an instruction, not enforced.*
+
 **Problem:** "The agent never opens, searches or reads LinkedIn" (`modes/contact.md`, `modes/interview.md`) is an instruction. A lock on one door is not a lock.
 
 **Build:** A PreToolUse hook that blocks browser navigation, search and fetch calls to linkedin.com in a marked project, with a test against the fixture. Instructions stay; the hook is the enforcement.
@@ -72,7 +90,7 @@ Practice rounds where the agent asks questions and grades the answers. Parked: t
 
 ## Done
 
-- **Discover mode, and the round is closed** *(2026-10-27, v1.4.0)*. `modes/discover.md`: boards found from labeled alert emails, probation/paused board statuses, the rejection question, and the label guard hook. This was the last feature of this round. The label guard's connector tool names are not verified on a real install; verifying them is the first thing to do before relying on it.
+- **Discover mode, and the round is closed** *(2026-10-27, v1.4.0)*. `modes/discover.md`: boards found from labeled alert emails, probation/paused board statuses, the rejection question, and the label guard hook. This was the last feature of this round. The label guard's connector tool names are not verified on a real install; that is now item 12 under *Next*.
 
 - **Scope guard hook** *(2026-10-20, v1.1.0)*. `hooks/scope_guard.py`, active only in a folder with the `.job-search` marker: Read, Glob, Grep, Write, Edit and NotebookEdit on paths outside the project and the kit root are blocked, and so is any Bash argument or redirect target that resolves outside them (`locate` and `mdfind` always). Allowed besides: this project's own scratch folder `/private/tmp/claude-<uid>/<slug>/` and its own `~/.claude/projects/` folder. It fails closed with a message if it cannot check a call. Known gap: paths built inside `python3 -c`, scripts or variables are not seen. Live-tested from a local export (pre-release `1.1.0-dev.1`) in sandboxed sessions.
 - **One-command install as a Claude Code plugin** *(2026-10-20, v1.0.0)*. `claude plugin install job-search-agent --marketplace kniverhell/product-jobs-search-agent`, then "run setup" in an empty folder. The repo is both the marketplace and the plugin; the one `SKILL.md` lives at `skills/job-search-ops/`, and clone installs use the clone as a local marketplace (this closes *Install as a thin skill*). Your data lives in your project folder, marked by `.job-search`; data scripts stop anywhere else, and setup refuses your home folder, `/` and the kit's own folder. Setup never overwrites. Both hooks ship with the plugin and check themselves (the push check needs terms in `.privacy-patterns`; the fill guard needs `application-profile.md`), so a fresh install is never blocked. Semantic versions with a CHANGELOG; nothing updates without a version bump.
