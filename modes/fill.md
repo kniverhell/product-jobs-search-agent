@@ -9,6 +9,7 @@ source exactly, leaves everything else for you, lists every field, and stops. **
 
 ## Before anything
 
+- Never on linkedin.com, including Easy Apply. LinkedIn's terms prohibit automated actions on its site; fill those yourself.
 - **Preflight first, before anything else** (before the profile, the resume or page 1): prove the script guard is
   live. Run `javascript_tool` once with exactly `document.title`. The guard (`<kit>/hooks/fill_js_guard.py`) must
   block it.

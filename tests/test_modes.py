@@ -52,5 +52,9 @@ check("request-type rule comes before the round table: lookup-only, no round nam
       and "A prep request with a round:** produce that round's sections only" in text and text.count("No prep sections") == 2 and "do not add one the table doesn't list" in text)
 check("prep goes to chat; a file only when asked, to a path the user names",
       "**Prep output goes to chat.** Write a file only when the user asks, and only to a path the user names." in text)
+fill = re.sub(r"\s+", " ", open(os.path.join(REPO, "modes", "fill.md"), encoding="utf-8").read())
+check("fill mode: never on linkedin.com, including Easy Apply, stated before the preflight",
+      "Never on linkedin.com, including Easy Apply. LinkedIn's terms prohibit automated actions on its site; fill those yourself." in fill
+      and 0 < fill.find("Never on linkedin.com") < fill.find("Preflight first"))
 print(f"{'FAILED' if fails else 'passed'}: {fails} failure(s)")
 raise SystemExit(1 if fails else 0)
