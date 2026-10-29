@@ -3,6 +3,12 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.3.2 (2026-10-29)
+
+- fill: never on linkedin.com, including Easy Apply. LinkedIn's terms prohibit automated actions on its site, so the
+  agent stops before running anything there and you fill those forms yourself. This is an instruction, not an enforced
+  block.
+
 ## 1.3.1 (2026-10-27)
 
 - interview: the request is sorted before any prep. A lookup-only or side request is refused (ask for a paste, no prep
