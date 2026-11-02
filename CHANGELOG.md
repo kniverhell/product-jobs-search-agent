@@ -3,7 +3,7 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
-## 1.4.0 (2026-10-27)
+## 1.4.0 (2026-11-02)
 
 - New `discover` mode: reads your labeled job-alert emails (Gmail connector, read-only, one label; or `.eml` files),
   finds the employers' public boards, and adds them to `04-queries.md` on probation. A company whose board can't be
