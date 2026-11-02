@@ -29,6 +29,8 @@ Verified against the real Gmail connector on 2026-11-02; see *Done*. The number 
 
 ## Later
 
+- **Close the mixed-thread limit:** `get_message` returns `labelIds`, so the label guard could check a message carries the alerts label's ID before allowing the read; search results carry no label IDs, so it needs the label's ID once (from `config.md` or a one-off lookup).
+
 ### 4. Resume variants as a first-class concept
 **Problem:** The system assumes one master resume plus per-JD tailoring. Real searches settle into a few standing variants: people-leader, senior IC, and a domain-specific one such as AI or decisioning. That produces stray copies and confusion about which file was submitted.
 

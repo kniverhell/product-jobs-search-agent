@@ -134,7 +134,8 @@ command line (a long ID in one, `claude_ai_Gmail` in the other); list each, sepa
 `label:<alerts_label>` (no `OR`, no groups, no other labels), and any read by message or thread ID that a label-scoped
 search in the same session did not return. Tested on 2026-11-02 against the Gmail connector in the command line: an
 unlabeled search and a read of an ID no labeled search had returned were both blocked, and a labeled search followed by
-a read of one of its results went through. Not tested in the desktop app. Tool names checked against the Gmail
+a read of one of its results went through. The live connector test ran in the command line only; the desktop app
+was not live-tested. Tool names checked against the Gmail
 connector on 2026-11-02 (its 30 published tools and their parameters). The hook guards every tool on the server named
 in `mail_connector`. Only `search_threads`, `get_thread` and `get_message` are allowed, and only as above; sending,
 drafting, replying, forwarding, trashing and labeling are blocked.
