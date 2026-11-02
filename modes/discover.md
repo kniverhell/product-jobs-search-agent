@@ -18,9 +18,12 @@ coverage line counts boards by status. A company on the no-go list is the only t
 
 ## 2. Read the labeled alerts
 
-- **Source:** the Gmail connector, read-only, one label only: `alerts_label` in `config.md`. A hook (`label_guard.py`)
-  blocks any search that is not restricted to that label, and any read by ID that a label-scoped search did not return.
-  If `alerts_label` is blank, stop and ask the user to set it. Never widen a query to get around a block.
+- **Source:** the Gmail connector, read-only, one label only: `alerts_label` in `config.md`; the connector is the server
+  named in `mail_connector`. A hook (`label_guard.py`) blocks any search that is not restricted to that label, any read
+  by ID that a label-scoped search did not return, and every other tool on that server. Search with `search_threads`
+  (`query`: `label:<alerts_label>` plus any of from:, subject:, newer_than:), then read each role with `get_message`
+  (`messageId`, `messageFormat` PLAIN_TEXT) for IDs the search returned. If `alerts_label` is blank, stop and ask the user
+  to set it. If `mail_connector` is blank, use the `.eml` fallback. Never widen a query to get around a block.
 - **Fallback with no connector:** `.eml` files the user drops in `inbound/alerts/`. Run
   `python3 "<kit>/scan.py" parse-alerts`; it writes `inbound/alerts-<today>.csv` and names any file it could not read.
 - **Four fields per role:** company, title, location, alert date. Code first. Only for what the parser could not read,

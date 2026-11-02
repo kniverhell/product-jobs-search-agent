@@ -16,8 +16,16 @@ copies update only when the version changes.
   the board is still scanned and its roles show `paused: rejected <date>`. Remove adds the company to the no-go list and
   stops scanning it. `scan.py decide` applies the answer.
 - New hook `label_guard.py`: mail searches must AND `label:<alerts_label>` with the rest (no `OR`, groups, other labels);
-  reads by ID are allowed only for IDs a label-scoped search returned in the session. Its connector tool names are not
-  verified on a real install (see README).
+  reads by ID are allowed only for IDs a label-scoped search returned in the session. New `config.md` field
+  `mail_connector` names the mail server; the hook guards every tool on it and allows only `search_threads`,
+  `get_thread` and `get_message`. A mail search or read tool on any other server is blocked, and with the field blank
+  the Gmail route is off (`.eml` only). `mail_connector` takes a comma-separated list, because one connector can have
+  a different server name in the desktop app and the command line. Tested against the real Gmail connector in the
+  command line: an unlabeled search and a read of an unreturned ID are blocked, and a labeled search and a read of its
+  result go through. Not tested in the desktop app (see README).
+- The alert parser reads the plain-text digest layout (title, company, location, badge lines, "View job"), decodes
+  quoted-printable, takes the date from the `Date` header, and notes when a digest's job count differs from the roles
+  it lists.
 - `scan.py` gains `alerts`, `parse-alerts` and `decide`. `config.md` gains `alerts_label`.
 
 ## 1.3.2 (2026-10-29)

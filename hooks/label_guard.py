@@ -1,15 +1,28 @@
 #!/usr/bin/env python3
-"""Claude Code hook (PreToolUse and PostToolUse): in a job-search project, the Gmail connector may read only the
+"""Claude Code hook (PreToolUse and PostToolUse): in a job-search project, the mail connector may read only the
 labeled alerts. Ships with the plugin, wired in hooks/hooks.json. ROADMAP: discover mode (1.4.0).
 
 Self-checking: active only in a project folder that holds the .job-search marker. In a marked project the hook fails
 closed: a mail tool call it cannot check is blocked, with the reason.
 
-TOOL NAMES, NOT VERIFIED ON A REAL INSTALL. The connector's server ID differs per install (a UUID), so tools are matched
-by the tool-name suffix, not the server. SEARCH_TOOLS and READ_TOOLS below are the names the Gmail connector is expected
-to use; QUERY_KEYS and ID_KEYS are the parameter names. They were written without a Gmail connector attached to the
-build session. Before relying on this hook, list the connector's real tool names and parameters and fix these four sets;
-a name that is missing here is not guarded (the hook cannot block a tool it does not recognise).
+Which server is the mail connector: the `mail_connector` field in config.md names it, exactly as it appears in the
+tool names (`mcp__<server>__<tool>`). The hook does not guess a server name. The same connector can have a different
+server name in each Claude surface (observed 2026-11-02: a UUID in the desktop app, `claude_ai_Gmail` in the CLI), so
+the field takes a comma-separated list.
+- Field set: every tool on that server is guarded. search_threads (parameter `query`) and get_thread / get_message
+  (parameters `threadId` / `messageId`) are checked as below; every other tool on that server, including send, draft,
+  reply, forward, trash and label tools, is blocked.
+- Field empty or still the placeholder: the Gmail route is off (use .eml files). A tool named like a mail search or
+  read tool on any server is blocked. Tools of an unidentified mail server that have other names cannot be recognised.
+- A search or read tool name that appears on a server other than the configured one is blocked: if the connector is
+  reconnected under a new server ID, or its tool names change, the hook blocks until config.md is updated.
+
+TOOL NAMES: checked against the Gmail connector's published tool list and parameter schemas on 2026-11-02 (30 tools),
+then tested live in a command-line session: an unlabeled search and a read of an unreturned ID were blocked, a labeled
+search and a read of one of its results were allowed. A search response is `{"threads": [{"id", "messageCount",
+"messages": [{"id", "threadId", "sender", "subject", "toRecipients"}]}]}`: no label IDs, so a message's labels cannot be
+checked from it. If the shape ever changes so that no IDs are found, no IDs are recorded and every read by ID is
+blocked (fails closed). Not tested in the desktop app.
 
 Searches: the query must AND `label:<alerts_label>` (alerts_label is a field in config.md) with the rest. Allowed
 besides the label: plain words and quoted phrases, and from: to: subject: after: before: newer_than: older_than: is:
@@ -19,7 +32,8 @@ and any other operator. Anything not on the allow-list is blocked rather than gu
 Reads by message or thread ID: a PostToolUse call records the IDs a label-scoped search returned, in this session; a
 read is allowed only for a recorded ID. State is a small file in the project's own scratch folder keyed by session ID.
 If the hook has no session ID, or cannot write its state, it cannot remember IDs, so every read by ID is blocked: that
-is the documented limit (README).
+is the documented limit (README). Gmail matches a search by thread: a thread with one labeled message and other
+unlabeled ones is returned whole, so a recorded ID can lead to an unlabeled message in a mixed thread (README).
 """
 import json
 import os
@@ -28,22 +42,50 @@ import sys
 import tempfile
 
 MARKER = ".job-search"
-SEARCH_TOOLS = {"search_threads", "search_messages", "search_emails", "list_threads", "list_messages", "list_emails",
-                "gmail_search_messages", "gmail_search_threads"}
-READ_TOOLS = {"get_thread", "get_message", "read_thread", "read_message", "read_email", "get_email",
-              "gmail_read_message", "gmail_read_thread", "get_threads", "get_messages"}
-QUERY_KEYS = ("query", "q", "search", "search_query")
-ID_KEYS = ("thread_id", "threadId", "message_id", "messageId", "id", "ids", "thread_ids", "message_ids")
+SEARCH_TOOLS = {"search_threads"}
+READ_TOOLS = {"get_thread", "get_message"}
+QUERY_KEYS = ("query",)
+ID_KEYS = ("threadId", "messageId")
 OK_OPERATORS = {"from", "to", "subject", "after", "before", "newer_than", "older_than", "is", "has"}
 
 
-def tool_kind(name):
-    base = re.sub(r"^mcp__[^_]+(?:_[^_]+)*?__", "", name or "")
-    base = base.split("__")[-1].lower()
-    if base in SEARCH_TOOLS:
-        return "search"
-    if base in READ_TOOLS:
-        return "read"
+def split_tool(name):
+    """mcp__<server>__<tool> -> (server, tool), lowercased; a non-MCP tool has server None."""
+    name = name or ""
+    if not name.startswith("mcp__"):
+        return None, name.lower()
+    server, sep, tool = name[5:].rpartition("__")
+    return (server.lower(), tool.lower()) if sep else (name[5:].lower(), "")
+
+
+def norm_server(text):
+    text = text.strip().strip("`\"'").lower()
+    if text.startswith("mcp__"):
+        text = text[5:]
+    return text.rstrip("_") if text.endswith("__") else text
+
+
+def config_value(project, key):
+    try:
+        for line in open(os.path.join(project, "config.md"), encoding="utf-8"):
+            m = re.match(rf"\s*{key}\s*:\s*(.+?)\s*(?:#.*)?$", line, re.I)
+            if m and "[" not in m.group(1) and m.group(1).strip():
+                return m.group(1).strip()
+    except OSError:
+        pass
+    return None
+
+
+def tool_kind(name, project):
+    """search | read | mail-other (a tool on the configured mail server that is neither) | stray (a mail search or read
+    tool name on some other server, or with no connector configured) | None (not a mail tool this hook can see)."""
+    server, tool = split_tool(name)
+    mail = config_value(project, "mail_connector")
+    names = {norm_server(n) for n in re.split(r"[,\s]+", mail or "") if n}
+    if server is not None and server in names:
+        return "search" if tool in SEARCH_TOOLS else "read" if tool in READ_TOOLS else "mail-other"
+    if server is not None and tool in SEARCH_TOOLS | READ_TOOLS:
+        return "stray"
     return None
 
 
@@ -52,14 +94,8 @@ def norm_label(text):
 
 
 def alerts_label(project):
-    try:
-        for line in open(os.path.join(project, "config.md"), encoding="utf-8"):
-            m = re.match(r"\s*alerts_label\s*:\s*(.+?)\s*(?:#.*)?$", line, re.I)
-            if m and "[" not in m.group(1) and m.group(1).strip():
-                return norm_label(m.group(1))
-    except OSError:
-        pass
-    return None
+    v = config_value(project, "alerts_label")
+    return norm_label(v) if v else None
 
 
 def tokens(query):
@@ -134,7 +170,7 @@ def main():
         project = os.environ.get("CLAUDE_PROJECT_DIR") or call.get("cwd") or os.getcwd()
         if not os.path.isfile(os.path.join(project, MARKER)):
             return 0
-        kind = tool_kind(str(call.get("tool_name", "")))
+        kind = tool_kind(str(call.get("tool_name", "")), project)
         if kind is None:
             return 0
         args = call.get("tool_input") or {}
@@ -149,6 +185,14 @@ def main():
                 os.makedirs(os.path.dirname(path), exist_ok=True)
                 json.dump(sorted(load_ids(path) | returned_ids(call.get("tool_response"))), open(path, "w"))
             return 0
+        if kind == "stray":
+            if not config_value(project, "mail_connector"):
+                return block("mail_connector is not set in config.md, so the Gmail route is off (use .eml files in inbound/alerts/)")
+            return block(f"{call.get('tool_name')} is not on the mail_connector server named in config.md; if the connector "
+                         "was reconnected or renamed, the user updates mail_connector first")
+        if kind == "mail-other":
+            return block(f"{call.get('tool_name')} is not a labeled-alert search or read; only search_threads, get_thread and "
+                         "get_message are allowed on the mail connector")
         if not label:
             return block("alerts_label is not set in config.md, so the labeled alerts cannot be told apart from the rest of the inbox")
         if kind == "search":
@@ -166,7 +210,7 @@ def main():
         try:
             project = os.environ.get("CLAUDE_PROJECT_DIR") or (call or {}).get("cwd") or os.getcwd()
             marked = os.path.isfile(os.path.join(project, MARKER))
-            kind = tool_kind(str((call or {}).get("tool_name", "")))
+            kind = tool_kind(str((call or {}).get("tool_name", "")), project)
         except Exception:
             marked, kind = True, "?"
         if not marked or kind is None or (call or {}).get("hook_event_name") == "PostToolUse":

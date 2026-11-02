@@ -68,7 +68,7 @@ The system **never submits, sends, or clicks anything that submits, saves or adv
 
 This is not an oversight — it is a design decision. An application is a human act. The tracker records it after the fact, when you say so. That is also why the kit has no email-sending and no job-aggregator feeds: sending is yours, and a role counts only once the employer's own site confirms it.
 
-What is enforced by a hook and what is an instruction: the scope guard, push privacy check, fill script allow-list and label guard (new in 1.4.0; not yet verified against a live connector; see ROADMAP item 12) are hooks. "Never submit" and "never open LinkedIn" are instructions only; hooks for both are on the [roadmap](ROADMAP.md).
+What is enforced by a hook and what is an instruction: the scope guard, push privacy check, fill script allow-list and label guard (new in 1.4.0; tested against the Gmail connector on 2026-11-02, command line only) are hooks. "Never submit" and "never open LinkedIn" are instructions only; hooks for both are on the [roadmap](ROADMAP.md).
 
 ---
 
@@ -124,19 +124,35 @@ reads alert emails from your own inbox (never a job site), finds employers' publ
 on probation.
 
 **Set up the filter.** In Gmail, create a label (for example `job-alerts`) and a filter that applies it to your alert
-emails. Put the label's name in `config.md` as `alerts_label`. Connect the Gmail connector in Claude. No connector?
-Drop the alert emails as `.eml` files in `inbound/alerts/` instead.
+emails. Put the label's name in `config.md` as `alerts_label`. Connect the Gmail connector in Claude, then put its server
+name in `config.md` as `mail_connector`: it is the part of a tool name between `mcp__` and the tool, for example
+`abc123` in `mcp__abc123__search_threads`. The same connector can have a different name in the desktop app and in the
+command line (a long ID in one, `claude_ai_Gmail` in the other); list each, separated by commas. No connector? Leave `mail_connector` blank and drop the alert emails as
+`.eml` files in `inbound/alerts/` instead.
 
-**What it can read.** Only that label. A hook (`hooks/label_guard.py`) blocks any mail search that is not restricted to
+**What it can read.** That label only. A hook (`hooks/label_guard.py`) blocks any mail search that is not restricted to
 `label:<alerts_label>` (no `OR`, no groups, no other labels), and any read by message or thread ID that a label-scoped
-search in the same session did not return. Limits, stated plainly:
-- The hook recognises the connector's tools by name pattern. The names in the hook have **not been verified on a real
-  install**; list your connector's tool names and fix `SEARCH_TOOLS`, `READ_TOOLS`, `QUERY_KEYS` and `ID_KEYS` in the
-  hook before you rely on it. A tool the hook does not recognise is not guarded.
+search in the same session did not return. Tested on 2026-11-02 against the Gmail connector in the command line: an
+unlabeled search and a read of an ID no labeled search had returned were both blocked, and a labeled search followed by
+a read of one of its results went through. Not tested in the desktop app. Tool names checked against the Gmail
+connector on 2026-11-02 (its 30 published tools and their parameters). The hook guards every tool on the server named
+in `mail_connector`. Only `search_threads`, `get_thread` and `get_message` are allowed, and only as above; sending,
+drafting, replying, forwarding, trashing and labeling are blocked.
+Limits, stated plainly:
+- Only Gmail's tool names are checked. Other mail connectors are not covered: the hook has no knowledge of their tools,
+  so do not point `mail_connector` at one.
+- The hook blocks if the names change. A search or read tool that appears on a server other than `mail_connector` is
+  blocked, and so is any other tool on that server. If you reconnect the connector and its server name changes, the
+  hook blocks until you update `mail_connector`. With `mail_connector` blank, mail search and read tools are blocked on
+  any server (the Gmail route is off); tools with other names on an unnamed mail server cannot be recognised.
 - Reads by ID depend on the hook remembering IDs in the session. If it has no session ID, or cannot write its small
   state file, every read by ID is blocked.
-- The alert parser matches a simple pattern (title line, then `Company · Location`). Alerts it cannot read are named,
-  and the model reads only those, recorded as `parsed by model`.
+- Gmail matches a search by thread. A thread that holds one labeled alert and other unlabeled messages (a reply, say) is
+  returned whole, and the hook then allows its IDs. Alert digests are single messages, so this is rare; it is not
+  prevented.
+- The alert parser reads the plain-text body: each role is a title, company and location line, then optional badge lines
+  (such as "Top applicant"), then a "View job" line. The older "title, then `Company · Location`" form also works. Alerts
+  it cannot read are named, and the model reads only those, recorded as `parsed by model`.
 
 **What it stores.** Company, title, location and date per role, in `inbound/alerts-YYYY-MM-DD.csv`. No bodies, no links.
 Alert roles are leads: only the employer's own posting counts as evidence.

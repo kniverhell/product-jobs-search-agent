@@ -169,6 +169,33 @@ try:
     # bad choice
     r = subprocess.run([sys.executable, os.path.join(T, "scan.py"), "decide", "OldCo", "maybe"], cwd=p, capture_output=True, text=True)
     check("an unknown answer changes nothing and exits 1", r.returncode == 1)
+
+    # the real digest layout (fake data): plain-text part, quoted-printable, title / company / location / badges / View job
+    p5 = project("greenhouse | acme | Acme\n")
+    os.makedirs(os.path.join(p5, "inbound", "alerts"))
+    shutil.copy(os.path.join(REPO, "tests", "fixtures", "digest-alert.eml"), os.path.join(p5, "inbound", "alerts"))
+    m5 = mod_in(p5, "d5")
+    buf5 = io.StringIO()
+    with contextlib.redirect_stdout(buf5):
+        m5.cmd_parse_alerts()
+    import csv as _csv
+    rows5 = list(_csv.DictReader(open(os.path.join(p5, "inbound", "alerts-2026-10-27.csv"), encoding="utf-8")))
+    csv5 = read(p5, "inbound/alerts-2026-10-27.csv")
+    check("digest layout: 6 roles, company/title/location all read by code (18 of 18 fields), date from the Date header",
+          len(rows5) == 6 and all(r["company"] and r["title"] and r["location"] for r in rows5)
+          and {r["alert_date"] for r in rows5} == {"2026-11-02"} and {r["parsed_by"] for r in rows5} == {"code"}, rows5)
+    check("digest layout: the first role is title / company / location, not the header or a badge",
+          rows5[0] == {"company": "Northwind Freight", "title": "Principal Product Manager, Payments", "location": "Austin, TX",
+                       "alert_date": "2026-11-02", "parsed_by": "code"} and rows5[1]["company"] == "Brightloom Freight", rows5[:2])
+    check("digest layout: quoted-printable is decoded (en dash, ampersand, slash kept in titles)",
+          any(r["title"] == "Product Owner \u2013 Access & Onboarding (IAM)" for r in rows5)
+          and any(r["title"] == "Senior Product Manager / Product Manager" for r in rows5), [r["title"] for r in rows5])
+    check("digest layout: a role with two badge lines keeps its location", rows5[5]["location"] == "Metropolitan Area", rows5[5])
+    check("digest layout: badges, URLs, tokens, recipient and footer never reach the CSV",
+          not any(w in csv5 for w in ("Top applicant", "Fast growing", "actively hiring", "connections", "Apply with", "http", "example.com/jobs",
+                                      "token", "trackingId", "Pat Example", "Unsubscribe", "View job", "Fake Headline")), csv5)
+    check("digest layout: the digest's job count is checked against what the email lists",
+          "the digest says 9 jobs, the email lists 6" in buf5.getvalue() and "Fields read by code: 18 of 18" in buf5.getvalue(), buf5.getvalue())
 finally:
     os.chdir("/"); shutil.rmtree(T)
 print(f"{'FAILED' if fails else 'passed'}: {fails} failure(s)"); sys.exit(1 if fails else 0)

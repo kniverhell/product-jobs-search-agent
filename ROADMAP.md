@@ -22,12 +22,8 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 **Build:** Add the section under Scoring, with the observed title-vs-actual-level table, and reference it from the Level fit dimension.
 
-### 12. Verify the label guard on a real install
-**Problem:** `hooks/label_guard.py` shipped in 1.4.0 with connector tool and parameter names written without a Gmail connector attached. A tool the hook does not recognise is not guarded, so it can fail open. Until verified, the README's "can only read that label" is unproven.
-
-**Build:** With the Gmail connector attached, list its real tool names and parameters; fix `SEARCH_TOOLS`, `READ_TOOLS`, `QUERY_KEYS` and `ID_KEYS`; add the real names to `tests/test_label_guard.py`.
-
-**Done when:** an unlabeled search and a read by an unreturned ID are both blocked against the real connector, and the README drops its "not verified" caveat.
+### 12. Closed
+Verified against the real Gmail connector on 2026-11-02; see *Done*. The number stays so the others keep theirs.
 
 ---
 
@@ -88,7 +84,7 @@ Not specced. Whether to build it, and how, is undecided.
 
 ## Done
 
-- **Discover mode, and the round is closed** *(2026-10-27, v1.4.0)*. `modes/discover.md`: boards found from labeled alert emails, probation/paused board statuses, the rejection question, and the label guard hook. This was the last feature of this round. The label guard's connector tool names are not verified on a real install; that is now item 12 under *Next*.
+- **Discover mode, and the round is closed** *(2026-10-27, v1.4.0)*. `modes/discover.md`: boards found from labeled alert emails, probation/paused board statuses, the rejection question, and the label guard hook. This was the last feature of this round. The label guard was tested against the real Gmail connector on 2026-11-02, in the command line: an unlabeled search and a read of an ID no labeled search returned were blocked; a labeled search and a read of one of its results went through. Not tested in the desktop app. A thread mixing labeled and unlabeled messages is not prevented.
 
 - **Scope guard hook** *(2026-10-20, v1.1.0)*. `hooks/scope_guard.py`, active only in a folder with the `.job-search` marker: Read, Glob, Grep, Write, Edit and NotebookEdit on paths outside the project and the kit root are blocked, and so is any Bash argument or redirect target that resolves outside them (`locate` and `mdfind` always). Allowed besides: this project's own scratch folder `/private/tmp/claude-<uid>/<slug>/` and its own `~/.claude/projects/` folder. It fails closed with a message if it cannot check a call. Known gap: paths built inside `python3 -c`, scripts or variables are not seen. Live-tested from a local export (pre-release `1.1.0-dev.1`) in sandboxed sessions.
 - **One-command install as a Claude Code plugin** *(2026-10-20, v1.0.0)*. `claude plugin install job-search-agent --marketplace kniverhell/product-jobs-search-agent`, then "run setup" in an empty folder. The repo is both the marketplace and the plugin; the one `SKILL.md` lives at `skills/job-search-ops/`, and clone installs use the clone as a local marketplace (this closes *Install as a thin skill*). Your data lives in your project folder, marked by `.job-search`; data scripts stop anywhere else, and setup refuses your home folder, `/` and the kit's own folder. Setup never overwrites. Both hooks ship with the plugin and check themselves (the push check needs terms in `.privacy-patterns`; the fill guard needs `application-profile.md`), so a fresh install is never blocked. Semantic versions with a CHANGELOG; nothing updates without a version bump.

@@ -111,8 +111,17 @@ The Gmail label your job-alert emails are filed under. `discover` reads this lab
 the label guard hook blocks any search that is not restricted to it. Leave the placeholder until you have set up the
 filter (README, "Discover: boards from your own job-alert emails").
 
+`mail_connector` names your mail connector, exactly as it appears in its tool names: a tool called
+`mcp__abc123__search_threads` belongs to the server `abc123`. The same connector can have a different name in the
+desktop app and in the command line (one is often a long ID, the other `claude_ai_Gmail`); list every name you use,
+separated by commas. The label guard checks every tool on that server and
+blocks all but the alert search and read tools. Leave the placeholder to keep the Gmail route off and use `.eml` files
+in `inbound/alerts/`; mail search and read tools are then blocked. If you reconnect the connector and its name changes,
+update this line.
+
 ```
 alerts_label: [your Gmail label, e.g. job-alerts]
+mail_connector: [your mail connector's server name; blank = Gmail route off]
 ```
 
 ---

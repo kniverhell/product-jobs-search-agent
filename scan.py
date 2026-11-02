@@ -577,6 +577,39 @@ def cmd_alerts(arg=None):
     print("Alert roles are leads, not evidence: only the employer's own posting counts (verification gate).")
 
 
+def parse_alert_text(text):
+    """Roles in an alert's plain-text body: [(title, company, location)], and the job count the digest header states.
+    Each role ends at a "View job:" line and is the unbroken run of lines above it: title, company, location, then any
+    badge lines ("Top applicant", "2 connections"). Also reads the older "title / Company · Location" form. URLs are
+    removed before anything else, so none can reach the output."""
+    text = re.sub(r"https?://\S+|www\.\S+|\S*(?:linkedin\.com|lnkd\.in)\S*", "", text)
+    lines = [l.strip() for l in text.splitlines()]
+    roles = []
+    for k, line in enumerate(lines):
+        if not line.lower().startswith("view job"):
+            continue
+        j = k
+        while j > 0 and lines[j - 1] and not re.match(r"^-{3,}$", lines[j - 1]):
+            j -= 1
+        group = lines[j:k]
+        if len(group) == 2 and " · " in group[1] and " · " not in group[0]:
+            company, _, loc = group[1].partition(" · ")
+            title = group[0]
+        elif len(group) >= 3 and not any(" · " in g for g in group[:3]):
+            title, company, loc = group[:3]
+        else:
+            continue
+        if len(title) < 140 and title and company.strip():
+            roles.append((title, company.strip(), loc.strip()))
+    if not roles:  # no "View job" markers: the plain "title, then Company · Location" pair
+        for i in range(len(lines) - 1):
+            if lines[i] and " · " in lines[i + 1] and " · " not in lines[i] and len(lines[i]) < 120:
+                company, _, loc = lines[i + 1].partition(" · ")
+                roles.append((lines[i], company.strip(), loc.strip()))
+    m = re.search(r"\b(\d+)\s+new\s+jobs?\b", text, re.I)
+    return roles, int(m.group(1)) if m else 0
+
+
 def cmd_parse_alerts():
     import csv, glob
     from email import policy
@@ -584,26 +617,22 @@ def cmd_parse_alerts():
     from email.utils import parsedate_to_datetime
     require_project()
     folder = os.path.join(project_dir(), "inbound", "alerts")
-    rows, unreadable = [], []
+    rows, unreadable, notes = [], [], []
     for f in sorted(glob.glob(os.path.join(folder, "*.eml"))):
         msg = BytesParser(policy=policy.default).parse(open(f, "rb"))
         body = msg.get_body(preferencelist=("plain",))
         text = body.get_content() if body else ""
-        text = re.sub(r"https?://\S+|www\.\S+|\S*(?:linkedin|lnkd)\S*", "", text)  # no URLs survive extraction
         try:
             adate = parsedate_to_datetime(msg["Date"]).date().isoformat()
         except Exception:
             adate = TODAY.isoformat()
-        lines = [l.strip() for l in text.splitlines()]
-        found = 0
-        for i in range(len(lines) - 1):
-            if lines[i] and " · " in lines[i + 1] and " · " not in lines[i] and len(lines[i]) < 120:
-                company, _, loc = lines[i + 1].partition(" · ")
-                rows.append({"company": company.strip(), "title": lines[i], "location": loc.strip(), "alert_date": adate,
-                             "parsed_by": "code"})
-                found += 1
-        if not found:
+        roles, listed = parse_alert_text(text)
+        for title, company, loc in roles:
+            rows.append({"company": company, "title": title, "location": loc, "alert_date": adate, "parsed_by": "code"})
+        if not roles:
             unreadable.append(os.path.basename(f))
+        elif listed and listed != len(roles):
+            notes.append(f"{os.path.basename(f)}: the digest says {listed} jobs, the email lists {len(roles)}")
     out = os.path.join(OUTPUT_DIR, f"alerts-{TODAY.isoformat()}.csv")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(out, "w", newline="", encoding="utf-8") as fh:
@@ -612,8 +641,11 @@ def cmd_parse_alerts():
         w.writerows(rows)
     print(f"Parsed {len(rows)} roles from {len(glob.glob(os.path.join(folder, '*.eml')))} files -> {out} "
           f"(fields only; no bodies, no URLs). Unreadable by code: {', '.join(unreadable) or 'none'}.")
-    print("The alert format is matched by a pattern (title line, then 'Company · Location'); unreadable files "
-          "go to the model, recorded as 'parsed by model'.")
+    for n in notes:
+        print("  " + n)
+    print(f"Fields read by code: {len(rows) * 3} of {len(rows) * 3} (company, title, location per role) plus the date from "
+          "the Date header. The format is matched by pattern (see parse_alert_text); unreadable files go to the model, "
+          "recorded as 'parsed by model'.")
 
 
 def cmd_decide(company, choice):
