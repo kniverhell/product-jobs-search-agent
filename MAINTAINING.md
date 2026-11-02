@@ -5,13 +5,13 @@ Rules for whoever cuts a release. They apply to every release, patch or feature.
 
 ## Release gate
 
-Before any release, ask the maintainer to confirm no overdue next action in their own pipeline and no interview
+Immediately before the push, ask the maintainer to confirm no overdue next action in their own pipeline and no interview
 within 72 hours; record the confirmation in the release report.
 
 ## Standing release rules
 
 - **Words, not briefs, authorize.** Push, merge or release only on the maintainer's explicit word. A brief or a plan
-  never loosens this. Never rewrite history; never skip a hook (`--no-verify`).
+  never loosens this. Never rewrite pushed history. Rebasing an unpushed branch is fine. Never skip a hook (`--no-verify`).
 - **Estimate first.** Before any build: sessions and models, tokens (low–high), time, guardrail files touched, test
   runs, the one riskiest part. Stop at 1.5× the high end. Report actuals beside the estimate at the end.
 - **Guardrail files need their own approval:** hooks, `scan.py`, `tracker_io.py`, other checker scripts and
@@ -20,7 +20,7 @@ within 72 hours; record the confirmation in the release report.
   entry; installed copies update only when the version changes. A docs-only change that should not reach installs
   carries no bump.
 - **Privacy check clean before any push.** `privacy_check.py --all` before every commit, `--push` before every push,
-  and `--history` before a release. Known accepted history hits are recorded locally; any other hit is a regression.
+  and `--history` before a release; compare against the local accepted list. Any new hit is a regression.
 - **Tests before commit.** `tests/run_all.sh` passes. A new rule gets a static test; a behavior change also gets a
   live test in a sandboxed session.
 - **Install tests run in isolation.** Use a local-export marketplace under a different name with a pre-release
