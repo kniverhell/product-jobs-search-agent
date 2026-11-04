@@ -3,6 +3,16 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.4.1 (2026-11-04)
+
+- interview: a prep request with a round now gets an intake first, asking only for what is missing: the resume (the
+  version in `sent/` first), the JD, and the interviewer's name. A declined or missing item stays `[UNKNOWN]` with the
+  question that resolves it, and nothing is invented. Interviewer background still comes only from what you paste.
+  The answers stay in chat. With an item missing it asks and stops; sections come after your answer.
+- A request that mentions interview prep now goes to interview mode's sort first, even if it also asks for a lookup of a
+  person, so the lookup rule applies (no search, ask for a paste, stop) instead of the request being answered as a
+  contact request.
+
 ## 1.4.0 (2026-11-02)
 
 - New `discover` mode: reads your labeled job-alert emails (Gmail connector, read-only, one label; or `.eml` files),

@@ -103,6 +103,11 @@ Read the mode file before running it. Don't work from memory.
 | "friction <company>" | Mine low-star user complaints for interview prep. **On request only**; never scores or touches the tracker | `${CLAUDE_PLUGIN_ROOT}/modes/friction.md` |
 | "fill this application for <role>" | Fill one page of an application you opened, from your resume and `application-profile.md`. Never free text, EEO, uploads or passwords; **never submits** | `${CLAUDE_PLUGIN_ROOT}/modes/fill.md` |
 
+**Interview prep goes first.** A request that mentions interview prep ("prep me", "prep the screen") runs `interview` and
+its sort in section 0 first, even when it also asks for a lookup of a person (LinkedIn or anywhere else). Do not route it
+to `contact`, and do not answer the lookup part yourself. A request that asks only who to contact, with no interview
+prep, still goes to `contact`.
+
 **Default behavior:** if you paste a job posting with no instruction, run `evaluate`. That is almost always what you mean.
 
 ## Google Sheets sync (optional)

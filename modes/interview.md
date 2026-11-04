@@ -15,7 +15,23 @@ not for everything you know.
   round was named.
 - **Any other side request** (not a prep request): do that request; this mode's sections don't apply.
 - **A prep request with no round named:** ask which round, and **stop**. No prep sections.
-- **A prep request with a round:** produce that round's sections only, from the table below.
+- **A prep request with a round:** produce that round's sections only, from the table below, after the intake.
+
+**Intake (a prep request with a round, before any section).** Three things are needed. If any is missing, ask once, in
+one message, for only the missing ones, and **stop**: produce no section until the user answers. If the request already
+supplies one (the JD pasted, the interviewer named), do not ask for it again, and if all three are supplied, skip the
+intake and go to the sections. A later round for the same role reuses what the user already gave.
+1. **The resume.** Look in `sent/` first: the interviewer has the version that was sent. Name the file that matches this
+   role. If none matches or several could, list the candidates and ask which version went out. If `sent/` has nothing,
+   name the file you found in the project folder, or say none was found.
+2. **The JD.** Name the file or evaluation report you found, or say none was found.
+3. **The interviewer's name,** and any background the user wants to paste.
+
+The user can say "use those", paste something newer, or decline any item. A declined item does not stop the prep: after
+the user's answer, every section that depends on it carries `[UNKNOWN]` and the question that resolves it. Never invent a resume or
+a JD; if there is no JD, section 2 says what it was built from. The interviewer's name is only a name: background comes
+from what the user pastes, never from a search (see Rules). The answers stay in chat; write nothing to a file or the
+tracker unless the user asks.
 
 The rounds: recruiter or coordinator screen · hiring manager · peer or panel · executive or final. The round sets the
 depth and **which sections to produce. Produce only the sections listed for that round; do not add one the table
@@ -49,6 +65,8 @@ List every fact you might repeat on the call, each labeled:
 - **Claim** (name where it came from); do not repeat it as fact;
 - **Unknown**, with the question that resolves it (the resolving question).
 
+Whether the named interviewer is the hiring manager is Unknown unless the user said so.
+
 Unverified is labeled, never dropped and never stated as fact. This covers their facts as well as yours: team size,
 budget, reporting line, why the role is open. Same rule as unknowns in scoring: a fork with a resolving question.
 
@@ -79,7 +97,7 @@ for it, the resume figure is not an anchor: flag it and say what would settle it
 ## 7. Questions to ask
 
 Five, drawn from the research. **Each one resolves an open item in section 3**, so the call closes the gaps. Not "what's
-the culture like."
+the culture like." Direct them to the named interviewer when there is one.
 
 ## 8. JD match
 

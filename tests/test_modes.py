@@ -50,6 +50,20 @@ check("request-type rule comes before the round table: lookup-only, no round nam
       and "A request that includes a lookup" in text and "do not search or fetch anything about the person" in text and "ask the user to paste what they want used" in text and "even if a round was named" in text
       and "A prep request with no round named:** ask which round, and **stop**" in text
       and "A prep request with a round:** produce that round's sections only" in text and text.count("No prep sections") == 2 and "do not add one the table doesn't list" in text)
+check("intake: after the sort, before the table; resume, JD, interviewer name; declined items stay labeled, never invented",
+      0 < text.find("First, sort the request") < text.find("**Intake") < text.find("| Round | What they decide | Sections |")
+      and all(k in text for k in ("The resume.", "The JD.", "The interviewer's name,"))
+      and "A declined item does not stop the prep" in text and "Never invent a resume or a JD" in text
+      and "produce no section until the user answers" in text and "a missing item does not stop" not in text
+      and "never from a search" in text)
+check("intake: asks only for what is missing, looks in sent/ first, answers stay in chat",
+      "for only the missing ones, and **stop**" in text and "skip the intake" in text
+      and "Look in `sent/` first" in text and "which version went out" in text
+      and "write nothing to a file or the tracker unless the user asks" in text)
+skill = re.sub(r"\s+", " ", open(os.path.join(REPO, "skills", "job-search-ops", "SKILL.md"), encoding="utf-8").read())
+check("router: interview prep runs interview's sort first, even with a lookup; contact-only still goes to contact",
+      "**Interview prep goes first.**" in skill and "Do not route it to `contact`" in skill
+      and "still goes to `contact`" in skill)
 check("prep goes to chat; a file only when asked, to a path the user names",
       "**Prep output goes to chat.** Write a file only when the user asks, and only to a path the user names." in text)
 fill = re.sub(r"\s+", " ", open(os.path.join(REPO, "modes", "fill.md"), encoding="utf-8").read())
