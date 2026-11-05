@@ -4,8 +4,6 @@ Improvements queued from continued live use of the system. Each item names the f
 
 Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
-**Separate kits:** Claim Check is planned.
-
 ---
 
 ## Next
