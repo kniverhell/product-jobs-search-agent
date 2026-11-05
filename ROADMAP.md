@@ -25,6 +25,35 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 ### 12. Closed
 Verified against the real Gmail connector on 2026-11-02; see *Done*. The number stays so the others keep theirs.
 
+### 14. Posting-age window in `scan.py`
+**Problem:** A repeat scan shows every open posting again, so the same old roles come back each run. A fixed window
+alone would hide the wrong ones: postings on a board added since the last run, on a board that failed last time, and
+anything posted during a long gap between runs.
+
+**Build:** A per-board age window in `scan.py`.
+- `lookback days: N` in the `scan-screen` block of `01-target-roles.md` (whole number, at least 1; missing means 8, so
+  existing installs keep working; invalid stops with the usual file:line error). Added to the template.
+- A small gitignored state file under `inbound/` records each board's last successful read date. It is written only
+  after a scan completes; a failed board keeps its old date.
+- The window for a board is the larger of `lookback days` and days since its last successful read, plus one. A board
+  with no recorded date has no age limit, which covers the first run and boards added later. With no state file but an
+  earlier scan-candidates file, that file's date is used for every board, with a one-line warning.
+- A same-day rerun returns the same list as that day's first run. `--since N` and `--all` override for one run and
+  never change the setting.
+- Age comes from the existing posted date. A missing or unreadable date is kept, flagged and counted, never dropped.
+  The filter runs after the title screen, comp floor and retirement check, so retirement and probation promotion are
+  unchanged. The summary and coverage line report how many were dropped by age and how many were kept undated, and say
+  when a run has no age limit and why. `modes/scan.md` shows the candidate count first on such a run.
+- Scoring rules and `staleness_flag` are untouched. Fixtures are fictional.
+
+**Done when:** a fresh install runs once with no limit; the next run drops old postings and says how many; a board added
+after the first run still shows its backlog; a board that failed last time covers its gap; a 20-day gap drops nothing
+posted in it; and `tests/run_all.sh` passes with the `test_scan.py` baseline changes each explained.
+
+**Touches:** `scan.py`, `tests/test_scan.py`, `modes/scan.md`, the `01-target-roles.md` template. `scan.py` is a
+guardrail file, so the build needs its own approval and an estimate first (MAINTAINING.md). Related: item 2 dedups
+against the tracker; this item filters by age. They are independent.
+
 ---
 
 ## Later
