@@ -3,7 +3,7 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
-## 1.4.2 (unreleased: date set at release)
+## 1.4.2 (2026-11-09)
 
 - scan: a posting-age window. `lookback days: N` in the `scan-screen` block of `01-target-roles.md` (whole number, at
   least 1; missing means 8, so existing files keep working; added to the template). Each board shows postings up to the
