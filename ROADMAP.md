@@ -8,15 +8,6 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 ## Next
 
-### 2. `scan.py` dedups against the tracker
-**Problem:** Dedup of scan output against the tracker is done by the agent by hand (rule 18). (The other half of this item, reading the screen and boards from your files, is done; see *Done*.)
-
-**Build:** A dedup step that matches scan output against `02-tracker.csv` on req ID and URL (via `tracker_io.read_tracker`) and prints only new rows.
-
-**Done when:** a re-run against a saved output reports zero new rows for roles already tracked.
-
-**Value (decided 2026-11-09):** Today the agent drops tracked roles by judgment (`modes/scan.md` step 5, "fuzzy match"), so a miss is silent: a role already passed on can come back, or a new look-alike can be dropped. A script makes the same input give the same answer, lets a test prove it, and saves the agent's tokens on every scan. It complements item 14: that stops old postings coming back by age, this stops tracked postings coming back by identity (a role posted yesterday that you already applied to still shows today). Limit: it matches req ID and URL only; a title-only match with no shared ID stays with the agent. Modest value: item 14 already removed most repeat noise, so build it when repeats still bother you after a few real scans. It touches `scan.py`, a guardrail file: estimate and approval first.
-
 ### 3. Closed
 Built and released as 1.4.3 on 2026-11-09; see *Done*. The number stays so the others keep theirs.
 
@@ -30,26 +21,14 @@ Built and released as 1.4.2 on 2026-11-09; see *Done*. The number stays so the o
 
 ## Later
 
+Items 2, 4, 6, 10, 11 and 13 were removed on 2026-11-09: not planned.
+
 - **Close the mixed-thread limit:** `get_message` returns `labelIds`, so the label guard could check a message carries the alerts label's ID before allowing the read; search results carry no label IDs, so it needs the label's ID once (from `config.md` or a one-off lookup).
-
-### 4. Resume variants as a first-class concept
-**Problem:** The system assumes one master resume plus per-JD tailoring. Real searches settle into a few standing variants: people-leader, senior IC, and a domain-specific one such as AI or decisioning. That produces stray copies and confusion about which file was submitted.
-
-**Build:** A `variants` table in `config.md` (file, archetype, when to use), a rule that every variant is a subset of the master, and the `integrity` mode covering all of them. `tailor` picks the variant before tailoring.
 
 ### 5. `sent/` capture includes free-text answers
 **Problem:** ATS forms ask "why this company," "what qualifies you," and "salary expectation." Those answers are drafted in chat and then lost. The next application at the same company risks contradicting them, and nobody can later confirm which resume file was uploaded.
 
-**Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`. It also records the `applied_on` date, also useful for item 13 if that goes ahead.
-
-### 6. Block clicks during a fill session
-*Today this is an instruction, not enforced.*
-
-**Problem:** `fill` mode's "never submit" is an instruction, not an enforced block. A PreToolUse hook sees a tool's name and an element ref or coordinates, not what the element is, so it can't tell a Submit click from a field click.
-
-**Build:** A hook that blocks `computer` clicks, key presses and typing, and `navigate`, while a fill session is active, keyed to a session marker the mode sets and clears. Test it against the fixture with a planted Submit click.
-
-**Also scope the script guard to fill sessions.** `hooks/fill_js_guard.py` today blocks every browser script in the folder, in every session, so other work (debugging a page, checking a scan) can't run one. Key it to the same session marker: inside a fill session only the pinned read pages run; outside one, scripts are allowed. The preflight (`document.title` must come back blocked) then checks that the marker is set, not only that the hook is installed.
+**Build:** On "I applied," `sent/{slug}/` records the exact resume file, the cover letter, every free-text answer, and the comp answer given. Reusable answers get promoted to `08-application-answers.md`. It also records the `applied_on` date.
 
 ### 7. Retired
 Shipped as the scope guard in v1.1.0; see *Done*. The number stays so the others keep theirs.
@@ -67,21 +46,6 @@ Shipped as the scope guard in v1.1.0; see *Done*. The number stays so the others
 **Problem:** When the real master resume lived outside the project folder, `tailor` quietly read an older in-folder copy that was missing recent bullets.
 
 **Build:** `config.md` names the master's path explicitly. `SETUP.md` says to keep exactly one master, and `integrity` warns if more than one file matches `*master*resume*`.
-
-### 10. Ship the LinkedIn ban as a hook
-*Today this is an instruction, not enforced.*
-
-**Problem:** "The agent never opens, searches or reads LinkedIn" (`modes/contact.md`, `modes/interview.md`) is an instruction. A lock on one door is not a lock.
-
-**Build:** A PreToolUse hook that blocks browser navigation, search and fetch calls to linkedin.com in a marked project, with a test against the fixture. Instructions stay; the hook is the enforcement.
-
-### 11. Graded mock interviews (parked)
-Practice rounds where the agent asks questions and grades the answers. Parked: the current practice loop only cuts and tightens what the user says. Not planned.
-
-### 13. Funnel counts per run (under consideration)
-**Problem:** There is no measurement of the search over time. The tracker keeps only the current status (no `applied_on`, no status history), and `scan.py` prints its coverage line without saving it, so a funnel cannot be derived after the fact.
-
-Not specced. Whether to build it, and how, is undecided.
 
 ---
 
@@ -106,7 +70,7 @@ Not specced. Whether to build it, and how, is undecided.
 - **No human scores** *(2026-09-24)*. The Sheet's score columns are ignored in every merge; scores come only from evaluations; Sheet-created rows start blank. New `templates/needs-evaluation.md` lists unscored rows with an open decision.
 - **"Designed-only" claim status** *(2026-09-24)*. It's in the ledger template alongside Confidential and Closed as qualitative, each with how it counts for Evidence.
 - **Session rules** *(2026-09-24)*. Long tasks run off `TASKS.md`; keep going on bookkeeping and stop for the user's decisions (named list); long runs end with Blocked on me · Changed · Found.
-- **Scan learnings** *(2026-09-24)*. LinkedIn's "No matching jobs found" padding counts as zero; background tabs render ~7 cards, so titles come from `/jobs/view/{id}`; LinkedIn reading stays user-initiated and low volume. The coverage line counts every query and every source. The Sheet is chosen by title pattern and newest `modifiedTime`, never a stored ID. Superseded: the agent no longer reads LinkedIn (see item 10).
+- **Scan learnings** *(2026-09-24)*. LinkedIn's "No matching jobs found" padding counts as zero; background tabs render ~7 cards, so titles come from `/jobs/view/{id}`; LinkedIn reading stays user-initiated and low volume. The coverage line counts every query and every source. The Sheet is chosen by title pattern and newest `modifiedTime`, never a stored ID. Superseded: the agent no longer reads LinkedIn (see `modes/contact.md`).
 - **Weekly Review: lead with roles, drop follow-up auditing** *(2026-09-24)*. It now runs new roles first, then the pipeline in one line, one deadlined item and one action. Past-due dates stay in the tracker and aren't surfaced.
 - **Tracker column-width validation** *(2026-09-24)*. `tracker_io.py` is now the only writer (SKILL.md rule 10). It quotes every field, validates width and row count on a temp file, refuses silent shrinkage, backs up to `archive/`, and swaps atomically. `python3 tracker_io.py` validates without writing.
 - **One rule source** *(2026-09-24)*. `config.md` holds facts only; scoring and blockers live in `01-target-roles.md` (SKILL.md rule 9); claim rules live in `06-proof-points.md`.

@@ -68,7 +68,7 @@ The system **never submits, sends, or clicks anything that submits, saves or adv
 
 This is not an oversight — it is a design decision. An application is a human act. The tracker records it after the fact, when you say so. That is also why the kit has no email-sending and no job-aggregator feeds: sending is yours, and a role counts only once the employer's own site confirms it.
 
-What is enforced by a hook and what is an instruction: the scope guard, push privacy check, fill script allow-list and label guard (new in 1.4.0; tested against the Gmail connector on 2026-11-02, command line only) are hooks. "Never submit" and "never open LinkedIn" are instructions only; hooks for both are on the [roadmap](ROADMAP.md).
+What is enforced by a hook and what is an instruction: the scope guard, push privacy check, fill script allow-list and label guard (new in 1.4.0; tested against the Gmail connector on 2026-11-02, command line only) are hooks. "Never submit" and "never open LinkedIn" are instructions only; no hook is planned for either.
 
 ---
 

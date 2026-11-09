@@ -95,8 +95,8 @@ Then, on its own line: **Review every field, then submit yourself.**
 - **Not enforced, instruction only: "no submit".** A Claude Code PreToolUse hook sees a tool's name and
   parameters (coordinates or an element ref), not what the element is. It can't reliably tell a Submit click
   from a click on a field. What this mode does instead: it uses no clicking, key or navigation tools at all, and
-  the fixture test checks for zero button clicks and zero POSTs. A hook that blocks those tools during a fill
-  session is on the ROADMAP.
+  the fixture test checks for zero button clicks and zero POSTs. No hook that blocks those tools during a fill
+  session is planned.
 - **Embedded frames** from another site (common for ATS forms) can't be read by the snippets. The mode asks before
   filling anything on such a page.
 - **Some ATS sites autosave** a draft as fields change. That's the site saving, not a submit; you still submit.
