@@ -3,6 +3,24 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.4.2 (unreleased: date set at release)
+
+- scan: a posting-age window. `lookback days: N` in the `scan-screen` block of `01-target-roles.md` (whole number, at
+  least 1; missing means 8, so existing files keep working; added to the template). Each board shows postings up to the
+  larger of that number and the days since the board's last successful read, plus one, so a repeat scan stops re-showing
+  old postings, and a new board, a board that failed last time, or a long gap between runs still shows its backlog. A
+  board with no recorded read has no age limit.
+- The last successful read of each board is kept in `inbound/scan-state.json` (gitignored with `inbound/`), written only
+  after a scan completes; a failed board keeps its old date. If the file is missing but an earlier scan-candidates file
+  exists, that file's date is used for every board and the scan says so. A same-day rerun returns the same list as that
+  day's first run.
+- `python3 scan.py --since N` and `--all` change one run only; the setting is untouched. A `--since` run narrower than a
+  board's own window does not move its read date.
+- A posting with a missing or unreadable date is kept, flagged `undated, kept` when a window applies, and counted. The age
+  filter runs after the title screen, comp floor, retirement and probation promotion, so those are unchanged. The scan
+  summary and coverage line report how many were dropped by age and how many were kept undated, and say when a run has
+  no age limit and why.
+
 ## 1.4.1 (2026-11-04)
 
 - interview: a prep request with a round now gets an intake first, asking only for what is missing: the resume (the

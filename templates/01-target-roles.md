@@ -206,8 +206,14 @@ repeat; its terms add up. A title passes when it has a **level** term and an **i
 (case-insensitive substring match). `comp floor: 0` turns the floor off; otherwise a role whose disclosed maximum is
 below the floor is dropped.
 
+`lookback days` is how old a posting may be and still be shown. It is measured per board: the larger of this number and
+the days since that board's last successful read (plus one), so a long gap or a failed board never hides postings you
+have not seen. A board with no recorded read (the first run, a board you just added) has no age limit. Use `8` unless
+you scan less often than weekly; a whole number, at least 1. The line is optional (missing means 8).
+
 ```scan-screen
 comp floor: [your base floor as a whole number, e.g. 160000; 0 = off]
+lookback days: 8
 level: "[a level word, e.g. director]", "[another, e.g. head of]"
 include: "[a domain word, e.g. product]", "[another]"
 exclude: "[a word that rules a title out, e.g. engineer]", "[another]"

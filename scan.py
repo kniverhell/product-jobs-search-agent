@@ -6,6 +6,8 @@ applies comp floor at scan time, auto-sets verified_on (API = live),
 and dumps candidates to inbound/YYYY-MM-DD-scan-candidates.md
 
 Usage:  python3 scan.py        (run from your project folder)
+        python3 scan.py --since N   one run: postings up to N days old on every board (the setting is unchanged)
+        python3 scan.py --all       one run: no age limit
         python3 scan.py alerts [alerts-YYYY-MM-DD.csv]   discover boards from alert fields (see modes/discover.md)
         python3 scan.py parse-alerts                      inbound/alerts/*.eml -> inbound/alerts-<today>.csv
         python3 scan.py decide "Company" keep|pause|remove   the answer to the rejection question
@@ -16,6 +18,7 @@ Configuration lives in your project folder, never in this script:
       level: "director", "head of", "vp "
       include: "product", "platform"
       exclude: "engineer", "sales"
+      lookback days: 8              (optional; whole number >= 1; missing means 8)
     Terms are double-quoted, so spaces and commas inside a term are kept ("vp ", "head,").
     A key may repeat; its terms add up.
   - The boards: a ```scan-boards block in 04-queries.md, one per line:
@@ -24,6 +27,11 @@ Configuration lives in your project folder, never in this script:
     free text (e.g. "alert 2026-11-03", "paused 2026-10-20 rejected"). Paused boards are still scanned; their roles are
     labeled "paused: rejected <date>". Probation boards become active after a scan reads real listings.
 A missing, empty, placeholder or malformed config stops the scan (exit 1) with the file and line.
+
+Posting-age window: each board shows postings up to max(lookback days, days since that board's last successful read + 1)
+days old. A board with no recorded read has no age limit (first run, a board added later). The last successful read of
+each board is kept in inbound/scan-state.json, written only after a scan completes. A posting with no readable date is
+kept, flagged and counted, never dropped.
 """
 
 import json
@@ -51,6 +59,9 @@ GREENHOUSE, ASHBY, LEVER = [], [], []
 STATUSES = ("active", "probation", "paused")
 BOARD_META = {}   # (ats, slug) -> (status, source); filled by load_config()
 LAST_RAW = 0      # postings the last board returned before the title filter
+LOOKBACK_DEFAULT = 8
+LOOKBACK = LOOKBACK_DEFAULT   # days; the 'lookback days:' line of the scan-screen block
+STATE_FILE = "scan-state.json"
 
 
 class ConfigError(Exception):
@@ -93,14 +104,23 @@ def parse_terms(name, n, line, value):
 
 
 def load_config():
-    global COMP_FLOOR, SENIORITY, DOMAIN, EXCLUDE, GREENHOUSE, ASHBY, LEVER
-    floor, lists = None, {"level": [], "include": [], "exclude": []}
+    global COMP_FLOOR, SENIORITY, DOMAIN, EXCLUDE, GREENHOUSE, ASHBY, LEVER, LOOKBACK
+    floor, lookback, lists = None, None, {"level": [], "include": [], "exclude": []}
     for n, line in read_block(SCREEN_FILE, "scan-screen"):
         key, sep, value = line.partition(":")
         key = key.strip().lower()
-        if not sep or (key != "comp floor" and key not in lists):
-            raise ConfigError(f"{SCREEN_FILE}:{n}: expected 'comp floor:', 'level:', 'include:' or 'exclude:': {line}")
-        if key == "comp floor":
+        if not sep or (key not in ("comp floor", "lookback days") and key not in lists):
+            raise ConfigError(f"{SCREEN_FILE}:{n}: expected 'comp floor:', 'level:', 'include:', 'exclude:' "
+                              f"or 'lookback days:': {line}")
+        if key == "lookback days":
+            if placeholder(value):
+                raise ConfigError(f"{SCREEN_FILE}:{n}: placeholder not filled in: {line}")
+            if lookback is not None:
+                raise ConfigError(f"{SCREEN_FILE}:{n}: 'lookback days:' is given twice: {line}")
+            if not value.strip().isdigit() or int(value.strip()) < 1:
+                raise ConfigError(f"{SCREEN_FILE}:{n}: lookback days must be a whole number of at least 1: {line}")
+            lookback = int(value.strip())
+        elif key == "comp floor":
             if placeholder(value):
                 raise ConfigError(f"{SCREEN_FILE}:{n}: placeholder not filled in: {line}")
             digits = value.strip().replace(",", "").replace("_", "")
@@ -132,6 +152,7 @@ def load_config():
         raise ConfigError(f"{BOARDS_FILE}: the scan-boards block lists no boards")
 
     COMP_FLOOR = floor
+    LOOKBACK = lookback if lookback is not None else LOOKBACK_DEFAULT
     SENIORITY, DOMAIN, EXCLUDE = lists["level"], lists["include"], lists["exclude"]
     GREENHOUSE, ASHBY, LEVER = boards["greenhouse"], boards["ashby"], boards["lever"]
 
@@ -682,7 +703,81 @@ def cmd_decide(company, choice):
 
 
 
-def main():
+# ── Posting-age window ────────────────────────────────────────────────────────
+
+def state_path():
+    return os.path.join(OUTPUT_DIR, STATE_FILE)
+
+
+def load_state():
+    """(state, problem). state maps 'ats|slug' to {'last_read', 'prior_read'}; None when there is no usable file."""
+    path = state_path()
+    if not os.path.exists(path):
+        return None, ""
+    try:
+        data = json.load(open(path, encoding="utf-8"))
+        boards = data["boards"]
+        for rec in boards.values():
+            date.fromisoformat(rec["last_read"])
+            if rec.get("prior_read"):
+                date.fromisoformat(rec["prior_read"])
+        return boards, ""
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return None, f"{STATE_FILE} could not be read"
+
+
+def earlier_scan_date():
+    """The newest date before today among inbound/*-scan-candidates.md, or None (first run)."""
+    found = []
+    try:
+        names = os.listdir(OUTPUT_DIR)
+    except OSError:
+        return None
+    for name in names:
+        m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})-scan-candidates\.md", name)
+        if m:
+            try:
+                d = date.fromisoformat(m.group(1))
+            except ValueError:
+                continue
+            if d < TODAY:
+                found.append(d)
+    return max(found) if found else None
+
+
+def window_days(basis):
+    """Age window for a board whose reference read was on `basis` (a date), or None for no limit."""
+    return None if basis is None else max(LOOKBACK, (TODAY - basis).days + 1)
+
+
+def reference_date(rec):
+    """The date a board's window is measured from: its last successful read, or on a same-day rerun the read
+    before today's, so a rerun returns the list the day's first run did. None means no limit."""
+    if rec is None:
+        return None
+    if rec["last_read"] == TODAY.isoformat():
+        return date.fromisoformat(rec["prior_read"]) if rec.get("prior_read") else None
+    return date.fromisoformat(rec["last_read"])
+
+
+def age_days(posted):
+    """Days between the posted date and today; None when the date is missing or unreadable."""
+    try:
+        return (TODAY - date.fromisoformat(str(posted)[:10])).days
+    except (ValueError, TypeError):
+        return None
+
+
+def write_state(boards):
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    tmp = state_path() + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump({"boards": boards}, f, indent=1, sort_keys=True)
+        f.write("\n")
+    os.replace(tmp, state_path())
+
+
+def main(since=None, all_runs=False):
     require_project()
     try:
         load_config()
@@ -699,8 +794,20 @@ def main():
           f"{len(ASHBY)} Ashby · {len(LEVER)} Lever)…\n" if not skipped_nogo else
           f"Scanning {total} companies (no-go list skipped: {len(skipped_nogo)})…\n")
 
+    state, state_problem = load_state()
+    fallback = earlier_scan_date() if state is None else None   # upgrade case: no state file, earlier scans exist
+    warn = []
+    if state_problem:
+        warn.append(f"{state_problem}; treating this run as the first")
+    if state is None and fallback is not None:
+        warn.append(f"No {STATE_FILE} yet: using the date of the newest earlier scan ({fallback.isoformat()}) for every board")
     candidates = []
     failed     = []
+    read_ok    = []     # (state key, reference date used, whether this run may record the read)
+    dropped    = 0      # postings older than their board's window
+    undated    = 0      # postings with no readable date, kept
+    unlimited  = []     # boards read with no age limit
+    longer     = {}     # board -> window when it is longer than lookback days
     ok_count   = 0
     tally      = {s_: 0 for s_ in STATUSES}
     promote    = []     # probation boards that returned real listings
@@ -727,19 +834,59 @@ def main():
             for h in hits:
                 if note:
                     h["company"] = f"{h['company']} ({note})"
-            candidates.extend(hits)
-            print(f"{len(hits)} hits")
             if status == "probation" and LAST_RAW > 0:
                 promote.append((key, slug, label))
             if source.startswith("alert") and not hits and days_since(source) >= 30:
                 retire.append(label)
             if status == "paused" and days_since(source) >= 90:
                 to_review.append(f"{label} ({paused_label(source)})")
+            # The age filter comes last: after the title screen, comp floor, retirement and promotion.
+            bkey = f"{key}|{slug}"
+            rec = state.get(bkey) if state is not None else None
+            basis = reference_date(rec) if state is not None else fallback
+            natural = window_days(basis)
+            window = None if all_runs else (since if since else natural)
+            if window is None:
+                unlimited.append(label)
+            elif natural is not None and natural > LOOKBACK and not since:
+                longer[label] = natural
+            kept, d = [], 0
+            for h in hits:
+                a = age_days(h["posted"])
+                if a is None:
+                    undated += 1
+                    if window is not None:
+                        h["staleness"] += " · undated, kept"
+                    kept.append(h)
+                elif window is not None and a > window:
+                    d += 1
+                else:
+                    kept.append(h)
+            dropped += d
+            candidates.extend(kept)
+            print(f"{len(kept)} hits" + (f" ({d} older than {window} days dropped)" if d else ""))
+            # A run narrower than the board's own window must not move its date, or the backlog would be lost.
+            read_ok.append((bkey, basis, window is None or (natural is not None and window >= natural)))
     for key, slug, label in promote:
         rewrite_board(key, slug, "active", BOARD_META[(key, slug)][1])
     retire = sorted(set(retire))
 
     # ── Build output ──────────────────────────────────────────────────────────
+    if all_runs:
+        age_line = "Age window: no limit this run (--all)."
+    elif since:
+        age_line = f"Age window: {since} days on every board this run (--since); the lookback setting is unchanged."
+    elif not ok_count:
+        age_line = "Age window: not applied, no board was read."
+    elif len(unlimited) == ok_count:
+        age_line = "Age window: no limit this run (no earlier read recorded for any board)."
+    else:
+        age_line = f"Age window: {LOOKBACK} days (lookback days)"
+        if longer:
+            age_line += "; longer after a gap or a failed read: " + ", ".join(f"{l} {w} days" for l, w in sorted(longer.items()))
+        age_line += "."
+        if unlimited:
+            age_line += f" No limit for {', '.join(sorted(unlimited))} (no earlier read recorded)."
     comp_note = (f"Comp floor ${COMP_FLOOR:,} applied at scan time where compensation is disclosed."
                  if COMP_FLOOR > 0 else
                  "No comp floor set. Set 'comp floor:' in the scan-screen block of 01-target-roles.md to filter by base salary.")
@@ -749,11 +896,15 @@ def main():
         f"",
         f"**Boards read: {ok_count} of {total}. "
         f"Failed: {len(failed)} ({', '.join(f[0] for f in failed) or 'none'}). "
-        f"Candidates above filter: {len(candidates)}.**",
+        f"Candidates above filter: {len(candidates)} (dropped by age: {dropped} · undated kept: {undated}).**",
         f"",
         *([f"Boards by status: {tally['active']} active · {tally['probation']} probation · {tally['paused']} paused "
            f"(scanned, labeled)" + (f" · {len(skipped_nogo)} skipped (no-go list)" if skipped_nogo else "") + ".", ""]
           if tally["probation"] or tally["paused"] or skipped_nogo else []),
+        age_line,
+        f"",
+        *[w + "." for w in warn],
+        *([""] if warn else []),
         f"Verified_on: {TODAY.isoformat()} — API responses are live by definition. "
         f"Roles here satisfy the verification gate; no manual ATS check required.",
         f"",
@@ -807,8 +958,20 @@ def main():
     with open(outpath, "w") as f:
         f.write("\n".join(lines) + "\n")
 
+    # Record the reads only now that the scan has completed; a failed board keeps its old date.
+    new_state = dict(state or {})
+    for bkey, basis, record in read_ok:
+        rec = new_state.get(bkey)
+        if record and not (rec and rec["last_read"] == TODAY.isoformat()):
+            new_state[bkey] = {"last_read": TODAY.isoformat(), "prior_read": basis.isoformat() if basis else None}
+    write_state(new_state)
+
     print(f"\n{'─'*60}")
-    print(f"Boards read: {ok_count}/{total}. Candidates: {len(candidates)}.")
+    print(f"Boards read: {ok_count}/{total}. Candidates: {len(candidates)} "
+          f"(dropped by age: {dropped} · undated kept: {undated}).")
+    print(age_line)
+    for w in warn:
+        print(f"Note: {w}.")
     print(f"Output → {outpath}")
     if failed:
         print(f"Failed: {', '.join(f'{f[0]} ({f[2]})' for f in failed)}")
@@ -818,6 +981,10 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     if not args:
         main()
+    elif args == ["--all"]:
+        main(all_runs=True)
+    elif len(args) == 2 and args[0] == "--since" and args[1].isdigit() and int(args[1]) >= 1:
+        main(since=int(args[1]))
     elif args[0] == "alerts" and len(args) <= 2:
         cmd_alerts(args[1] if len(args) > 1 else None)
     elif args[0] == "parse-alerts" and len(args) == 1:
@@ -825,5 +992,5 @@ if __name__ == "__main__":
     elif args[0] == "decide" and len(args) == 3:
         cmd_decide(args[1], args[2])
     else:
-        print("Usage: scan.py | scan.py alerts [csv] | scan.py parse-alerts | scan.py decide \"Company\" keep|pause|remove")
+        print("Usage: scan.py [--all | --since N] | scan.py alerts [csv] | scan.py parse-alerts | scan.py decide \"Company\" keep|pause|remove")
         sys.exit(2)

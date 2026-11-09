@@ -63,6 +63,15 @@ Open with the denominator. It counts **every query in `04-queries.md`** and **ev
 
 When a board's postings are counted, give distinct titles too (see *Collapse a board to distinct titles*).
 
+**Age window.** `scan.py` shows each board's postings only up to an age limit: the larger of `lookback days` (in the
+`scan-screen` block, default 8) and the days since that board's last successful read, plus one. So a repeat scan does not
+re-show what you have already had a chance to see, and a new board, a board that failed last time, or a long gap shows
+its backlog. Put its numbers in the coverage line: `scan.py ✓ (age window 8 days; dropped by age 14; undated kept 1)`.
+A posting with no readable date is kept and flagged, never dropped. `--since N` and `--all` change one run only.
+
+**On a run with no age limit** (the first run, `--all`, or no board with an earlier read), say so and **show the
+candidate count before reading any posting**: the list is the whole board, not the new part of it.
+
 Never report an absence without it. "The market is quiet" after running three queries is not a finding, it is an unread report — and the difference between a quiet market and an unread one is the entire value of the scan.
 
 Name any query that could not run and why.
