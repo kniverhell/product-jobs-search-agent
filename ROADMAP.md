@@ -15,10 +15,10 @@ Status key: **Next** = ready to build · **Later** = worth doing, not urgent
 
 **Done when:** a re-run against a saved output reports zero new rows for roles already tracked.
 
-### 3. Move "Titles lie" into `SKILL.md`
-**Problem:** The rule "never score level from a title; search the JD for 'reports'" is in the README but not in `SKILL.md`, so the agent never reads it at scoring time. A "Director" title on an explicit IC role, and a "Principal" role with no reports, both score as leadership roles.
+**Value (decided 2026-11-09):** Today the agent drops tracked roles by judgment (`modes/scan.md` step 5, "fuzzy match"), so a miss is silent: a role already passed on can come back, or a new look-alike can be dropped. A script makes the same input give the same answer, lets a test prove it, and saves the agent's tokens on every scan. It complements item 14: that stops old postings coming back by age, this stops tracked postings coming back by identity (a role posted yesterday that you already applied to still shows today). Limit: it matches req ID and URL only; a title-only match with no shared ID stays with the agent. Modest value: item 14 already removed most repeat noise, so build it when repeats still bother you after a few real scans. It touches `scan.py`, a guardrail file: estimate and approval first.
 
-**Build:** Add the section under Scoring, with the observed title-vs-actual-level table, and reference it from the Level fit dimension.
+### 3. Closed
+Built and released as 1.4.3 on 2026-11-09; see *Done*. The number stays so the others keep theirs.
 
 ### 12. Closed
 Verified against the real Gmail connector on 2026-11-02; see *Done*. The number stays so the others keep theirs.
@@ -86,6 +86,8 @@ Not specced. Whether to build it, and how, is undecided.
 ---
 
 ## Done
+
+- **"Titles lie" in `SKILL.md`** *(2026-11-09, v1.4.3, item 3)*. A *Titles lie* subsection under Scoring, referenced from the Level fit row: level comes from the JD (search `reports` / `team of` / `mentor` / `recruit`), never the title; a missing signal is Unknown; the comp band is a check; the two observed failures are listed. Before this the rule was only in the README.
 
 - **Posting-age window in `scan.py`** *(2026-11-09, v1.4.2, item 14)*. `lookback days: N` in the `scan-screen` block (default 8) sets a per-board age limit: the larger of N and the days since that board's last successful read, plus one. Reads are kept in a gitignored `inbound/scan-state.json`, written only after a scan completes; a failed board keeps its old date. A new board, a failed board or a long gap shows its backlog, and a same-day rerun returns the same list. `--since N` and `--all` change one run only. Postings with no readable date are kept, flagged and counted; the filter runs after the title screen, comp floor, retirement and promotion checks. Tested on fictional fixtures (`tests/test_scan.py`, 64 checks) and a live scan; next-day behavior was emulated by editing the state file, not observed live.
 

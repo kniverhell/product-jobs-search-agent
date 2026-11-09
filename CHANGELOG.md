@@ -3,6 +3,14 @@
 Every release bumps `version` in `.claude-plugin/plugin.json` and adds an entry here, in the same commit. Installed
 copies update only when the version changes.
 
+## 1.4.3 (2026-11-09)
+
+- scoring: the "Titles lie" rule is now in `SKILL.md`, where the agent reads it when it scores. Level fit comes from what
+  the JD says the role owns (search for `reports`, `team of`, `mentor`, `recruit`), never from the title; a JD with none
+  of those signals leaves Level fit Unknown instead of assumed; the posted comp band is a check, not a substitute.
+  Before, the rule lived only in the README, so a "Director" title on an individual-contributor role, or a "Principal"
+  role with no reports, could still score as leadership. No code changed.
+
 ## 1.4.2 (2026-11-09)
 
 - scan: a posting-age window. `lookback days: N` in the `scan-screen` block of `01-target-roles.md` (whole number, at

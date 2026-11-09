@@ -191,10 +191,25 @@ Score each dimension 1–5, then produce a **holistic** score. The holistic is a
 | Dimension | What it measures |
 |---|---|
 | **Domain fit** | **Problem ownership.** Is the core problem space one you have **owned**? Judged on the problem the job exists to solve, not on whether the ledger has a number for it. Scale below. |
-| **Level fit** | Does this role own roadmap and people, not just a feature backlog? Look for "own the vision," "manage PMs," "0→1," "define strategy." |
+| **Level fit** | Does this role own roadmap and people, not just a feature backlog? Look for "own the vision," "manage PMs," "0→1," "define strategy." Never from the title; see *Titles lie* below. |
 | **Evidence match** | **Provable with numbers.** How much of **this JD** can you prove with numbers from `06-proof-points.md`, requirement by requirement? Not keyword overlap. Scale below. |
 | **Company fit** | Domain-core vendor > domain-adjacent company where your work is existential > company where it's decorative. See *Company tiers* in `01-target-roles.md`. |
 | **Trajectory** | Does this role make the *next* one better? Growing scope, better story, stronger network. How it treats a move out of your specialty depends on `SPECIALTY_PATH` in `config.md`; see *Trajectory and specialty path* below. |
+
+### Titles lie: score level from the JD, never the title
+
+A title is a label the employer chose, not the level of the job. Score Level fit only from what the JD says the role owns.
+
+- **Search the JD** for `reports` / `team of` / `mentor` / `recruit`, and for who owns the roadmap and the decisions. Quote what you found in the report; if the JD has none of it, Level fit is Unknown, not assumed.
+- **A senior-sounding title does not raise Level fit, and a modest one does not lower it.**
+- **The posted comp band is a check, not a substitute.** Say when it disagrees with the title's apparent level.
+
+| Observed | What was true |
+|---|---|
+| A "Director" title | The JD was an explicit individual-contributor role, with no reports. |
+| A "Principal" title | The role had no reports. |
+
+Both scored as leadership roles before this rule existed.
 
 ### Domain fit and Evidence match: two different questions
 
